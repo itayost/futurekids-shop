@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { X, Minus, Plus, ShoppingBag, Sparkles } from 'lucide-react';
+import { X, Minus, Plus, ShoppingBag, Sparkles, Star, Gift } from 'lucide-react';
 import { useCart } from './CartProvider';
-import { products } from '@/lib/products';
+import { products, bundle } from '@/lib/products';
 
 export default function Cart() {
   const { items, isOpen, setIsOpen, removeItem, updateQuantity, total, itemCount, addItem } = useCart();
@@ -66,10 +66,72 @@ export default function Cart() {
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
           {items.length === 0 ? (
-            <div className="text-center py-12">
-              <ShoppingBag size={64} className="mx-auto text-gray-300 mb-4" />
-              <p className="text-gray-500 text-lg font-medium">הסל ריק</p>
-              <p className="text-gray-400 text-sm mt-2">הוסיפו ספרים לסל הקניות</p>
+            <div className="space-y-6">
+              {/* Empty State Header */}
+              <div className="text-center py-4">
+                <ShoppingBag size={48} className="mx-auto text-gray-300 mb-3" />
+                <p className="text-gray-500 text-lg font-medium">הסל ריק</p>
+                <p className="text-gray-400 text-sm">בחרו ספרים להוספה לסל</p>
+              </div>
+
+              {/* Bundle Deal */}
+              <Link
+                href="/bundle"
+                onClick={handleClose}
+                className="block bg-pink-50 border-2 border-pink-300 rounded-xl p-4 hover:bg-pink-100 transition"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <Star size={16} className="text-pink-500" fill="currentColor" />
+                  <span className="text-pink-600 font-bold text-sm">הכי משתלם!</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center">
+                    <Gift size={28} className="text-pink-500" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-black text-sm">{bundle.name}</p>
+                    <p className="text-xs text-gray-600">3 ספרים במחיר מיוחד</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-pink-500 font-black">₪{bundle.price}</span>
+                      <span className="text-gray-400 text-xs line-through">₪{bundle.originalPrice}</span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+
+              {/* All Products */}
+              <div>
+                <h3 className="font-bold text-sm text-gray-600 mb-3 flex items-center gap-2">
+                  <Sparkles size={16} className="text-pink-500" />
+                  הספרים שלנו
+                </h3>
+                <div className="space-y-3">
+                  {products.map((product) => (
+                    <button
+                      key={product.id}
+                      onClick={() => addItem(product)}
+                      className="w-full flex items-center gap-3 bg-gray-50 border-2 border-black rounded-xl p-3 hover:bg-gray-100 transition text-right"
+                    >
+                      <div className="w-14 h-18 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          width={44}
+                          height={60}
+                          className="object-contain"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-sm truncate">{product.name}</p>
+                        <p className="text-pink-500 font-black">₪{product.price}</p>
+                      </div>
+                      <div className="bg-black text-white px-3 py-1.5 rounded-lg text-xs font-bold flex-shrink-0">
+                        + הוסף
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           ) : (
             <div className="space-y-4">
