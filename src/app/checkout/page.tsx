@@ -9,8 +9,9 @@ import { useCart } from '@/components/CartProvider';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, total, clearCart } = useCart();
+  const { items, total } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -30,9 +31,11 @@ export default function CheckoutPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setError(null);
 
     try {
-      const response = await fetch('/api/orders', {
+      // Call checkout API - creates order and returns payment page URL
+      const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -49,15 +52,22 @@ export default function CheckoutPage() {
         }),
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        throw new Error('Failed to create order');
+        throw new Error(result.error || 'Failed to create order');
       }
 
-      clearCart();
-      router.push('/success');
-    } catch (error) {
-      console.error('Error submitting order:', error);
-      alert('אירעה שגיאה בשליחת ההזמנה. אנא נסו שוב.');
+      // Redirect to iCount payment page
+      if (result.paymentUrl) {
+        window.location.href = result.paymentUrl;
+      } else {
+        // Fallback if no payment URL (shouldn't happen)
+        router.push('/success');
+      }
+    } catch (err) {
+      console.error('Error submitting order:', err);
+      setError(err instanceof Error ? err.message : 'אירעה שגיאה בשליחת ההזמנה. אנא נסו שוב.');
       setIsSubmitting(false);
     }
   };
@@ -176,17 +186,23 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
+              {error && (
+                <div className="bg-red-50 border-2 border-red-500 rounded-xl p-4 text-red-700 font-bold text-center">
+                  {error}
+                </div>
+              )}
+
               <button
                 type="submit"
                 disabled={isSubmitting}
                 className="btn-retro bg-pink-500 text-white text-xl w-full py-4 rounded-xl font-black border-2 border-black hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? 'מעבד...' : 'להשלמת ההזמנה'}
+                {isSubmitting ? 'מעבר לתשלום...' : 'המשך לתשלום מאובטח'}
               </button>
 
               <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
                 <Lock className="w-4 h-4" />
-                החשבונית תישלח במייל (iCount)
+                תועברו לדף תשלום מאובטח | החשבונית תישלח למייל
               </div>
             </form>
           </div>
