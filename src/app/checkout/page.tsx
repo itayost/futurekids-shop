@@ -31,12 +31,35 @@ export default function CheckoutPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // TODO: Submit order to API
-    // For now, just simulate order creation
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          items: items.map((item) => ({
+            productId: item.productId,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+          })),
+          total,
+        }),
+      });
 
-    clearCart();
-    router.push('/success');
+      if (!response.ok) {
+        throw new Error('Failed to create order');
+      }
+
+      clearCart();
+      router.push('/success');
+    } catch (error) {
+      console.error('Error submitting order:', error);
+      alert('אירעה שגיאה בשליחת ההזמנה. אנא נסו שוב.');
+      setIsSubmitting(false);
+    }
   };
 
   if (items.length === 0) {
