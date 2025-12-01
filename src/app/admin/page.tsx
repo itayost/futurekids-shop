@@ -26,21 +26,18 @@ interface Order {
   items: OrderItem[];
 }
 
-const ADMIN_PASSWORD = 'stav2024';
-
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
 
   useEffect(() => {
-    const auth = sessionStorage.getItem('admin_auth');
-    if (auth === 'true') {
-      setIsAuthenticated(true);
-    }
+    checkAuth();
   }, []);
 
   useEffect(() => {
@@ -48,6 +45,18 @@ export default function AdminPage() {
       fetchOrders();
     }
   }, [isAuthenticated]);
+
+  const checkAuth = async () => {
+    try {
+      const response = await fetch('/api/admin/auth');
+      const data = await response.json();
+      setIsAuthenticated(data.authenticated);
+    } catch {
+      setIsAuthenticated(false);
+    } finally {
+      setIsChecking(false);
+    }
+  };
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -62,20 +71,34 @@ export default function AdminPage() {
     }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true);
-      sessionStorage.setItem('admin_auth', 'true');
-      setError('');
-    } else {
-      setError('סיסמה שגויה');
+    setIsLoggingIn(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/admin/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+
+      if (response.ok) {
+        setIsAuthenticated(true);
+        setPassword('');
+      } else {
+        setError('סיסמה שגויה');
+      }
+    } catch {
+      setError('שגיאה בהתחברות');
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await fetch('/api/admin/auth', { method: 'DELETE' });
     setIsAuthenticated(false);
-    sessionStorage.removeItem('admin_auth');
   };
 
   const formatDate = (dateString: string) => {
@@ -122,6 +145,14 @@ export default function AdminPage() {
     }
   };
 
+  if (isChecking) {
+    return (
+      <div className="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+        <div className="animate-spin w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full"></div>
+      </div>
+    );
+  }
+
   if (!isAuthenticated) {
     return (
       <div className="bg-gray-100 min-h-screen flex items-center justify-center p-6">
@@ -141,6 +172,7 @@ export default function AdminPage() {
                 className="input-brutal w-full rounded-lg p-3 text-lg bg-gray-50"
                 placeholder="הזינו סיסמת מנהל"
                 required
+                disabled={isLoggingIn}
               />
             </div>
 
@@ -150,9 +182,10 @@ export default function AdminPage() {
 
             <button
               type="submit"
-              className="btn-retro bg-pink-500 text-white w-full py-3 rounded-xl font-black border-2 border-black hover:bg-pink-600"
+              disabled={isLoggingIn}
+              className="btn-retro bg-pink-500 text-white w-full py-3 rounded-xl font-black border-2 border-black hover:bg-pink-600 disabled:opacity-50"
             >
-              כניסה
+              {isLoggingIn ? 'מתחבר...' : 'כניסה'}
             </button>
           </form>
         </div>
