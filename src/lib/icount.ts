@@ -1,71 +1,147 @@
 // iCount API Client
 // Documentation: https://api.icount.co.il/api/v3.php
+// Based on official OpenAPI specs
 
-const ICOUNT_API_URL = 'https://api.icount.co.il/api/v3.php';
+const ICOUNT_API_BASE = 'https://api.icount.co.il/api/v3.php';
 
-// Types
+// ============ Types ============
+
 export interface ICountCredentials {
   cid: string;
   user: string;
   pass: string;
 }
 
-export interface ICountSession {
-  sid: string;
+export interface ICountAuthResponse {
+  status: boolean;
+  reason?: string;
+  error_description?: string;
+  sid?: string;
+  cid?: string;
+  user?: string;
+  user_id?: number;
 }
 
-export interface ICountDocItem {
+export interface ICountPayPageItem {
   description: string;
-  unitprice: number;
+  description_he?: string;
+  description_en?: string;
+  unitprice?: number;        // Price excluding VAT
+  unitprice_incl?: number;   // Price including VAT (takes precedence)
   quantity: number;
+  sku?: string;
 }
 
-export interface ICountCustomer {
-  client_name: string;
-  client_email: string;
-  client_phone?: string;
-  client_address?: string;
-  client_city?: string;
+export interface ICountCreatePayPageRequest {
+  // Auth (either sid OR cid+user+pass)
+  sid?: string;
+  cid?: string;
+  user?: string;
+  pass?: string;
+  // Required
+  page_name: string;
+  currency_id: number;       // 1=ILS, 2=USD, 3=EUR
+  items: ICountPayPageItem[];
+  // Optional
+  page_name_en?: string;
+  header_text?: string;
+  doctype?: string;          // 'invrec' for חשבונית מס קבלה
+  success_url?: string;
+  ipn_url?: string;
+  require_phone?: boolean;
+  require_fname_lname?: boolean;
+  request_address?: boolean;
+  page_lang?: string;        // 'he' | 'en' | 'auto'
+  max_payments?: number;
 }
 
-export interface ICountPaymentPageRequest {
-  sid: string;
-  doctype: 'invrec'; // Tax Invoice Receipt (חשבונית מס קבלה)
-  client_name: string;
-  client_email: string;
-  client_phone?: string;
-  client_address?: string;
-  client_city?: string;
-  items: ICountDocItem[];
-  currency_code?: string;
-  send_email?: boolean;
-  success_url: string;
-  failure_url: string;
-  custom_data?: string; // We'll store orderId here
-}
-
-export interface ICountResponse<T = unknown> {
+export interface ICountCreatePayPageResponse {
   status: boolean;
+  reason?: string;
   error_description?: string;
-  data?: T;
+  paypage_id?: number;
 }
 
-export interface ICountPaymentPageResponse {
+export interface ICountGenerateSaleRequest {
+  // Auth (either sid OR cid+user+pass)
+  sid?: string;
+  cid?: string;
+  user?: string;
+  pass?: string;
+  // Required
+  paypage_id: number;
+  // Optional - dynamic items override paypage items
+  items?: ICountPayPageItem[];
+  currency_id?: number;
+  currency_code?: string;    // 'ILS', 'USD', 'EUR'
+  // Customer info
+  client_name?: string;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  phone?: string;
+  vat_id?: string;
+  // Address
+  city?: string;
+  street?: string;
+  street_num?: string;
+  zip?: string;
+  country_code?: string;     // 2-letter code
+  // URLs
+  success_url?: string;
+  failure_url?: string;
+  cancel_url?: string;
+  ipn_url?: string;          // Server-to-server notification URL
+  // Other
+  page_lang?: string;
+  max_payments?: number;
+  is_iframe?: boolean;
+}
+
+export interface ICountGenerateSaleResponse {
   status: boolean;
-  payment_page_url?: string;
-  payment_id?: string;
+  reason?: string;
   error_description?: string;
+  paypage_id?: string;
+  sale_uniqid?: string;      // Unique sale identifier
+  sale_sid?: string;
+  sale_url?: string;         // URL to redirect customer (expires after 2 hours)
 }
 
-export interface ICountDocCreateResponse {
+export interface ICountPayPageInfoRequest {
+  sid?: string;
+  cid?: string;
+  user?: string;
+  pass?: string;
+  paypage_id: number;
+}
+
+export interface ICountPayPageInfoResponse {
   status: boolean;
+  reason?: string;
+  error_description?: string;
+  paypage_id?: number;
+  page_name?: string;
+}
+
+// IPN (Instant Payment Notification) payload from iCount
+export interface ICountIPNPayload {
+  sale_uniqid: string;
+  paypage_id: string;
   doc_id?: string;
   doc_number?: string;
-  doc_url?: string;
-  error_description?: string;
+  doc_type?: string;
+  client_name?: string;
+  client_email?: string;
+  total_sum?: string;
+  currency?: string;
+  status?: string;
+  confirmation_code?: string;
+  custom_fields?: Record<string, string>;
 }
 
-// Get iCount credentials from environment
+// ============ Helper Functions ============
+
 function getCredentials(): ICountCredentials {
   const cid = process.env.ICOUNT_CID;
   const user = process.env.ICOUNT_USER;
@@ -78,128 +154,179 @@ function getCredentials(): ICountCredentials {
   return { cid, user, pass };
 }
 
-// Login to iCount and get session ID
+async function icountRequest<T>(
+  endpoint: string,
+  body: object
+): Promise<T> {
+  const response = await fetch(`${ICOUNT_API_BASE}${endpoint}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw new Error(`iCount API error: ${response.status} ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+// ============ Auth API ============
+
 export async function icountLogin(): Promise<string> {
   const credentials = getCredentials();
 
-  const response = await fetch(`${ICOUNT_API_URL}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(credentials),
-  });
+  const data = await icountRequest<ICountAuthResponse>('/auth/login', credentials);
 
-  const data = await response.json();
-
-  if (!data.status) {
+  if (!data.status || !data.sid) {
     throw new Error(data.error_description || 'iCount login failed');
   }
 
   return data.sid;
 }
 
-// Create payment page URL for redirect flow
-export async function icountCreatePaymentPage(
-  session: string,
-  customer: ICountCustomer,
-  items: Array<{ name: string; price: number; quantity: number }>,
-  orderId: string,
-  successUrl: string,
-  failureUrl: string
-): Promise<ICountPaymentPageResponse> {
-  const docItems: ICountDocItem[] = items.map((item) => ({
-    description: item.name,
-    unitprice: item.price,
-    quantity: item.quantity,
-  }));
-
-  const response = await fetch(`${ICOUNT_API_URL}/payment_page/create`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      sid: session,
-      doctype: 'invrec',
-      client_name: customer.client_name,
-      client_email: customer.client_email,
-      client_phone: customer.client_phone,
-      client_address: customer.client_address,
-      client_city: customer.client_city,
-      items: docItems,
-      currency_code: 'ILS',
-      send_email: true,
-      success_url: successUrl,
-      failure_url: failureUrl,
-      custom_data: orderId,
-      lang: 'he',
-    }),
-  });
-
-  return response.json();
+export async function icountLogout(sid: string): Promise<void> {
+  await icountRequest('/auth/logout', { sid });
 }
 
-// Create invoice/receipt document directly (for webhook callback)
-export async function icountCreateDocument(
-  session: string,
-  customer: ICountCustomer,
-  items: Array<{ name: string; price: number; quantity: number }>,
-  paymentInfo: {
-    cc_last_digits?: string;
-    cc_type?: string;
-    transaction_id?: string;
+// ============ PayPage API ============
+
+/**
+ * Create a base PayPage template (one-time setup)
+ * This creates a reusable payment page configuration
+ */
+export async function icountCreatePayPage(
+  options: {
+    pageName: string;
+    doctype?: string;
+    successUrl?: string;
+    ipnUrl?: string;
   }
-): Promise<ICountDocCreateResponse> {
-  const docItems: ICountDocItem[] = items.map((item) => ({
+): Promise<ICountCreatePayPageResponse> {
+  const credentials = getCredentials();
+
+  // Create a minimal paypage - items will be passed dynamically via generate_sale
+  return icountRequest<ICountCreatePayPageResponse>('/paypage/create', {
+    ...credentials,
+    page_name: options.pageName,
+    page_name_en: options.pageName,
+    currency_id: 1, // ILS
+    items: [{ description: 'פריט', unitprice: 1, quantity: 1 }], // Placeholder, will be overridden
+    doctype: options.doctype || 'invrec', // חשבונית מס קבלה
+    success_url: options.successUrl,
+    ipn_url: options.ipnUrl,
+    require_phone: true,
+    request_address: true,
+    page_lang: 'he',
+    max_payments: 3,
+  });
+}
+
+/**
+ * Generate a one-time sale URL for a specific transaction
+ * The URL expires after 2 hours
+ */
+export async function icountGenerateSale(
+  request: Omit<ICountGenerateSaleRequest, 'cid' | 'user' | 'pass'>
+): Promise<ICountGenerateSaleResponse> {
+  const credentials = getCredentials();
+
+  return icountRequest<ICountGenerateSaleResponse>('/paypage/generate_sale', {
+    ...credentials,
+    ...request,
+  });
+}
+
+/**
+ * Get PayPage information
+ */
+export async function icountGetPayPageInfo(
+  paypageId: number
+): Promise<ICountPayPageInfoResponse> {
+  const credentials = getCredentials();
+
+  return icountRequest<ICountPayPageInfoResponse>('/paypage/info', {
+    ...credentials,
+    paypage_id: paypageId,
+  });
+}
+
+/**
+ * Get list of PayPages
+ */
+export async function icountGetPayPageList(): Promise<{
+  status: boolean;
+  reason?: string;
+  error_description?: string;
+  paypages?: Array<{ paypage_id: number; page_name: string }>;
+}> {
+  const credentials = getCredentials();
+
+  return icountRequest('/paypage/get_list', credentials);
+}
+
+// ============ Convenience Functions ============
+
+/**
+ * Create a payment URL for a customer order
+ * This is the main function to use for checkout
+ */
+export async function createPaymentUrl(options: {
+  paypageId: number;
+  items: Array<{ name: string; price: number; quantity: number }>;
+  customer: {
+    name: string;
+    email: string;
+    phone?: string;
+    city?: string;
+    street?: string;
+    streetNum?: string;
+  };
+  orderId: string;
+  successUrl: string;
+  failureUrl: string;
+  ipnUrl: string;
+}): Promise<{ saleUrl: string; saleUniqid: string }> {
+  const { paypageId, items, customer, successUrl, failureUrl, ipnUrl } = options;
+
+  // Convert items to iCount format
+  const icountItems: ICountPayPageItem[] = items.map((item) => ({
     description: item.name,
-    unitprice: item.price,
+    unitprice_incl: item.price,  // Price including VAT
     quantity: item.quantity,
   }));
 
-  const response = await fetch(`${ICOUNT_API_URL}/doc/create`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      sid: session,
-      doctype: 'invrec',
-      client_name: customer.client_name,
-      client_email: customer.client_email,
-      client_phone: customer.client_phone,
-      client_address: customer.client_address,
-      client_city: customer.client_city,
-      items: docItems,
-      currency_code: 'ILS',
-      send_email: true,
-      lang: 'he',
-      paid: true,
-      pay_method: 'cc',
-      ...paymentInfo,
-    }),
+  const response = await icountGenerateSale({
+    paypage_id: paypageId,
+    items: icountItems,
+    currency_code: 'ILS',
+    client_name: customer.name,
+    email: customer.email,
+    phone: customer.phone,
+    city: customer.city,
+    street: customer.street,
+    street_num: customer.streetNum,
+    country_code: 'IL',
+    success_url: successUrl,
+    failure_url: failureUrl,
+    ipn_url: ipnUrl,
+    page_lang: 'he',
+    max_payments: 1,
   });
 
-  return response.json();
+  if (!response.status || !response.sale_url) {
+    throw new Error(response.error_description || 'Failed to generate sale URL');
+  }
+
+  return {
+    saleUrl: response.sale_url,
+    saleUniqid: response.sale_uniqid || '',
+  };
 }
 
-// Verify payment status
-export async function icountGetPaymentStatus(
-  session: string,
-  paymentId: string
-): Promise<ICountResponse> {
-  const response = await fetch(`${ICOUNT_API_URL}/payment_page/status`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      sid: session,
-      payment_id: paymentId,
-    }),
-  });
-
-  return response.json();
-}
-
-// Detect card type from card number (utility)
-export function detectCardType(cardNumber: string): number {
-  const cleaned = cardNumber.replace(/\s/g, '');
-  if (/^4/.test(cleaned)) return 1; // Visa
-  if (/^5[1-5]/.test(cleaned)) return 2; // MasterCard
-  if (/^3[68]/.test(cleaned)) return 3; // Diners
-  if (/^3[47]/.test(cleaned)) return 4; // Amex
-  return 1; // Default to Visa
+/**
+ * Verify IPN payload has required fields
+ */
+export function verifyIPNPayload(payload: ICountIPNPayload): boolean {
+  return !!(payload.sale_uniqid && payload.paypage_id);
 }

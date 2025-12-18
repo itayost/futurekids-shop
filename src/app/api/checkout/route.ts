@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
-import { icountLogin, icountCreatePaymentPage } from '@/lib/icount';
+import { createPaymentUrl } from '@/lib/icount';
 
 interface OrderItem {
   productId: string;
@@ -39,6 +39,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get PayPage ID from environment
+    const paypageId = parseInt(process.env.ICOUNT_PAYPAGE_ID || '6');
+
     // Step 1: Create order in database with PENDING status
     const orderResult = await sql`
       INSERT INTO orders (email, first_name, last_name, phone, address, city, total, status)
@@ -56,64 +59,56 @@ export async function POST(request: NextRequest) {
       `;
     }
 
-    // Step 2: Login to iCount
-    let session: string;
+    // Step 2: Generate iCount payment URL
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const successUrl = `${baseUrl}/payment/success?orderId=${order.id}`;
+    const failureUrl = `${baseUrl}/payment/failed?orderId=${order.id}`;
+    const ipnUrl = `${baseUrl}/api/payment/ipn`;
+
     try {
-      session = await icountLogin();
+      const { saleUrl, saleUniqid } = await createPaymentUrl({
+        paypageId,
+        items: body.items.map((item) => ({
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+        customer: {
+          name: `${body.firstName} ${body.lastName}`,
+          email: body.email,
+          phone: body.phone,
+          city: body.city,
+          street: body.address,
+        },
+        orderId: order.id,
+        successUrl,
+        failureUrl,
+        ipnUrl,
+      });
+
+      // Store sale_uniqid in order for later verification
+      await sql`
+        UPDATE orders SET icount_doc_id = ${saleUniqid} WHERE id = ${order.id}
+      `;
+
+      // Return payment page URL for redirect
+      return NextResponse.json({
+        success: true,
+        orderId: order.id,
+        paymentUrl: saleUrl,
+        saleUniqid,
+      });
+
     } catch (icountError) {
-      console.error('iCount login failed:', icountError);
-      // Order created but payment init failed - return orderId so it can be retried
+      console.error('iCount payment URL generation failed:', icountError);
       return NextResponse.json(
         {
-          error: 'Payment service unavailable. Please try again.',
+          error: icountError instanceof Error ? icountError.message : 'Payment service unavailable',
           orderId: order.id
         },
         { status: 503 }
       );
     }
-
-    // Step 3: Create iCount payment page
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const successUrl = `${baseUrl}/payment/success?orderId=${order.id}`;
-    const failureUrl = `${baseUrl}/payment/failed?orderId=${order.id}`;
-
-    const paymentResult = await icountCreatePaymentPage(
-      session,
-      {
-        client_name: `${body.firstName} ${body.lastName}`,
-        client_email: body.email,
-        client_phone: body.phone,
-        client_address: body.address,
-        client_city: body.city,
-      },
-      body.items.map((item) => ({
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity,
-      })),
-      order.id,
-      successUrl,
-      failureUrl
-    );
-
-    if (!paymentResult.status || !paymentResult.payment_page_url) {
-      console.error('iCount payment page creation failed:', paymentResult);
-      return NextResponse.json(
-        {
-          error: paymentResult.error_description || 'Failed to create payment page',
-          orderId: order.id
-        },
-        { status: 500 }
-      );
-    }
-
-    // Return payment page URL for redirect
-    return NextResponse.json({
-      success: true,
-      orderId: order.id,
-      paymentUrl: paymentResult.payment_page_url,
-      paymentId: paymentResult.payment_id,
-    });
 
   } catch (error) {
     console.error('Checkout error:', error);
