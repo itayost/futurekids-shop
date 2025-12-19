@@ -107,7 +107,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   // Bundle detection: check if all 3 books are in cart
-  const BUNDLE_BOOK_IDS = ['ai', 'encryption', 'algorithms'];
+  const BUNDLE_BOOK_IDS = ['ai-book', 'encryption-book', 'algorithms-book'];
   const BUNDLE_DISCOUNT = 38;
 
   const hasBundle = BUNDLE_BOOK_IDS.every((bookId) =>
