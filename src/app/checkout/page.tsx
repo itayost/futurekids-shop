@@ -4,12 +4,12 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ChevronLeft, Lock, ShoppingBag } from 'lucide-react';
+import { ChevronLeft, Lock, ShoppingBag, Gift } from 'lucide-react';
 import { useCart } from '@/components/CartProvider';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, total } = useCart();
+  const { items, subtotal, bundleDiscount, hasBundle, total } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -48,6 +48,7 @@ export default function CheckoutPage() {
             price: item.price,
             quantity: item.quantity,
           })),
+          bundleDiscount,
           total,
         }),
       });
@@ -233,8 +234,26 @@ export default function CheckoutPage() {
                 ))}
               </div>
 
-              <div className="border-t-2 border-black pt-4">
-                <div className="flex justify-between items-center">
+              <div className="border-t-2 border-black pt-4 space-y-2">
+                {/* Subtotal */}
+                <div className="flex justify-between items-center text-gray-600">
+                  <span>סכום ביניים:</span>
+                  <span className="font-bold">₪{subtotal}</span>
+                </div>
+
+                {/* Bundle Discount */}
+                {hasBundle && (
+                  <div className="flex justify-between items-center text-emerald-600">
+                    <span className="flex items-center gap-1">
+                      <Gift size={16} />
+                      הנחת מארז:
+                    </span>
+                    <span className="font-bold">-₪{bundleDiscount}</span>
+                  </div>
+                )}
+
+                {/* Total */}
+                <div className="flex justify-between items-center pt-2 border-t border-gray-200">
                   <span className="text-lg font-bold">סה&quot;כ:</span>
                   <span className="text-3xl font-black">₪{total}</span>
                 </div>

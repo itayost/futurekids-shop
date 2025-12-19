@@ -8,7 +8,7 @@ import { useCart } from './CartProvider';
 import { products, bundle } from '@/lib/products';
 
 export default function Cart() {
-  const { items, isOpen, setIsOpen, removeItem, updateQuantity, total, itemCount, addItem } = useCart();
+  const { items, isOpen, setIsOpen, removeItem, updateQuantity, subtotal, bundleDiscount, hasBundle, total, itemCount, addItem } = useCart();
   const [isClosing, setIsClosing] = useState(false);
 
   // Get products not in cart for suggestions
@@ -219,7 +219,25 @@ export default function Cart() {
         {/* Footer */}
         {items.length > 0 && (
           <div className="p-6 border-t-4 border-black bg-gray-50">
-            <div className="flex items-center justify-between mb-4">
+            {/* Subtotal */}
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-600">סכום ביניים:</span>
+              <span className="font-bold">₪{subtotal}</span>
+            </div>
+
+            {/* Bundle Discount */}
+            {hasBundle && (
+              <div className="flex items-center justify-between mb-2 text-emerald-600">
+                <span className="flex items-center gap-1">
+                  <Gift size={16} />
+                  הנחת מארז:
+                </span>
+                <span className="font-bold">-₪{bundleDiscount}</span>
+              </div>
+            )}
+
+            {/* Total */}
+            <div className="flex items-center justify-between mb-4 pt-2 border-t border-gray-200">
               <span className="text-lg font-bold">סה&quot;כ לתשלום:</span>
               <span key={total} className="text-3xl font-black animate-pop">
                 ₪{total}

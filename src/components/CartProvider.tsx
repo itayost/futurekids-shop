@@ -106,7 +106,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems([]);
   };
 
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  // Bundle detection: check if all 3 books are in cart
+  const BUNDLE_BOOK_IDS = ['ai', 'encryption', 'algorithms'];
+  const BUNDLE_DISCOUNT = 38;
+
+  const hasBundle = BUNDLE_BOOK_IDS.every((bookId) =>
+    items.some((item) => item.productId === bookId && item.quantity >= 1)
+  );
+
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const bundleDiscount = hasBundle ? BUNDLE_DISCOUNT : 0;
+  const total = subtotal - bundleDiscount;
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
@@ -117,6 +127,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
         removeItem,
         updateQuantity,
         clearCart,
+        subtotal,
+        bundleDiscount,
+        hasBundle,
         total,
         itemCount,
         isOpen,

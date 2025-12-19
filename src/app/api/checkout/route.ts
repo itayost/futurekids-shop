@@ -17,6 +17,7 @@ interface CheckoutRequest {
   city: string;
   address: string;
   items: OrderItem[];
+  bundleDiscount?: number;
   total: number;
 }
 
@@ -66,13 +67,25 @@ export async function POST(request: NextRequest) {
     const ipnUrl = `${baseUrl}/api/payment/ipn`;
 
     try {
+      // Build items list for iCount
+      const icountItems = body.items.map((item) => ({
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      }));
+
+      // Add discount line if bundle discount applies
+      if (body.bundleDiscount && body.bundleDiscount > 0) {
+        icountItems.push({
+          name: 'הנחת מארז',
+          price: -body.bundleDiscount,
+          quantity: 1,
+        });
+      }
+
       const { saleUrl, saleUniqid } = await createPaymentUrl({
         paypageId,
-        items: body.items.map((item) => ({
-          name: item.name,
-          price: item.price,
-          quantity: item.quantity,
-        })),
+        items: icountItems,
         customer: {
           name: `${body.firstName} ${body.lastName}`,
           email: body.email,
