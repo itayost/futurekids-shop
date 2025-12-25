@@ -163,56 +163,6 @@ export default function BundlePage() {
           </div>
         </div>
 
-        {/* Bundle Comparison Table */}
-        <div className="mt-12 bg-white border-4 border-black rounded-2xl p-6 hard-shadow">
-          <h2 className="text-2xl font-black text-center mb-6">השוואת מארזים</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b-2 border-black">
-                  <th className="text-right py-3 px-4 font-bold">מארז</th>
-                  <th className="text-center py-3 px-4 font-bold">ספרים</th>
-                  <th className="text-center py-3 px-4 font-bold">חוברות</th>
-                  <th className="text-center py-3 px-4 font-bold">מחיר</th>
-                  <th className="text-center py-3 px-4 font-bold">חיסכון</th>
-                </tr>
-              </thead>
-              <tbody>
-                {bundles.map((bundle, index) => (
-                  <tr
-                    key={bundle.id}
-                    className={`border-b border-gray-200 cursor-pointer transition ${
-                      selectedIndex === index ? 'bg-pink-50' : 'hover:bg-gray-50'
-                    }`}
-                    onClick={() => setSelectedIndex(index)}
-                  >
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-2">
-                        {bundleIcons[index]}
-                        <span className="font-bold">{bundle.name}</span>
-                        {index === 1 && (
-                          <span className="bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 rounded-full">
-                            פופולרי
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="text-center py-4 px-4 font-medium">3</td>
-                    <td className="text-center py-4 px-4 font-medium">
-                      {bundle.workbookQuantity * 3}
-                    </td>
-                    <td className="text-center py-4 px-4 font-black text-pink-500">
-                      ₪{bundle.price}
-                    </td>
-                    <td className="text-center py-4 px-4 font-bold text-emerald-600">
-                      ₪{bundle.savings}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
       </div>
     </div>
   );
