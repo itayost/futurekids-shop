@@ -24,6 +24,14 @@ export default function Navbar() {
     }, 200); // Match fade-out animation duration
   };
 
+  const navLinks = [
+    { href: '/', label: 'הספרים' },
+    { href: '/games', label: 'משחקים אינטראקטיביים' },
+    { href: '/lessons', label: 'מערכי שיעור' },
+    { href: '/content', label: 'בתקשורת' },
+    { href: '/contact', label: 'צור קשר' },
+  ];
+
   return (
     <>
       <nav className="bg-white border-b-4 border-black sticky top-0 z-50">
@@ -32,23 +40,22 @@ export default function Navbar() {
             href="/"
             className="text-3xl font-black text-black tracking-tighter hover:text-pink-500 transition"
           >
-            Future<span className="text-pink-500">Kids</span>
+            Kid<span className="text-pink-500">Code</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-6 space-x-reverse font-bold text-lg items-center">
-            <Link href="/" className="hover:text-pink-500">
-              החנות
-            </Link>
-            <Link href="/content" className="hover:text-pink-500">
-              הופעות ומאמרים
-            </Link>
+          <div className="hidden md:flex space-x-4 space-x-reverse font-bold text-base items-center">
+            {navLinks.map((link) => (
+              <Link key={link.href} href={link.href} className="hover:text-pink-500">
+                {link.label}
+              </Link>
+            ))}
             <button
               onClick={() => setIsOpen(true)}
               className="flex items-center gap-2 bg-black text-white px-5 py-2 rounded-lg hover:bg-gray-800 transition relative"
             >
               <ShoppingCart size={20} />
-              סל קניות
+              הסל שלי
               {itemCount > 0 && (
                 <span
                   key={itemCount}
@@ -65,7 +72,7 @@ export default function Navbar() {
             <button
               onClick={() => setIsOpen(true)}
               className="flex items-center gap-2 bg-black text-white p-3 rounded-lg relative"
-              aria-label="סל קניות"
+              aria-label="הסל שלי"
             >
               <ShoppingCart size={20} />
               {itemCount > 0 && (
@@ -94,7 +101,7 @@ export default function Navbar() {
           {/* Header */}
           <div className="flex justify-between items-center p-6 border-b-4 border-pink-500">
             <span className="text-3xl font-black text-white">
-              Future<span className="text-pink-500">Kids</span>
+              Kid<span className="text-pink-500">Code</span>
             </span>
             <button
               onClick={handleCloseMenu}
@@ -107,29 +114,25 @@ export default function Navbar() {
 
           {/* Menu Links */}
           <div className="flex-1 flex flex-col justify-center items-center gap-2 p-6">
-            <Link
-              href="/"
-              onClick={handleCloseMenu}
-              className="text-white text-3xl font-black py-6 px-8 hover:text-pink-500 transition w-full text-center"
-            >
-              החנות
-            </Link>
-            <Link
-              href="/content"
-              onClick={handleCloseMenu}
-              className="text-white text-3xl font-black py-6 px-8 hover:text-pink-500 transition w-full text-center"
-            >
-              הופעות ומאמרים
-            </Link>
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={handleCloseMenu}
+                className="text-white text-2xl font-black py-4 px-8 hover:text-pink-500 transition w-full text-center"
+              >
+                {link.label}
+              </Link>
+            ))}
             <button
               onClick={() => {
                 handleCloseMenu();
                 setTimeout(() => setIsOpen(true), 200);
               }}
-              className="text-white text-3xl font-black py-6 px-8 hover:text-pink-500 transition w-full text-center flex items-center justify-center gap-3"
+              className="text-white text-2xl font-black py-4 px-8 hover:text-pink-500 transition w-full text-center flex items-center justify-center gap-3"
             >
-              <ShoppingCart size={28} />
-              סל קניות
+              <ShoppingCart size={24} />
+              הסל שלי
               {itemCount > 0 && (
                 <span className="bg-pink-500 text-white text-lg font-bold px-3 py-1 rounded-full">
                   {itemCount}
