@@ -4,14 +4,22 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ChevronLeft, Lock, ShoppingBag, Gift } from 'lucide-react';
+import { ChevronLeft, Lock, ShoppingBag, Gift, Truck, Package } from 'lucide-react';
 import { useCart } from '@/components/CartProvider';
+
+type ShippingOption = 'pickup' | 'delivery';
+
+const SHIPPING_OPTIONS = {
+  pickup: { label: 'איסוף עצמי', price: 20, icon: Package },
+  delivery: { label: 'משלוח עד הבית', price: 40, icon: Truck },
+};
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, bundleDiscount, hasBundle, total } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [shippingMethod, setShippingMethod] = useState<ShippingOption>('pickup');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -20,6 +28,9 @@ export default function CheckoutPage() {
     city: '',
     address: '',
   });
+
+  const shippingCost = SHIPPING_OPTIONS[shippingMethod].price;
+  const finalTotal = total + shippingCost;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -49,7 +60,9 @@ export default function CheckoutPage() {
             quantity: item.quantity,
           })),
           bundleDiscount,
-          total,
+          shippingMethod,
+          shippingCost,
+          total: finalTotal,
         }),
       });
 
@@ -104,13 +117,58 @@ export default function CheckoutPage() {
 
         <div className="flex flex-col lg:flex-row gap-10">
           {/* Form Section */}
-          <div className="lg:w-2/3 bg-white border-4 border-black rounded-2xl p-8 hard-shadow h-fit">
-            <h1 className="text-3xl font-black mb-8 flex items-center gap-3">
-              <span className="bg-black text-white w-10 h-10 rounded-full flex items-center justify-center text-lg">
-                1
-              </span>
-              פרטים למשלוח
-            </h1>
+          <div className="lg:w-2/3 space-y-6">
+            {/* Shipping Selection */}
+            <div className="bg-white border-4 border-black rounded-2xl p-8 hard-shadow">
+              <h2 className="text-3xl font-black mb-6 flex items-center gap-3">
+                <span className="bg-black text-white w-10 h-10 rounded-full flex items-center justify-center text-lg">
+                  1
+                </span>
+                אופן קבלת ההזמנה
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {(Object.entries(SHIPPING_OPTIONS) as [ShippingOption, typeof SHIPPING_OPTIONS.pickup][]).map(([key, option]) => {
+                  const Icon = option.icon;
+                  const isSelected = shippingMethod === key;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setShippingMethod(key)}
+                      className={`p-6 rounded-xl border-4 transition-all text-right ${
+                        isSelected
+                          ? 'border-pink-500 bg-pink-50'
+                          : 'border-gray-200 bg-gray-50 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                          isSelected ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-500'
+                        }`}>
+                          <Icon className="w-6 h-6" />
+                        </div>
+                        <div>
+                          <p className="font-black text-lg">{option.label}</p>
+                          <p className={`font-bold ${isSelected ? 'text-pink-500' : 'text-gray-500'}`}>
+                            ₪{option.price}
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Customer Details */}
+            <div className="bg-white border-4 border-black rounded-2xl p-8 hard-shadow">
+              <h2 className="text-3xl font-black mb-6 flex items-center gap-3">
+                <span className="bg-black text-white w-10 h-10 rounded-full flex items-center justify-center text-lg">
+                  2
+                </span>
+                פרטים למשלוח
+              </h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -206,6 +264,7 @@ export default function CheckoutPage() {
                 תועברו לדף תשלום מאובטח | החשבונית תישלח למייל
               </div>
             </form>
+            </div>
           </div>
 
           {/* Order Summary */}
@@ -252,10 +311,19 @@ export default function CheckoutPage() {
                   </div>
                 )}
 
+                {/* Shipping */}
+                <div className="flex justify-between items-center text-gray-600">
+                  <span className="flex items-center gap-1">
+                    {shippingMethod === 'delivery' ? <Truck size={16} /> : <Package size={16} />}
+                    {SHIPPING_OPTIONS[shippingMethod].label}:
+                  </span>
+                  <span className="font-bold">₪{shippingCost}</span>
+                </div>
+
                 {/* Total */}
                 <div className="flex justify-between items-center pt-2 border-t border-gray-200">
                   <span className="text-lg font-bold">סה&quot;כ:</span>
-                  <span className="text-3xl font-black">₪{total}</span>
+                  <span className="text-3xl font-black">₪{finalTotal}</span>
                 </div>
               </div>
             </div>

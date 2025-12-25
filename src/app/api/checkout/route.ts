@@ -18,6 +18,8 @@ interface CheckoutRequest {
   address: string;
   items: OrderItem[];
   bundleDiscount?: number;
+  shippingMethod?: 'pickup' | 'delivery';
+  shippingCost?: number;
   total: number;
 }
 
@@ -79,6 +81,16 @@ export async function POST(request: NextRequest) {
         icountItems.push({
           name: 'הנחת מארז',
           price: -body.bundleDiscount,
+          quantity: 1,
+        });
+      }
+
+      // Add shipping cost
+      if (body.shippingCost && body.shippingCost > 0) {
+        const shippingLabel = body.shippingMethod === 'delivery' ? 'משלוח עד הבית' : 'איסוף עצמי';
+        icountItems.push({
+          name: shippingLabel,
+          price: body.shippingCost,
           quantity: 1,
         });
       }

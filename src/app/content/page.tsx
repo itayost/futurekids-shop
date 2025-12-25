@@ -45,7 +45,7 @@ export default function MediaPage() {
           <div className="inline-block bg-pink-500 text-white px-4 py-2 rounded-full font-bold text-sm mb-4">
             מדברים עליי
           </div>
-          <h1 className="text-5xl font-black text-gray-900 mb-6">הופעות ומאמרים</h1>
+          <h1 className="text-5xl font-black text-gray-900 mb-6">בתקשורת</h1>
           <p className="text-xl text-gray-700 max-w-2xl mx-auto">
             ריכזתי כאן הופעות בפודקאסטים וכתבות שפורסמו על הספרים ועל הדרך שלי
           </p>
@@ -65,7 +65,7 @@ export default function MediaPage() {
           <div className="text-center md:text-right">
             <h2 className="text-2xl font-black mb-2">ד&quot;ר סתיו אלבר</h2>
             <p className="text-gray-600 text-lg">
-              מחברת סדרת הספרים FutureKids שמסבירה לילדים טכנולוגיה בשפה פשוטה ומהנה.
+              מחברת סדרת הספרים KidCode שמסבירה לילדים טכנולוגיה בשפה פשוטה ומהנה.
               אשמח לארח אתכם בפודקאסט או לשתף בכתבה!
             </p>
           </div>
