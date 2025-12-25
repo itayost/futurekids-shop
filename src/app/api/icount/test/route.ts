@@ -32,14 +32,14 @@ export async function GET() {
   }
 }
 
-// POST: Create a new PayPage for FutureKids
+// POST: Create a new PayPage for KidCode
 export async function POST() {
   try {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.kidcode.org.il';
 
-    console.log('Creating FutureKids PayPage...');
+    console.log('Creating KidCode PayPage...');
     const result = await icountCreatePayPage({
-      pageName: 'FutureKids - ספרי ילדים',
+      pageName: 'KidCode - ספרי ילדים',
       doctype: 'invrec', // חשבונית מס קבלה
       successUrl: `${appUrl}/payment/success`,
       ipnUrl: `${appUrl}/api/payment/ipn`,

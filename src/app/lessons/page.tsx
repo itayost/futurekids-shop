@@ -5,7 +5,7 @@ const lessons = [
   {
     id: 1,
     title: 'בינה מלאכותית',
-    description: 'מערך שיעור בהשראת ספר הבינה המלאכותית',
+    description: 'מערך שיעור בהשראת הספר בינה מלאכותית לילדים',
     color: 'sky',
     bgColor: 'bg-sky-100',
     textColor: 'text-sky-500',
@@ -14,7 +14,7 @@ const lessons = [
   {
     id: 2,
     title: 'סודות ההצפנה',
-    description: 'מערך שיעור בהשראת ספר סודות ההצפנה',
+    description: 'מערך שיעור בהשראת הספר סודות ההצפנה לילדים',
     color: 'pink',
     bgColor: 'bg-pink-100',
     textColor: 'text-pink-500',
@@ -23,7 +23,7 @@ const lessons = [
   {
     id: 3,
     title: 'אלגוריתמים',
-    description: 'מערך שיעור בהשראת ספר האלגוריתמים',
+    description: 'מערך שיעור בהשראת הספר אלגוריתמים לילדים',
     color: 'emerald',
     bgColor: 'bg-emerald-100',
     textColor: 'text-emerald-500',

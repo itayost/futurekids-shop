@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Step 2: Generate iCount payment URL
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.kidcode.org.il';
     const successUrl = `${baseUrl}/payment/success?orderId=${order.id}`;
     const failureUrl = `${baseUrl}/payment/failed?orderId=${order.id}`;
     const ipnUrl = `${baseUrl}/api/payment/ipn`;
