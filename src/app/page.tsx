@@ -54,7 +54,7 @@ export default function Home() {
         <div className="md:w-1/2 text-center md:text-right">
           <h1 className="text-4xl md:text-5xl font-black text-gray-900 leading-tight mb-6 animate-hero-2">
             הדור הבא של מומחי
-            <span className="block text-sky-500">הטכנולוגיה גדל כאן</span>
+            <span className="block">הטכנולוגיה גדל כאן</span>
           </h1>
           <p className="text-xl text-gray-700 mb-8 leading-relaxed animate-hero-3">
             בואו לגלות את סדרת הספרים המצליחה של ד&quot;ר סתיו אלבר שמנגישה לילדים (ולהורים!) את עולמות ההצפנה, הבינה המלאכותית והאלגוריתמים בצורה חווייתית ומרתקת.
