@@ -11,7 +11,7 @@ export default function ContactForm() {
       <input type="hidden" name="_subject" value="פנייה חדשה מהאתר" />
       <input type="hidden" name="_captcha" value="false" />
       <input type="hidden" name="_template" value="table" />
-      <input type="hidden" name="_next" value="https://futurekids.co.il/contact?success=true" />
+      <input type="hidden" name="_next" value="https://www.kidcode.org.il/contact?success=true" />
 
       <h2 className="text-2xl font-black mb-8">שלחו הודעה</h2>
 
