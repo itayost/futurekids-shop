@@ -84,15 +84,15 @@ export default function ContactPage() {
         </div>
 
         {/* CTA Box */}
-        <div className="mt-16 bg-black text-white rounded-3xl p-8 text-center max-w-2xl mx-auto">
-          <MessageCircle className="w-12 h-12 mx-auto text-pink-400 mb-4" />
+        <div className="mt-16 bg-sky-50 border-4 border-black rounded-3xl p-8 text-center max-w-2xl mx-auto hard-shadow">
+          <MessageCircle className="w-12 h-12 mx-auto text-sky-500 mb-4" />
           <h3 className="text-2xl font-black mb-4">מחכה לשמוע מכם!</h3>
-          <p className="text-gray-300 mb-6">
+          <p className="text-gray-700 mb-6">
             שלחו אימייל ואחזור אליכם בהקדם האפשרי
           </p>
           <a
             href="mailto:stav.elbar@gmail.com"
-            className="btn-retro inline-block bg-pink-500 text-white px-10 py-4 rounded-xl font-black text-lg border-2 border-white hover:bg-pink-600"
+            className="btn-retro inline-block bg-pink-500 text-white px-10 py-4 rounded-xl font-black text-lg border-2 border-black hover:bg-pink-600"
           >
             שלחו אימייל
           </a>
