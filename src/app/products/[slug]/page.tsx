@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { BookOpen, ChevronLeft } from 'lucide-react';
+import { BookOpen, ChevronLeft, Users } from 'lucide-react';
 import { getProductBySlug, products } from '@/lib/products';
 import AddToCartButton from '@/components/AddToCartButton';
 
@@ -93,10 +93,10 @@ export default async function ProductPage({ params }: Props) {
             </div>
 
             {/* Features */}
-            <div className="bg-white border-4 border-black rounded-xl p-6">
+            <div className="bg-white border-4 border-black rounded-xl p-6 mb-6">
               <h3 className="font-black text-xl mb-4 flex items-center gap-2">
                 <BookOpen className={`w-6 h-6 ${colors.text}`} />
-                מה לומדים בספר?
+                מה מגלים בפנים?
               </h3>
               <ul className="space-y-3 text-lg font-medium text-gray-700">
                 {product.features.map((feature, index) => (
@@ -107,6 +107,17 @@ export default async function ProductPage({ params }: Props) {
                 ))}
               </ul>
             </div>
+
+            {/* Audience */}
+            {product.audience && (
+              <div className={`${colors.bgLight} border-4 border-black rounded-xl p-6`}>
+                <h3 className="font-black text-xl mb-4 flex items-center gap-2">
+                  <Users className={`w-6 h-6 ${colors.text}`} />
+                  למי הספר מתאים?
+                </h3>
+                <p className="text-lg font-medium text-gray-700">{product.audience}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

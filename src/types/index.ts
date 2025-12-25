@@ -7,6 +7,8 @@ export interface Product {
   image: string;
   color: 'blue' | 'pink' | 'green';
   features: string[];
+  audience?: string;
+  type?: 'book' | 'workbook';
 }
 
 export interface CartItem {
