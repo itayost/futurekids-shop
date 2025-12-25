@@ -5,11 +5,32 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { X, Minus, Plus, ShoppingBag, Sparkles, Star, Gift } from 'lucide-react';
 import { useCart } from './CartProvider';
-import { products, bundle } from '@/lib/products';
+import { products, bundles, books, workbooks } from '@/lib/products';
 
 export default function Cart() {
   const { items, isOpen, setIsOpen, removeItem, updateQuantity, subtotal, bundleDiscount, bundleName, hasBundle, total, itemCount, addItem } = useCart();
   const [isClosing, setIsClosing] = useState(false);
+  const bundle = bundles[1]; // Default bundle (most popular)
+
+  const handleAddBundle = () => {
+    // Add all books
+    bundle.bookIds.forEach((bookId) => {
+      const book = books.find((b) => b.id === bookId);
+      if (book) addItem(book);
+    });
+
+    // Add workbooks based on bundle
+    if (bundle.workbookQuantity > 0) {
+      bundle.workbookIds.forEach((workbookId) => {
+        const workbook = workbooks.find((w) => w.id === workbookId);
+        if (workbook) {
+          for (let i = 0; i < bundle.workbookQuantity; i++) {
+            addItem(workbook);
+          }
+        }
+      });
+    }
+  };
 
   // Get products not in cart for suggestions
   const cartProductIds = items.map((item) => item.productId);
@@ -75,10 +96,9 @@ export default function Cart() {
               </div>
 
               {/* Bundle Deal */}
-              <Link
-                href="/bundle"
-                onClick={handleClose}
-                className="block bg-pink-50 border-2 border-pink-300 rounded-xl p-4 hover:bg-pink-100 transition"
+              <button
+                onClick={handleAddBundle}
+                className="w-full text-right bg-pink-50 border-2 border-pink-300 rounded-xl p-4 hover:bg-pink-100 transition"
               >
                 <div className="flex items-center gap-2 mb-2">
                   <Star size={16} className="text-pink-500" fill="currentColor" />
@@ -90,14 +110,17 @@ export default function Cart() {
                   </div>
                   <div className="flex-1">
                     <p className="font-black text-sm">{bundle.name}</p>
-                    <p className="text-xs text-gray-600">3 ספרים במחיר מיוחד</p>
+                    <p className="text-xs text-gray-600">3 ספרים + 3 חוברות</p>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="text-pink-500 font-black">₪{bundle.price}</span>
                       <span className="text-gray-400 text-xs line-through">₪{bundle.originalPrice}</span>
                     </div>
                   </div>
+                  <div className="bg-pink-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex-shrink-0">
+                    + הוסף
+                  </div>
                 </div>
-              </Link>
+              </button>
 
               {/* All Products */}
               <div>

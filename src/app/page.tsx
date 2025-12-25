@@ -163,7 +163,7 @@ export default function Home() {
                 הוסף לסל
               </button>
               <Link
-                href="/bundle"
+                href={`/bundle?selected=${selectedBundleIndex}`}
                 className="btn-retro bg-white text-pink-500 px-10 py-4 rounded-xl font-black text-lg border-2 border-black hover:bg-pink-50"
               >
                 לפרטים נוספים
