@@ -58,7 +58,7 @@ function BundleContent() {
     // Add books
     selectedBundle.bookIds.forEach((bookId) => {
       const book = books.find((b) => b.id === bookId);
-      if (book) items.push(book.name);
+      if (book) items.push(`ספר ${book.name}`);
     });
 
     // Add workbooks with quantity

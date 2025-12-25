@@ -9,7 +9,7 @@ const lessons = [
     color: 'sky',
     bgColor: 'bg-sky-100',
     textColor: 'text-sky-500',
-    downloadReady: false,
+    downloadUrl: '/lessons/מערך שיעור בינה מלאכותית.pdf',
   },
   {
     id: 2,
@@ -18,7 +18,7 @@ const lessons = [
     color: 'pink',
     bgColor: 'bg-pink-100',
     textColor: 'text-pink-500',
-    downloadReady: false,
+    downloadUrl: '/lessons/מערך שיעור סודות ההצפנה.pdf',
   },
   {
     id: 3,
@@ -27,7 +27,7 @@ const lessons = [
     color: 'emerald',
     bgColor: 'bg-emerald-100',
     textColor: 'text-emerald-500',
-    downloadReady: false,
+    downloadUrl: '/lessons/מערך שיעור אלגוריתמים.pdf',
   },
 ];
 
@@ -65,16 +65,14 @@ export default function LessonsPage() {
               <p className="text-gray-600 mb-6">
                 {lesson.description}
               </p>
-              {lesson.downloadReady ? (
-                <button className={`w-full ${lesson.bgColor} ${lesson.textColor} border-2 border-black rounded-xl p-4 font-bold flex items-center justify-center gap-2 hover:opacity-80 transition-opacity`}>
-                  <FileDown className="w-5 h-5" />
-                  הורדה
-                </button>
-              ) : (
-                <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-xl p-4 text-center">
-                  <p className="text-gray-500 font-medium">בקרוב להורדה!</p>
-                </div>
-              )}
+              <a
+                href={lesson.downloadUrl}
+                download
+                className={`w-full ${lesson.bgColor} ${lesson.textColor} border-2 border-black rounded-xl p-4 font-bold flex items-center justify-center gap-2 hover:opacity-80 transition-opacity`}
+              >
+                <FileDown className="w-5 h-5" />
+                הורדה
+              </a>
             </div>
           ))}
         </div>
@@ -82,9 +80,9 @@ export default function LessonsPage() {
         {/* Info Box */}
         <div className="mt-16 bg-sky-50 border-4 border-black rounded-3xl p-8 text-center hard-shadow max-w-2xl mx-auto">
           <Download className="w-12 h-12 mx-auto text-sky-500 mb-4" />
-          <h3 className="text-2xl font-black mb-4">רוצים לקבל עדכון?</h3>
+          <h3 className="text-2xl font-black mb-4">שימוש חופשי</h3>
           <p className="text-gray-700">
-            המערכים בהכנה ויהיו זמינים להורדה בקרוב. צרו קשר ונעדכן אתכם כשהם מוכנים!
+            מערכי השיעור פתוחים לשימוש חופשי למורים, מדריכים והורים. הורידו, הדפיסו והעבירו שיעורים מעשירים!
           </p>
         </div>
       </div>

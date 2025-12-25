@@ -34,9 +34,44 @@ export default function GamesPage() {
             <h2 className="text-3xl font-black">גופים וארגונים שבחרו בחוויה</h2>
           </div>
 
-          {/* Logos placeholder */}
-          <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl p-12 text-center">
-            <p className="text-gray-500 font-medium">לוגואים יתווספו בקרוב</p>
+          {/* Organization Logos */}
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+            <div className="h-16 md:h-20 flex items-center">
+              <Image
+                src="/games/logos/Google_2015_logo.svg.png"
+                alt="Google"
+                width={120}
+                height={40}
+                className="h-10 md:h-12 w-auto object-contain"
+              />
+            </div>
+            <div className="h-16 md:h-20 flex items-center">
+              <Image
+                src="/games/logos/Technion_–_Israel_Institute_of_Technology_Symbol-H.png"
+                alt="Technion"
+                width={160}
+                height={60}
+                className="h-12 md:h-16 w-auto object-contain"
+              />
+            </div>
+            <div className="h-16 md:h-20 flex items-center">
+              <Image
+                src="/games/logos/images (3).jpeg"
+                alt="ארגון"
+                width={120}
+                height={60}
+                className="h-12 md:h-16 w-auto object-contain"
+              />
+            </div>
+            <div className="h-16 md:h-20 flex items-center">
+              <Image
+                src="/games/logos/לוגו-מלא-שקוף.png"
+                alt="ארגון"
+                width={120}
+                height={60}
+                className="h-12 md:h-16 w-auto object-contain"
+              />
+            </div>
           </div>
         </div>
 
