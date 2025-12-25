@@ -36,6 +36,7 @@ export interface CartContextType {
   clearCart: () => void;
   subtotal: number;
   bundleDiscount: number;
+  bundleName: string | null;
   hasBundle: boolean;
   total: number;
   itemCount: number;

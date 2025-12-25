@@ -8,7 +8,7 @@ import { useCart } from './CartProvider';
 import { products, bundle } from '@/lib/products';
 
 export default function Cart() {
-  const { items, isOpen, setIsOpen, removeItem, updateQuantity, subtotal, bundleDiscount, hasBundle, total, itemCount, addItem } = useCart();
+  const { items, isOpen, setIsOpen, removeItem, updateQuantity, subtotal, bundleDiscount, bundleName, hasBundle, total, itemCount, addItem } = useCart();
   const [isClosing, setIsClosing] = useState(false);
 
   // Get products not in cart for suggestions
@@ -226,11 +226,11 @@ export default function Cart() {
             </div>
 
             {/* Bundle Discount */}
-            {hasBundle && (
+            {hasBundle && bundleName && (
               <div className="flex items-center justify-between mb-2 text-emerald-600">
                 <span className="flex items-center gap-1">
                   <Gift size={16} />
-                  הנחת מארז:
+                  הנחת {bundleName}:
                 </span>
                 <span className="font-bold">-₪{bundleDiscount}</span>
               </div>

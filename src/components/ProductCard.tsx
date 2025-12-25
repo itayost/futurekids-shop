@@ -6,6 +6,7 @@ import { Product } from '@/types';
 
 interface ProductCardProps {
   product: Product;
+  isCompact?: boolean;
 }
 
 const colorClasses = {
@@ -29,8 +30,44 @@ const colorClasses = {
   },
 };
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, isCompact = false }: ProductCardProps) {
   const colors = colorClasses[product.color];
+
+  if (isCompact) {
+    // Compact version for workbooks
+    return (
+      <Link href={`/products/${product.slug}`} className="block group">
+        <div
+          className={`bg-white border-2 border-black rounded-xl p-4 shadow-[2px_2px_0px_0px_#000000] ${colors.hover} transition-all duration-200`}
+        >
+          <div className="flex items-center gap-4">
+            <div
+              className={`${colors.bg} rounded-lg w-16 h-20 flex items-center justify-center flex-shrink-0 overflow-hidden`}
+            >
+              <Image
+                src={product.image}
+                alt={product.name}
+                width={50}
+                height={70}
+                className="object-contain transform group-hover:scale-105 transition-transform duration-200"
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="font-bold text-sm mb-1 truncate">{product.name}</h4>
+              <div className="flex items-center justify-between">
+                <span className="text-lg font-black">₪{product.price}</span>
+                <span
+                  className={`${colors.text} font-bold text-xs group-hover:underline`}
+                >
+                  לפרטים ←
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Link>
+    );
+  }
 
   return (
     <Link href={`/products/${product.slug}`} className="block group">

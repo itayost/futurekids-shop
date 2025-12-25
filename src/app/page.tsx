@@ -3,7 +3,14 @@ import Link from 'next/link';
 import { Star, ChevronDown, Cpu, Lock, GitBranch, User } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
 import BookComposite from '@/components/BookComposite';
-import { products, bundle } from '@/lib/products';
+import { books, workbooks, bundle } from '@/lib/products';
+
+// Create book+workbook pairs
+const bookWorkbookPairs = [
+  { book: books.find(b => b.id === 'ai-book')!, workbook: workbooks.find(w => w.id === 'ai-workbook')! },
+  { book: books.find(b => b.id === 'encryption-book')!, workbook: workbooks.find(w => w.id === 'encryption-workbook')! },
+  { book: books.find(b => b.id === 'algorithms-book')!, workbook: workbooks.find(w => w.id === 'algorithms-workbook')! },
+];
 
 export default function Home() {
   return (
@@ -60,8 +67,11 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {bookWorkbookPairs.map((pair) => (
+            <div key={pair.book.id} className="space-y-4">
+              <ProductCard product={pair.book} />
+              <ProductCard product={pair.workbook} isCompact />
+            </div>
           ))}
         </div>
 
