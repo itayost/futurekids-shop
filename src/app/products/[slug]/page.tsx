@@ -113,7 +113,7 @@ export default async function ProductPage({ params }: Props) {
               <div className={`${colors.bgLight} border-4 border-black rounded-xl p-6`}>
                 <h3 className="font-black text-xl mb-4 flex items-center gap-2">
                   <Users className={`w-6 h-6 ${colors.text}`} />
-                  למי הספר מתאים?
+                  {product.type === 'workbook' ? 'למי החוברת מתאימה?' : 'למי הספר מתאים?'}
                 </h3>
                 <p className="text-lg font-medium text-gray-700">{product.audience}</p>
               </div>
