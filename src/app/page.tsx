@@ -1,9 +1,13 @@
+'use client';
+
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, ChevronDown, Cpu, Lock, GitBranch, User } from 'lucide-react';
+import { Star, ChevronDown, Cpu, Lock, GitBranch, User, BookOpen, Gift, Users } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
 import BookComposite from '@/components/BookComposite';
-import { books, workbooks, bundle } from '@/lib/products';
+import { books, workbooks, bundles } from '@/lib/products';
+import { useCart } from '@/components/CartProvider';
 
 // Create book+workbook pairs
 const bookWorkbookPairs = [
@@ -12,7 +16,37 @@ const bookWorkbookPairs = [
   { book: books.find(b => b.id === 'algorithms-book')!, workbook: workbooks.find(w => w.id === 'algorithms-workbook')! },
 ];
 
+const bundleIcons = [
+  <BookOpen key="books" className="w-5 h-5" />,
+  <Gift key="complete" className="w-5 h-5" />,
+  <Users key="ultimate" className="w-5 h-5" />,
+];
+
 export default function Home() {
+  const { addItem } = useCart();
+  const [selectedBundleIndex, setSelectedBundleIndex] = useState(1); // Default to Bundle 2
+  const selectedBundle = bundles[selectedBundleIndex];
+
+  const handleAddBundle = () => {
+    // Add all books
+    selectedBundle.bookIds.forEach((bookId) => {
+      const book = books.find((b) => b.id === bookId);
+      if (book) addItem(book);
+    });
+
+    // Add workbooks based on bundle
+    if (selectedBundle.workbookQuantity > 0) {
+      selectedBundle.workbookIds.forEach((workbookId) => {
+        const workbook = workbooks.find((w) => w.id === workbookId);
+        if (workbook) {
+          for (let i = 0; i < selectedBundle.workbookQuantity; i++) {
+            addItem(workbook);
+          }
+        }
+      });
+    }
+  };
+
   return (
     <div className="bg-gradient-to-br from-amber-50 via-pink-50/50 to-sky-50/50">
       {/* Hero Section */}
@@ -75,29 +109,67 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Bundle CTA */}
-        <div className="mt-16 bg-pink-100 border-4 border-black rounded-3xl p-8 md:p-12 hard-shadow text-center">
-          <div className="inline-block bg-pink-500 text-white px-4 py-1 rounded-full font-bold text-sm mb-4">
-            <Star className="inline w-4 h-4 ml-1" fill="currentColor" />
-            הכי משתלם
+        {/* Bundle Section with Tabs */}
+        <div className="mt-16 bg-pink-100 border-4 border-black rounded-3xl p-8 md:p-12 hard-shadow">
+          {/* Bundle Tabs */}
+          <div className="flex justify-center mb-8">
+            <div className="bg-white border-2 border-black rounded-xl p-1.5 flex gap-1.5">
+              {bundles.map((bundle, index) => (
+                <button
+                  key={bundle.id}
+                  onClick={() => setSelectedBundleIndex(index)}
+                  className={`relative px-4 py-2.5 rounded-lg font-bold text-sm transition-all flex items-center gap-2 ${
+                    selectedBundleIndex === index
+                      ? 'bg-pink-500 text-white'
+                      : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  {bundleIcons[index]}
+                  <span className="hidden sm:inline">{bundle.name}</span>
+                  <span className="sm:hidden">{bundle.subtitle}</span>
+                  {index === 1 && (
+                    <span className="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs px-1.5 py-0.5 rounded-full border border-black">
+                      פופולרי
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
-          <h3 className="text-3xl font-black mb-4">מארז החוקרים הצעירים</h3>
-          <p className="text-lg text-gray-700 mb-6 max-w-2xl mx-auto leading-relaxed">
-            למה רק לקרוא כשאפשר גם ליצור? מארז החוקרים הצעירים הוא החוויה הטכנולוגית השלמה. הוא מאגד את שלושת הספרים שכל ילד סקרן חייב להכיר – בינה מלאכותית, הצפנה ואלגוריתמים – יחד עם 3 חוברות פעילות תואמות.
-          </p>
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <span className="text-5xl font-black">₪{bundle.price}</span>
-            <span className="text-2xl text-gray-400 line-through">₪{bundle.originalPrice}</span>
-            <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-bold border border-emerald-300">
-              חיסכון של ₪{bundle.savings}
-            </span>
+
+          {/* Bundle Content */}
+          <div className="text-center">
+            <div className="inline-block bg-pink-500 text-white px-4 py-1 rounded-full font-bold text-sm mb-4">
+              <Star className="inline w-4 h-4 ml-1" fill="currentColor" />
+              {selectedBundleIndex === 1 ? 'הכי פופולרי' : selectedBundleIndex === 2 ? 'הכי משתלם' : 'בסיסי'}
+            </div>
+            <h3 className="text-3xl font-black mb-2">{selectedBundle.name}</h3>
+            <p className="text-pink-600 font-bold mb-4">{selectedBundle.subtitle}</p>
+            <p className="text-lg text-gray-700 mb-6 max-w-2xl mx-auto leading-relaxed">
+              {selectedBundle.description}
+            </p>
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <span className="text-5xl font-black">₪{selectedBundle.price}</span>
+              <span className="text-2xl text-gray-400 line-through">₪{selectedBundle.originalPrice}</span>
+              <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-bold border border-emerald-300">
+                חיסכון של ₪{selectedBundle.savings}
+              </span>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={handleAddBundle}
+                className="btn-retro bg-pink-500 text-white px-10 py-4 rounded-xl font-black text-lg border-2 border-black hover:bg-pink-600"
+              >
+                הוסף לסל
+              </button>
+              <Link
+                href="/bundle"
+                className="btn-retro bg-white text-pink-500 px-10 py-4 rounded-xl font-black text-lg border-2 border-black hover:bg-pink-50"
+              >
+                לפרטים נוספים
+              </Link>
+            </div>
           </div>
-          <Link
-            href="/bundle"
-            className="btn-retro inline-block bg-pink-500 text-white px-10 py-4 rounded-xl font-black text-lg border-2 border-black hover:bg-pink-600"
-          >
-            לפרטים על המארז
-          </Link>
         </div>
       </section>
 
