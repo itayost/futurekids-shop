@@ -1,22 +1,31 @@
-import { Gamepad2, Lock, Brain, GitBranch } from 'lucide-react';
+import Image from 'next/image';
+import { Gamepad2, Lock, Brain, GitBranch, Building2 } from 'lucide-react';
 
 export default function GamesPage() {
   return (
     <div className="bg-amber-50 min-h-screen">
       <div className="container mx-auto px-6 py-16">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <div className="inline-block bg-emerald-500 text-white px-4 py-2 rounded-full font-bold text-sm mb-4">
-            ללמוד דרך משחק
+        {/* Author Intro Card */}
+        <div className="bg-white border-4 border-black rounded-3xl p-8 mb-16 hard-shadow flex flex-col md:flex-row items-center gap-8">
+          <div className="w-32 h-32 bg-emerald-100 border-4 border-black rounded-full overflow-hidden flex-shrink-0">
+            <Image
+              src="/Stav.png"
+              alt="ד״ר סתיו אלבר"
+              width={128}
+              height={128}
+              className="w-full h-full object-cover"
+            />
           </div>
-          <h1 className="text-5xl font-black text-gray-900 mb-6">משחקים אינטראקטיביים</h1>
-          <p className="text-xl text-gray-700 max-w-2xl mx-auto">
-            משחקים חינמיים שמלווים את הספרים ומאפשרים לילדים להתנסות בעצמם במושגים שלמדו
-          </p>
+          <div className="text-center md:text-right">
+            <h1 className="text-3xl font-black mb-4">משחקים אינטראקטיביים</h1>
+            <p className="text-gray-600 text-lg">
+              אני מאמינה שכדי להתאהב במדע, צריך להרגיש אותו בידיים. המשחקים האינטראקטיביים שאני מפתחת הם הרבה יותר מעוד פעילות העשרה; הם משחקי קבוצה בעולם האמיתי, שנועדו לקחת נושאים טכנולוגיים מורכבים – כמו הצפנה, אלגוריתמים ובינה מלאכותית – ולהפוך אותם להרפתקה סוחפת ומלאת אדרנלין.
+            </p>
+          </div>
         </div>
 
         {/* Games Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           {/* Encryption Game */}
           <div className="bg-white border-4 border-black rounded-3xl p-8 hard-shadow">
             <div className="w-16 h-16 bg-pink-100 text-pink-500 rounded-2xl flex items-center justify-center border-2 border-black mb-6">
@@ -57,6 +66,21 @@ export default function GamesPage() {
             <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-xl p-4 text-center">
               <p className="text-gray-500 font-medium">בקרוב!</p>
             </div>
+          </div>
+        </div>
+
+        {/* Organizations Section */}
+        <div className="bg-white border-4 border-black rounded-3xl p-8 hard-shadow">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-12 h-12 bg-emerald-500 text-white rounded-xl flex items-center justify-center border-2 border-black">
+              <Building2 className="w-6 h-6" />
+            </div>
+            <h2 className="text-3xl font-black">גופים וארגונים שבחרו בחוויה</h2>
+          </div>
+
+          {/* Logos placeholder */}
+          <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl p-12 text-center">
+            <p className="text-gray-500 font-medium">לוגואים יתווספו בקרוב</p>
           </div>
         </div>
 

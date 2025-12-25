@@ -1,97 +1,82 @@
-import { BookOpen, Download, GraduationCap } from 'lucide-react';
+import Image from 'next/image';
+import { BookOpen, Download, FileDown } from 'lucide-react';
+
+const lessons = [
+  {
+    id: 1,
+    title: 'בינה מלאכותית',
+    description: 'מערך שיעור בהשראת ספר הבינה המלאכותית',
+    color: 'sky',
+    bgColor: 'bg-sky-100',
+    textColor: 'text-sky-500',
+    downloadReady: false,
+  },
+  {
+    id: 2,
+    title: 'סודות ההצפנה',
+    description: 'מערך שיעור בהשראת ספר סודות ההצפנה',
+    color: 'pink',
+    bgColor: 'bg-pink-100',
+    textColor: 'text-pink-500',
+    downloadReady: false,
+  },
+  {
+    id: 3,
+    title: 'אלגוריתמים',
+    description: 'מערך שיעור בהשראת ספר האלגוריתמים',
+    color: 'emerald',
+    bgColor: 'bg-emerald-100',
+    textColor: 'text-emerald-500',
+    downloadReady: false,
+  },
+];
 
 export default function LessonsPage() {
   return (
     <div className="bg-amber-50 min-h-screen">
       <div className="container mx-auto px-6 py-16">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <div className="inline-block bg-sky-500 text-white px-4 py-2 rounded-full font-bold text-sm mb-4">
-            למורים ולמחנכים
+        {/* Author Intro Card */}
+        <div className="bg-white border-4 border-black rounded-3xl p-8 mb-16 hard-shadow flex flex-col md:flex-row items-center gap-8">
+          <div className="w-32 h-32 bg-sky-100 border-4 border-black rounded-full overflow-hidden flex-shrink-0">
+            <Image
+              src="/Stav.png"
+              alt="ד״ר סתיו אלבר"
+              width={128}
+              height={128}
+              className="w-full h-full object-cover"
+            />
           </div>
-          <h1 className="text-5xl font-black text-gray-900 mb-6">מערכי שיעור</h1>
-          <p className="text-xl text-gray-700 max-w-2xl mx-auto">
-            מערכי שיעור מוכנים להורדה בחינם, המבוססים על הספרים ומותאמים לכיתות שונות
-          </p>
+          <div className="text-center md:text-right">
+            <h1 className="text-3xl font-black mb-4">מערכי שיעור</h1>
+            <p className="text-gray-600 text-lg">
+              להסביר לילדים בגילאי בית ספר יסודי איך עובד &apos;מפתח הצפנה&apos; או מה זה &apos;אלגוריתם&apos; זה אתגר לא פשוט. בדיוק בשביל זה הקמתי את המאגר הזה. פיתחתי עבורכם שלושה מערכי שיעור מובנים ומפורטים – אחד בהשראת כל ספר בסדרה (בינה מלאכותית, הצפנה ואלגוריתמים). כל מערך שיעור עומד בפני עצמו וכולל את כל התוכן וההנחיות שצריך כדי להעביר פעילות מעשירה, חווייתית ומרתקת בכיתה או בבית. הקבצים פתוחים להורדה ולשימוש חופשי, כדי לתת לכם כלים לגדל כאן את הדור הבא של החוקרים והממציאים.
+            </p>
+          </div>
         </div>
 
         {/* Lessons Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {/* Encryption Lesson */}
-          <div className="bg-white border-4 border-black rounded-3xl p-8 hard-shadow">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-pink-100 text-pink-500 rounded-xl flex items-center justify-center border-2 border-black">
-                <BookOpen className="w-6 h-6" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {lessons.map((lesson) => (
+            <div key={lesson.id} className="bg-white border-4 border-black rounded-3xl p-8 hard-shadow">
+              <div className={`w-16 h-16 ${lesson.bgColor} ${lesson.textColor} rounded-2xl flex items-center justify-center border-2 border-black mb-6`}>
+                <BookOpen className="w-8 h-8" />
               </div>
-              <div>
-                <h3 className="text-xl font-black">סודות ההצפנה</h3>
-                <p className="text-gray-500 text-sm">כיתות ד׳-ו׳</p>
-              </div>
+              <h3 className="text-2xl font-black mb-4">{lesson.title}</h3>
+              <p className="text-gray-600 mb-6">
+                {lesson.description}
+              </p>
+              {lesson.downloadReady ? (
+                <button className={`w-full ${lesson.bgColor} ${lesson.textColor} border-2 border-black rounded-xl p-4 font-bold flex items-center justify-center gap-2 hover:opacity-80 transition-opacity`}>
+                  <FileDown className="w-5 h-5" />
+                  הורדה
+                </button>
+              ) : (
+                <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-xl p-4 text-center">
+                  <p className="text-gray-500 font-medium">בקרוב להורדה!</p>
+                </div>
+              )}
             </div>
-            <p className="text-gray-600 mb-6">
-              מערך שיעור המלמד את עקרונות ההצפנה דרך פעילויות מעשיות וחידות לפיענוח
-            </p>
-            <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-xl p-4 text-center">
-              <p className="text-gray-500 font-medium">בקרוב להורדה!</p>
-            </div>
-          </div>
-
-          {/* AI Lesson */}
-          <div className="bg-white border-4 border-black rounded-3xl p-8 hard-shadow">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-sky-100 text-sky-500 rounded-xl flex items-center justify-center border-2 border-black">
-                <BookOpen className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-xl font-black">בינה מלאכותית</h3>
-                <p className="text-gray-500 text-sm">כיתות ד׳-ו׳</p>
-              </div>
-            </div>
-            <p className="text-gray-600 mb-6">
-              מערך שיעור להכרות עם עולם הבינה המלאכותית דרך דוגמאות מהחיים ופעילויות אינטראקטיביות
-            </p>
-            <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-xl p-4 text-center">
-              <p className="text-gray-500 font-medium">בקרוב להורדה!</p>
-            </div>
-          </div>
-
-          {/* Algorithms Lesson */}
-          <div className="bg-white border-4 border-black rounded-3xl p-8 hard-shadow">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-emerald-100 text-emerald-500 rounded-xl flex items-center justify-center border-2 border-black">
-                <BookOpen className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-xl font-black">אלגוריתמים</h3>
-                <p className="text-gray-500 text-sm">כיתות ד׳-ו׳</p>
-              </div>
-            </div>
-            <p className="text-gray-600 mb-6">
-              מערך שיעור המלמד חשיבה אלגוריתמית דרך משחקים ופעילויות קבוצתיות
-            </p>
-            <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-xl p-4 text-center">
-              <p className="text-gray-500 font-medium">בקרוב להורדה!</p>
-            </div>
-          </div>
-
-          {/* Combined Workshop */}
-          <div className="bg-white border-4 border-black rounded-3xl p-8 hard-shadow">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-amber-100 text-amber-500 rounded-xl flex items-center justify-center border-2 border-black">
-                <GraduationCap className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-xl font-black">סדנה משולבת</h3>
-                <p className="text-gray-500 text-sm">כל הגילאים</p>
-              </div>
-            </div>
-            <p className="text-gray-600 mb-6">
-              יום פעילות שלם המשלב את שלושת הנושאים בפעילויות מגוונות
-            </p>
-            <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-xl p-4 text-center">
-              <p className="text-gray-500 font-medium">בקרוב להורדה!</p>
-            </div>
-          </div>
+          ))}
         </div>
 
         {/* Info Box */}
