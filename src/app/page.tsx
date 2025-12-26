@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, ChevronDown, Cpu, Lock, GitBranch, User, BookOpen, Gift, Users } from 'lucide-react';
@@ -26,6 +26,28 @@ export default function Home() {
   const { addItem } = useCart();
   const [selectedBundleIndex, setSelectedBundleIndex] = useState(1); // Default to Bundle 2
   const selectedBundle = bundles[selectedBundleIndex];
+  const tabsContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleTabClick = (index: number, event: React.MouseEvent<HTMLButtonElement>) => {
+    setSelectedBundleIndex(index);
+
+    // Scroll the clicked tab to center
+    const container = tabsContainerRef.current;
+    const button = event.currentTarget;
+
+    if (container && button) {
+      const containerRect = container.getBoundingClientRect();
+      const buttonRect = button.getBoundingClientRect();
+
+      // Calculate the scroll position to center the button
+      const scrollLeft = button.offsetLeft - (containerRect.width / 2) + (buttonRect.width / 2);
+
+      container.scrollTo({
+        left: scrollLeft,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   const handleAddBundle = () => {
     // Add all books
@@ -111,30 +133,32 @@ export default function Home() {
         </div>
 
         {/* Bundle Section with Tabs */}
-        <div className="mt-16 bg-pink-100 border-4 border-black rounded-3xl p-8 md:p-12 hard-shadow">
+        <div className="mt-16 bg-pink-100 border-4 border-black rounded-3xl p-4 sm:p-8 md:p-12 hard-shadow">
           {/* Bundle Tabs */}
           <div className="flex justify-center mb-8">
-            <div className="bg-white border-2 border-black rounded-xl p-1.5 flex gap-1.5">
-              {bundles.map((bundle, index) => (
-                <button
-                  key={bundle.id}
-                  onClick={() => setSelectedBundleIndex(index)}
-                  className={`relative px-4 py-2.5 rounded-lg font-bold text-sm transition-all flex items-center gap-2 ${
-                    selectedBundleIndex === index
-                      ? 'bg-pink-500 text-white'
-                      : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  {bundleIcons[index]}
-                  <span className="hidden sm:inline">{bundle.name}</span>
-                  <span className="sm:hidden">{bundle.subtitle}</span>
-                  {index === 1 && (
-                    <span className="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs px-1.5 py-0.5 rounded-full border border-black">
-                      פופולרי
-                    </span>
-                  )}
-                </button>
-              ))}
+            <div ref={tabsContainerRef} className="bg-white border-2 border-black rounded-xl p-1.5 max-w-full overflow-x-auto">
+              <div className="flex gap-1.5 min-w-max">
+                {bundles.map((bundle, index) => (
+                  <button
+                    key={bundle.id}
+                    onClick={(e) => handleTabClick(index, e)}
+                    className={`relative px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
+                      selectedBundleIndex === index
+                        ? 'bg-pink-500 text-white'
+                        : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    {bundleIcons[index]}
+                    <span className="hidden sm:inline">{bundle.name}</span>
+                    <span className="sm:hidden">{bundle.subtitle}</span>
+                    {index === 1 && (
+                      <span className="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs px-1.5 py-0.5 rounded-full border border-black">
+                        פופולרי
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 

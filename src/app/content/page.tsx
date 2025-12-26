@@ -41,14 +41,14 @@ const articles = [
     id: 6,
     publication: 'N12',
     title: 'המהדורה הצעירה – סודות ההצפנה לילדים',
-    link: 'https://www.youtube.com/watch?v=E1BH6Cr-COs',
+    link: 'https://www.mako.co.il/news-channel12?subChannelId=cb4387fb2e4e2910VgnVCM200000650a10acRCRD&vcmid=57792afadd9d3910VgnVCM200000650a10acRCRD',
     logo: '/content/articles/N12.png',
   },
   {
     id: 7,
     publication: 'מאקו',
     title: 'לגדול עם AI: הספר החדש שמקרב את הבינה המלאכותית לילדים',
-    link: 'https://www.mako.co.il/news-channel12?subChannelId=cb4387fb2e4e2910VgnVCM200000650a10acRCRD&vcmid=57792afadd9d3910VgnVCM200000650a10acRCRD',
+    link: 'https://www.mako.co.il/home-family-kids/Article-182a489c211f691026.htm',
     logo: '/content/articles/mako.jpg',
   },
   {
