@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ShoppingCart, Menu, X } from 'lucide-react';
 import { useCart } from './CartProvider';
 
@@ -36,11 +37,15 @@ export default function Navbar() {
     <>
       <nav className="bg-white border-b-4 border-black sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-          <Link
-            href="/"
-            className="text-3xl font-black text-black tracking-tighter hover:text-pink-500 transition"
-          >
-            Kid<span className="text-pink-500">Code</span>
+          <Link href="/" className="flex-shrink-0">
+            <Image
+              src="/logo.png"
+              alt="KidCode"
+              width={140}
+              height={45}
+              className="h-10 w-auto"
+              priority
+            />
           </Link>
 
           {/* Desktop Navigation */}
@@ -100,9 +105,13 @@ export default function Navbar() {
         <div className={`fixed inset-0 bg-black z-[60] flex flex-col ${isMenuClosing ? 'animate-fade-out' : 'animate-fade-in'}`}>
           {/* Header */}
           <div className="flex justify-between items-center p-6 border-b-4 border-pink-500">
-            <span className="text-3xl font-black text-white">
-              Kid<span className="text-pink-500">Code</span>
-            </span>
+            <Image
+              src="/logo.png"
+              alt="KidCode"
+              width={140}
+              height={45}
+              className="h-10 w-auto brightness-0 invert"
+            />
             <button
               onClick={handleCloseMenu}
               className="p-3 text-white hover:bg-gray-800 rounded-lg transition"
