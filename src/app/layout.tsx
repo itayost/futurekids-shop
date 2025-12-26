@@ -13,8 +13,37 @@ const rubik = Rubik({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.kidcode.org.il'),
   title: "KidCode - ספרי מדע וטכנולוגיה לילדים",
   description: "ספרים שמסבירים לילדים את העולם הטכנולוגי - בינה מלאכותית, הצפנה ואלגוריתמים",
+  keywords: ["ספרי ילדים", "מדע לילדים", "בינה מלאכותית", "הצפנה", "אלגוריתמים", "ד\"ר סתיו אלבר", "KidCode"],
+  authors: [{ name: "ד\"ר סתיו אלבר" }],
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: "KidCode - ספרי מדע וטכנולוגיה לילדים",
+    description: "ספרים שמסבירים לילדים את העולם הטכנולוגי - בינה מלאכותית, הצפנה ואלגוריתמים",
+    url: "https://www.kidcode.org.il",
+    siteName: "KidCode",
+    locale: "he_IL",
+    type: "website",
+    images: [
+      {
+        url: "/logo.png",
+        width: 800,
+        height: 600,
+        alt: "KidCode - ספרי מדע וטכנולוגיה לילדים",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "KidCode - ספרי מדע וטכנולוגיה לילדים",
+    description: "ספרים שמסבירים לילדים את העולם הטכנולוגי - בינה מלאכותית, הצפנה ואלגוריתמים",
+    images: ["/logo.png"],
+  },
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
