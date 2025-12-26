@@ -32,9 +32,9 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/logo.png",
-        width: 800,
-        height: 600,
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
         alt: "KidCode - ספרי מדע וטכנולוגיה לילדים",
       },
     ],
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "KidCode - ספרי מדע וטכנולוגיה לילדים",
     description: "סדרת ספרי KidCode מנגישה לילדים את עולם הטכנולוגיה - בינה מלאכותית, הצפנה ואלגוריתמים. מאת ד\"ר סתיו אלבר, מהנדסת תוכנה ב-Google ומרצה בטכניון.",
-    images: ["/logo.png"],
+    images: ["/og-image.png"],
   },
   icons: {
     icon: [
