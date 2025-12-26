@@ -49,20 +49,14 @@ export default function ContactForm() {
           <label htmlFor="subject" className="block font-bold mb-2">
             נושא
           </label>
-          <select
+          <input
+            type="text"
             id="subject"
             name="subject"
             required
-            className="w-full border-2 border-black rounded-xl p-3 font-medium focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white"
-          >
-            <option value="">בחרו נושא</option>
-            <option value="הרצאה לילדים">הרצאה לילדים</option>
-            <option value="סדנה להורים וילדים">סדנה להורים וילדים</option>
-            <option value="הרצאה למורים">הרצאה למורים</option>
-            <option value="הופעה בתקשורת">הופעה בתקשורת</option>
-            <option value="שאלה על הספרים">שאלה על הספרים</option>
-            <option value="אחר">אחר</option>
-          </select>
+            className="w-full border-2 border-black rounded-xl p-3 font-medium focus:outline-none focus:ring-2 focus:ring-pink-500"
+            placeholder="נושא הפנייה"
+          />
         </div>
 
         <div>
