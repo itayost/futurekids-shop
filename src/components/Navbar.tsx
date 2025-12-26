@@ -52,7 +52,7 @@ export default function Navbar() {
             ))}
             <button
               onClick={() => setIsOpen(true)}
-              className="flex items-center gap-2 bg-black text-white px-5 py-2 rounded-lg hover:bg-gray-800 transition relative"
+              className="flex items-center gap-2 bg-black text-white px-5 py-2 rounded-lg hover:bg-gray-800 transition relative mr-4"
             >
               <ShoppingCart size={20} />
               הסל שלי

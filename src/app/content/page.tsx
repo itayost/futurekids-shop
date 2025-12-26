@@ -7,72 +7,84 @@ const articles = [
     publication: 'דה מרקר',
     title: 'סתיו אלבר – 40 מתחת ל-40',
     link: 'https://www.themarker.com/magazine/2025-01-01/ty-article-magazine/.premium/00000194-12bb-d983-af97-1abb76830000',
+    logo: '/content/articles/the-marker.jpg',
   },
   {
     id: 2,
     publication: 'Ynet',
     title: 'ד"ר סתיו אלבר פותחת צוהר לילדים לעולם הצפנים',
     link: 'https://www.ynet.co.il/laisha/article/syiz20bgkl',
+    logo: '/content/articles/ynet.png',
   },
   {
     id: 3,
     publication: 'כלכליסט',
     title: 'הדור הדיגיטלי חי בעולם חדש אך עדיין לומד בכלים ישנים',
     link: 'https://www.calcalist.co.il/local_news/article/skaczhwkle',
+    logo: '/content/articles/calcalist.webp',
   },
   {
     id: 4,
     publication: 'ערוץ הכלכלה',
     title: 'הילדים נחשפים לטכנולוגיה, אז למה שהם לא יבינו איך זה קורה?',
     link: 'https://www.youtube.com/watch?v=6Ov9bzpzqoc',
+    logo: '/content/articles/economy-channel.png',
   },
   {
     id: 5,
     publication: 'גיקטיים',
     title: 'מומחית הצפנה ישראלית בגוגל מנגישה הצפנה לילדים בספר חדש',
     link: 'https://www.geektime.co.il/encryption-for-kids-book/',
+    logo: '/content/articles/geektime.png',
   },
   {
     id: 6,
     publication: 'N12',
     title: 'המהדורה הצעירה – סודות ההצפנה לילדים',
     link: 'https://www.youtube.com/watch?v=E1BH6Cr-COs',
+    logo: '/content/articles/N12.png',
   },
   {
     id: 7,
     publication: 'מאקו',
     title: 'לגדול עם AI: הספר החדש שמקרב את הבינה המלאכותית לילדים',
     link: 'https://www.mako.co.il/home-family-kids/Article-182a489c211f691026.htm',
+    logo: '/content/articles/mako.jpg',
   },
   {
     id: 8,
     publication: 'וואלה',
     title: 'ספר חדש מלמד ילדים את סודות ההצפנה',
     link: 'https://tech.walla.co.il/item/3695826',
+    logo: '/content/articles/walla.jpeg',
   },
   {
     id: 9,
     publication: 'רשת 13',
     title: 'סודות ההצפנה לילדים – איך אנחנו נכנסים לחשבון הפורטנייט או הטיקטוק שלנו?',
     link: 'https://www.youtube.com/watch?v=E1BH6Cr-COs',
+    logo: '/content/articles/reshet13.png',
   },
   {
     id: 10,
     publication: 'הארץ',
     title: 'לגלות לילדים את סודות ההצפנה',
     link: 'https://www.haaretz.co.il/tmr/00000194-12bb-d983-af97-1abb76830000',
+    logo: '/content/articles/haaretz.png',
   },
   {
     id: 11,
     publication: 'גיקטיים',
     title: 'מעשה בחמישה משתנים: חוקרת בגוגל כתבה ספרי ילדים על אלגוריתמים',
     link: 'https://www.geektime.co.il/google-researcher-is-back-with-2-new-books-for-kids/',
+    logo: '/content/articles/geektime.png',
   },
   {
     id: 12,
     publication: 'מאקו',
     title: '7 חידות צופן שיעבירו לכם את כל כיפור',
     link: 'https://www.mako.co.il/home-family-kids/Article-e0712c3e1bf8991026.htm',
+    logo: '/content/articles/mako.jpg',
   },
 ];
 
@@ -82,54 +94,63 @@ const podcasts = [
     showName: 'גיקונומי',
     episodeTitle: 'ד"ר סתיו אלבר והצפנה לילדים',
     link: '#',
+    logo: '/content/podcasts/Geekonomy.jpg',
   },
   {
     id: 2,
     showName: 'עושים תוכנה',
     episodeTitle: 'סודות ההצפנה העתיקים',
     link: '#',
+    logo: '/content/podcasts/osim-tochna.jpeg',
   },
   {
     id: 3,
     showName: 'מפתחים מחוץ לקופסה',
     episodeTitle: 'הסודות שמאחורי הסודות – ד"ר סתיו אלבר מפצחת הצפנות',
     link: '#',
+    logo: '/content/podcasts/out-of-the-box.jpeg',
   },
   {
     id: 4,
     showName: 'פופקורן',
     episodeTitle: 'יכולים לשמור סוד? | יוליוס קיסר השתמש בוואטסאפ? | איך מסבירים הצפנה לילדים?',
     link: '#',
+    logo: '/content/podcasts/popcorn.jpeg',
   },
   {
     id: 5,
     showName: 'Think&Drink Different',
     episodeTitle: 'סודות ההצפנה. אורחת: ד"ר סתיו אלבר',
     link: '#',
+    logo: '/content/podcasts/think&drink different.webp',
   },
   {
     id: 6,
     showName: 'הטכניוניסטים',
     episodeTitle: 'פיצחה את הצופן | ד"ר סתיו אלבר',
     link: '#',
+    logo: '/content/podcasts/the-technionists.jpeg',
   },
   {
     id: 7,
     showName: 'מדברימדע',
     episodeTitle: 'ד"ר סתיו אלבר - סודות ההצפנה לילדים',
     link: '#',
+    logo: '/content/podcasts/מדברימדע-פודקאסט.jpg',
   },
   {
     id: 8,
     showName: 'Hard Reset',
     episodeTitle: 'Data Security (Stav Elbar)',
     link: '#',
+    logo: '/content/podcasts/hard-reset.jpeg',
   },
   {
     id: 9,
     showName: 'שלושה שיודעים',
     episodeTitle: 'חידה את לי',
     link: '#',
+    logo: '/content/podcasts/shlosha.webp',
   },
 ];
 
@@ -174,10 +195,19 @@ export default function MediaPage() {
                 rel="noopener noreferrer"
                 className="bg-white border-4 border-black rounded-2xl p-6 hard-shadow hover:translate-x-1 hover:-translate-y-1 transition-transform block"
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
+                <div className="flex items-start gap-4">
+                  <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-black flex-shrink-0 bg-gray-100">
+                    <Image
+                      src={article.logo}
+                      alt={article.publication}
+                      width={64}
+                      height={64}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
                     <p className="text-sky-500 font-bold text-sm mb-1">{article.publication}</p>
-                    <h3 className="text-xl font-black mb-2">{article.title}</h3>
+                    <h3 className="text-lg font-black leading-tight">{article.title}</h3>
                   </div>
                   <ExternalLink className="w-5 h-5 text-gray-400 flex-shrink-0" />
                 </div>
@@ -204,10 +234,19 @@ export default function MediaPage() {
                 rel="noopener noreferrer"
                 className="bg-white border-4 border-black rounded-2xl p-6 hard-shadow hover:translate-x-1 hover:-translate-y-1 transition-transform block"
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
+                <div className="flex items-start gap-4">
+                  <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-black flex-shrink-0 bg-gray-100">
+                    <Image
+                      src={podcast.logo}
+                      alt={podcast.showName}
+                      width={64}
+                      height={64}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
                     <p className="text-pink-500 font-bold text-sm mb-1">{podcast.showName}</p>
-                    <h3 className="text-xl font-black mb-2">{podcast.episodeTitle}</h3>
+                    <h3 className="text-lg font-black leading-tight">{podcast.episodeTitle}</h3>
                   </div>
                   <ExternalLink className="w-5 h-5 text-gray-400 flex-shrink-0" />
                 </div>
