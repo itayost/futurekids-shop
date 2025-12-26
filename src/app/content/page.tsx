@@ -48,7 +48,7 @@ const articles = [
     id: 7,
     publication: 'מאקו',
     title: 'לגדול עם AI: הספר החדש שמקרב את הבינה המלאכותית לילדים',
-    link: 'https://www.mako.co.il/home-family-kids/Article-182a489c211f691026.htm',
+    link: 'https://www.mako.co.il/news-channel12?subChannelId=cb4387fb2e4e2910VgnVCM200000650a10acRCRD&vcmid=57792afadd9d3910VgnVCM200000650a10acRCRD',
     logo: '/content/articles/mako.jpg',
   },
   {
@@ -93,70 +93,60 @@ const podcasts = [
     id: 1,
     showName: 'גיקונומי',
     episodeTitle: 'ד"ר סתיו אלבר והצפנה לילדים',
-    link: '#',
     logo: '/content/podcasts/Geekonomy.jpg',
   },
   {
     id: 2,
     showName: 'עושים תוכנה',
     episodeTitle: 'סודות ההצפנה העתיקים',
-    link: '#',
     logo: '/content/podcasts/osim-tochna.jpeg',
   },
   {
     id: 3,
     showName: 'מפתחים מחוץ לקופסה',
     episodeTitle: 'הסודות שמאחורי הסודות – ד"ר סתיו אלבר מפצחת הצפנות',
-    link: '#',
     logo: '/content/podcasts/out-of-the-box.jpeg',
   },
   {
     id: 4,
     showName: 'פופקורן',
     episodeTitle: 'יכולים לשמור סוד? | יוליוס קיסר השתמש בוואטסאפ? | איך מסבירים הצפנה לילדים?',
-    link: '#',
     logo: '/content/podcasts/popcorn.jpeg',
   },
   {
     id: 5,
     showName: 'Think&Drink Different',
     episodeTitle: 'סודות ההצפנה. אורחת: ד"ר סתיו אלבר',
-    link: '#',
     logo: '/content/podcasts/think&drink different.webp',
   },
   {
     id: 6,
     showName: 'הטכניוניסטים',
     episodeTitle: 'פיצחה את הצופן | ד"ר סתיו אלבר',
-    link: '#',
     logo: '/content/podcasts/the-technionists.jpeg',
   },
   {
     id: 7,
     showName: 'מדברימדע',
     episodeTitle: 'ד"ר סתיו אלבר - סודות ההצפנה לילדים',
-    link: '#',
     logo: '/content/podcasts/מדברימדע-פודקאסט.jpg',
   },
   {
     id: 8,
     showName: 'Hard Reset',
     episodeTitle: 'Data Security (Stav Elbar)',
-    link: '#',
     logo: '/content/podcasts/hard-reset.jpeg',
   },
   {
     id: 9,
     showName: 'שלושה שיודעים',
     episodeTitle: 'חידה את לי',
-    link: '#',
     logo: '/content/podcasts/shlosha.webp',
   },
   {
     id: 10,
     showName: 'האותיות הקטנות',
     episodeTitle: 'ד"ר סתיו אלבר כותבת ספר ילדים על הצפנה',
-    link: '#',
     logo: '/content/podcasts/otiot-ktanot.jpeg',
   },
 ];
@@ -234,12 +224,9 @@ export default function MediaPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {podcasts.map((podcast) => (
-              <a
+              <div
                 key={podcast.id}
-                href={podcast.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-white border-4 border-black rounded-2xl p-6 hard-shadow hover:translate-x-1 hover:-translate-y-1 transition-transform block"
+                className="bg-white border-4 border-black rounded-2xl p-6 hard-shadow"
               >
                 <div className="flex items-start gap-4">
                   <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-black flex-shrink-0 bg-white p-1">
@@ -255,9 +242,8 @@ export default function MediaPage() {
                     <p className="text-pink-500 font-bold text-sm mb-1">{podcast.showName}</p>
                     <h3 className="text-lg font-black leading-tight">{podcast.episodeTitle}</h3>
                   </div>
-                  <ExternalLink className="w-5 h-5 text-gray-400 flex-shrink-0" />
                 </div>
-              </a>
+              </div>
             ))}
           </div>
         </section>

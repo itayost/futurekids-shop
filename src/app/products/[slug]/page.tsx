@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { BookOpen, ChevronLeft, Users } from 'lucide-react';
 import { getProductBySlug, products } from '@/lib/products';
-import AddToCartButton from '@/components/AddToCartButton';
+import { ProductPageCTA } from '@/components/ProductPageCTA';
 
 const colorClasses = {
   blue: {
@@ -12,6 +12,8 @@ const colorClasses = {
     text: 'text-sky-600',
     border: 'border-sky-400',
     button: 'bg-sky-500 hover:bg-sky-600',
+    accent: 'bg-sky-500',
+    accentHover: 'hover:bg-sky-600',
   },
   pink: {
     bg: 'bg-pink-50',
@@ -19,6 +21,8 @@ const colorClasses = {
     text: 'text-pink-600',
     border: 'border-pink-400',
     button: 'bg-pink-500 hover:bg-pink-600',
+    accent: 'bg-pink-500',
+    accentHover: 'hover:bg-pink-600',
   },
   green: {
     bg: 'bg-emerald-50',
@@ -26,6 +30,8 @@ const colorClasses = {
     text: 'text-emerald-600',
     border: 'border-emerald-400',
     button: 'bg-emerald-500 hover:bg-emerald-600',
+    accent: 'bg-emerald-500',
+    accentHover: 'hover:bg-emerald-600',
   },
 };
 
@@ -85,12 +91,7 @@ export default async function ProductPage({ params }: Props) {
 
             <p className="text-xl text-gray-800 leading-relaxed mb-8">{product.description}</p>
 
-            <div className="flex gap-4 mb-10">
-              <AddToCartButton
-                product={product}
-                className={`btn-retro ${colors.button} text-white text-xl w-full py-4 rounded-xl font-bold border-2 border-black text-center`}
-              />
-            </div>
+            <ProductPageCTA product={product} colorClasses={colors} />
 
             {/* Features */}
             <div className="bg-white border-4 border-black rounded-xl p-6 mb-6">

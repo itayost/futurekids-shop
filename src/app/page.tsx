@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, ChevronDown, Cpu, Lock, GitBranch, User, BookOpen, Gift, Users } from 'lucide-react';
-import ProductCard from '@/components/ProductCard';
+import BookWorkbookPairCard from '@/components/BookWorkbookPairCard';
 import BookComposite from '@/components/BookComposite';
 import { books, workbooks, bundles } from '@/lib/products';
 import { useCart } from '@/components/CartProvider';
@@ -102,10 +102,11 @@ export default function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {bookWorkbookPairs.map((pair) => (
-            <div key={pair.book.id} className="space-y-4">
-              <ProductCard product={pair.book} />
-              <ProductCard product={pair.workbook} isCompact />
-            </div>
+            <BookWorkbookPairCard
+              key={pair.book.id}
+              book={pair.book}
+              workbook={pair.workbook}
+            />
           ))}
         </div>
 

@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { X, Minus, Plus, ShoppingBag, Sparkles, Star, Gift } from 'lucide-react';
 import { useCart } from './CartProvider';
 import { products, bundles, books, workbooks } from '@/lib/products';
+import { Product } from '@/types';
+import { getCompanionProduct } from '@/application/hooks/useCompanionOffer';
 
 export default function Cart() {
   const { items, isOpen, setIsOpen, removeItem, updateQuantity, subtotal, bundleDiscount, bundleName, hasBundle, total, itemCount, addItem } = useCart();
@@ -32,9 +34,29 @@ export default function Cart() {
     }
   };
 
-  // Get products not in cart for suggestions
+  // Get products not in cart for suggestions - prioritize companion products
   const cartProductIds = items.map((item) => item.productId);
-  const suggestions = products.filter((product) => !cartProductIds.includes(product.id));
+
+  const getSmartSuggestions = (): Product[] => {
+    const companions: Product[] = [];
+
+    // Find missing companions for products in cart
+    items.forEach(item => {
+      const companion = getCompanionProduct(item.productId);
+      if (companion && !cartProductIds.includes(companion.id) && !companions.find(c => c.id === companion.id)) {
+        companions.push(companion);
+      }
+    });
+
+    // Get other products not in cart or already in companions
+    const others = products.filter(p =>
+      !cartProductIds.includes(p.id) && !companions.find(c => c.id === p.id)
+    );
+
+    return [...companions, ...others];
+  };
+
+  const suggestions = getSmartSuggestions();
 
   // Reset closing state when cart opens
   useEffect(() => {
@@ -102,7 +124,7 @@ export default function Cart() {
               >
                 <div className="flex items-center gap-2 mb-2">
                   <Star size={16} className="text-pink-500" fill="currentColor" />
-                  <span className="text-pink-600 font-bold text-sm">הכי משתלם!</span>
+                  <span className="text-pink-600 font-bold text-sm">הכי פופולרי!</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center">
@@ -214,24 +236,29 @@ export default function Cart() {
                 <Sparkles size={16} className="text-pink-500" />
                 אולי יעניין אותך גם...
               </h3>
-              <div className="flex gap-3 overflow-x-auto pb-2">
+              <div className="space-y-3">
                 {suggestions.map((product) => (
                   <button
                     key={product.id}
                     onClick={() => addItem(product)}
-                    className="flex-shrink-0 w-32 bg-gray-50 border-2 border-black rounded-xl p-3 hover:bg-gray-100 transition text-right"
+                    className="w-full flex items-center gap-3 bg-gray-50 border-2 border-black rounded-xl p-3 hover:bg-gray-100 transition text-right"
                   >
-                    <div className="w-full h-16 bg-white rounded-lg flex items-center justify-center mb-2">
+                    <div className="w-14 h-18 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
                       <Image
                         src={product.image}
                         alt={product.name}
-                        width={40}
-                        height={56}
+                        width={44}
+                        height={60}
                         className="object-contain"
                       />
                     </div>
-                    <p className="font-bold text-xs truncate">{product.name}</p>
-                    <p className="text-pink-500 font-black text-sm">₪{product.price}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-sm truncate">{product.name}</p>
+                      <p className="text-pink-500 font-black">₪{product.price}</p>
+                    </div>
+                    <div className="bg-black text-white px-3 py-1.5 rounded-lg text-xs font-bold flex-shrink-0">
+                      + הוסף
+                    </div>
                   </button>
                 ))}
               </div>

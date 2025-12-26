@@ -5,6 +5,7 @@ import { CartProvider } from "@/components/CartProvider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Cart from "@/components/Cart";
+import JsonLd from "./JsonLd";
 
 const rubik = Rubik({
   variable: "--font-rubik",
@@ -15,7 +16,7 @@ const rubik = Rubik({
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.kidcode.org.il'),
   title: "KidCode - ספרי מדע וטכנולוגיה לילדים",
-  description: "ספרים שמסבירים לילדים את העולם הטכנולוגי - בינה מלאכותית, הצפנה ואלגוריתמים",
+  description: "סדרת ספרי KidCode מנגישה לילדים את עולם הטכנולוגיה - בינה מלאכותית, הצפנה ואלגוריתמים. מאת ד\"ר סתיו אלבר, מהנדסת תוכנה ב-Google ומרצה בטכניון.",
   keywords: ["ספרי ילדים", "מדע לילדים", "בינה מלאכותית", "הצפנה", "אלגוריתמים", "ד\"ר סתיו אלבר", "KidCode"],
   authors: [{ name: "ד\"ר סתיו אלבר" }],
   robots: {
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "KidCode - ספרי מדע וטכנולוגיה לילדים",
-    description: "ספרים שמסבירים לילדים את העולם הטכנולוגי - בינה מלאכותית, הצפנה ואלגוריתמים",
+    description: "סדרת ספרי KidCode מנגישה לילדים את עולם הטכנולוגיה - בינה מלאכותית, הצפנה ואלגוריתמים. מאת ד\"ר סתיו אלבר, מהנדסת תוכנה ב-Google ומרצה בטכניון.",
     url: "https://www.kidcode.org.il",
     siteName: "KidCode",
     locale: "he_IL",
@@ -41,7 +42,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "KidCode - ספרי מדע וטכנולוגיה לילדים",
-    description: "ספרים שמסבירים לילדים את העולם הטכנולוגי - בינה מלאכותית, הצפנה ואלגוריתמים",
+    description: "סדרת ספרי KidCode מנגישה לילדים את עולם הטכנולוגיה - בינה מלאכותית, הצפנה ואלגוריתמים. מאת ד\"ר סתיו אלבר, מהנדסת תוכנה ב-Google ומרצה בטכניון.",
     images: ["/logo.png"],
   },
   icons: {
@@ -65,6 +66,7 @@ export default function RootLayout({
   return (
     <html lang="he" dir="rtl">
       <body className={`${rubik.variable} font-sans antialiased min-h-screen flex flex-col`}>
+        <JsonLd />
         <CartProvider>
           <Navbar />
           <main className="flex-grow">
