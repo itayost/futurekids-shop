@@ -152,6 +152,13 @@ const podcasts = [
     link: '#',
     logo: '/content/podcasts/shlosha.webp',
   },
+  {
+    id: 10,
+    showName: 'האותיות הקטנות',
+    episodeTitle: 'ד"ר סתיו אלבר כותבת ספר ילדים על הצפנה',
+    link: '#',
+    logo: '/content/podcasts/otiot-ktanot.jpeg',
+  },
 ];
 
 export default function MediaPage() {
