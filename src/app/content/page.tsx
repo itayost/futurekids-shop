@@ -196,13 +196,13 @@ export default function MediaPage() {
                 className="bg-white border-4 border-black rounded-2xl p-6 hard-shadow hover:translate-x-1 hover:-translate-y-1 transition-transform block"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-black flex-shrink-0 bg-gray-100">
+                  <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-black flex-shrink-0 bg-white p-1">
                     <Image
                       src={article.logo}
                       alt={article.publication}
                       width={64}
                       height={64}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -235,13 +235,13 @@ export default function MediaPage() {
                 className="bg-white border-4 border-black rounded-2xl p-6 hard-shadow hover:translate-x-1 hover:-translate-y-1 transition-transform block"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-black flex-shrink-0 bg-gray-100">
+                  <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-black flex-shrink-0 bg-white p-1">
                     <Image
                       src={podcast.logo}
                       alt={podcast.showName}
                       width={64}
                       height={64}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
                   </div>
                   <div className="flex-1 min-w-0">
