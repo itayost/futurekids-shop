@@ -4,7 +4,7 @@ export default function Footer() {
       <div className="container mx-auto px-6 text-center">
         <p className="font-bold text-xl mb-2">Kid<span className="text-pink-400">Code</span></p>
         <p className="text-gray-400 text-sm">כל הזכויות שמורות לד&quot;ר סתיו אלבר © 2025</p>
-        <p className="text-gray-600 text-xs mt-4">
+        <p className="text-gray-400 text-xs mt-4">
           בנייה ועיצוב:{' '}
           <a
             href="https://itayost.com"
