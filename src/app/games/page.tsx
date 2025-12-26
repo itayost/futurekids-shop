@@ -80,7 +80,7 @@ export default function GamesPage() {
           <Sparkles className="w-12 h-12 mx-auto text-emerald-500 mb-4" />
           <h3 className="text-2xl font-black mb-4">בינתיים, הכירו את הספרים!</h3>
           <p className="text-gray-700 max-w-xl mx-auto mb-6">
-            הספרים והחוברות שלנו מלאים בפעילויות, חידות ומשחקים שאפשר לעשות בבית או בכיתה.
+            הספרים והחוברות מלאים בפעילויות, חידות ומשחקים שאפשר לעשות בבית או בכיתה.
           </p>
           <Link
             href="/#books"
