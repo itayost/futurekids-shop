@@ -18,7 +18,7 @@ const SHIPPING_OPTIONS = {
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, subtotal, bundleDiscount, hasBundle, total } = useCart();
+  const { items, subtotal, bundleDiscount, bundleName, hasBundle, total } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [shippingMethod, setShippingMethod] = useState<ShippingOption>('pickup-point');
@@ -87,6 +87,7 @@ export default function CheckoutPage() {
             quantity: item.quantity,
           })),
           bundleDiscount,
+          bundleName,
           shippingMethod,
           shippingCost,
           total: finalTotal,

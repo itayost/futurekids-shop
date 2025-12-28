@@ -34,6 +34,12 @@ export async function GET() {
         o.total,
         o.created_at,
         o.paid_at,
+        o.shipping_method,
+        o.shipping_cost,
+        o.pickup_point_code,
+        o.pickup_point_name,
+        o.bundle_discount,
+        o.bundle_name,
         COALESCE(
           json_agg(
             json_build_object(
@@ -57,6 +63,89 @@ export async function GET() {
     console.error('Error fetching orders:', error);
     return NextResponse.json(
       { error: 'Failed to fetch orders' },
+      { status: 500 }
+    );
+  }
+}
+
+// Update order status
+export async function PATCH(request: NextRequest) {
+  try {
+    const { orderId, status } = await request.json();
+
+    if (!orderId || !status) {
+      return NextResponse.json(
+        { error: 'Missing orderId or status' },
+        { status: 400 }
+      );
+    }
+
+    const validStatuses = ['PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
+    if (!validStatuses.includes(status)) {
+      return NextResponse.json(
+        { error: 'Invalid status' },
+        { status: 400 }
+      );
+    }
+
+    const result = await sql`
+      UPDATE orders
+      SET status = ${status}, updated_at = NOW()
+      WHERE id = ${orderId}
+      RETURNING id, status
+    `;
+
+    if (result.length === 0) {
+      return NextResponse.json(
+        { error: 'Order not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ success: true, order: result[0] });
+  } catch (error) {
+    console.error('Error updating order:', error);
+    return NextResponse.json(
+      { error: 'Failed to update order' },
+      { status: 500 }
+    );
+  }
+}
+
+// Delete order
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const orderId = searchParams.get('id');
+
+    if (!orderId) {
+      return NextResponse.json(
+        { error: 'Missing order ID' },
+        { status: 400 }
+      );
+    }
+
+    // Delete order items first (foreign key constraint)
+    await sql`DELETE FROM order_items WHERE order_id = ${orderId}`;
+
+    // Delete the order
+    const result = await sql`
+      DELETE FROM orders WHERE id = ${orderId}
+      RETURNING id
+    `;
+
+    if (result.length === 0) {
+      return NextResponse.json(
+        { error: 'Order not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting order:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete order' },
       { status: 500 }
     );
   }

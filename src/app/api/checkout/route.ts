@@ -18,6 +18,7 @@ interface CheckoutRequest {
   address: string;
   items: OrderItem[];
   bundleDiscount?: number;
+  bundleName?: string;
   shippingMethod?: 'pickup-point' | 'delivery';
   shippingCost?: number;
   total: number;
@@ -49,8 +50,8 @@ export async function POST(request: NextRequest) {
 
     // Step 1: Create order in database with PENDING status
     const orderResult = await sql`
-      INSERT INTO orders (email, first_name, last_name, phone, address, city, total, status, shipping_method, shipping_cost, pickup_point_code, pickup_point_name)
-      VALUES (${body.email}, ${body.firstName}, ${body.lastName}, ${body.phone}, ${body.address}, ${body.city}, ${body.total}, 'PENDING', ${body.shippingMethod || null}, ${body.shippingCost || null}, ${body.pickupPointCode || null}, ${body.pickupPointName || null})
+      INSERT INTO orders (email, first_name, last_name, phone, address, city, total, status, shipping_method, shipping_cost, pickup_point_code, pickup_point_name, bundle_discount, bundle_name)
+      VALUES (${body.email}, ${body.firstName}, ${body.lastName}, ${body.phone}, ${body.address}, ${body.city}, ${body.total}, 'PENDING', ${body.shippingMethod || null}, ${body.shippingCost || null}, ${body.pickupPointCode || null}, ${body.pickupPointName || null}, ${body.bundleDiscount || 0}, ${body.bundleName || null})
       RETURNING id, created_at
     `;
 
