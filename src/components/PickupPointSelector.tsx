@@ -1,12 +1,17 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { Search, MapPin, Clock, Check } from 'lucide-react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { Search, MapPin, Clock, Check, Navigation, Loader2 } from 'lucide-react';
 import { PickupPoint } from '@/types';
+import { calculateDistance, formatDistance } from '@/lib/geo';
 
 interface PickupPointSelectorProps {
   selectedPoint: PickupPoint | null;
   onSelect: (point: PickupPoint | null) => void;
+}
+
+interface PointWithDistance extends PickupPoint {
+  distance?: number;
 }
 
 export default function PickupPointSelector({
@@ -18,10 +23,17 @@ export default function PickupPointSelector({
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredCities, setFilteredCities] = useState<string[]>([]);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
-  const [cityPoints, setCityPoints] = useState<PickupPoint[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Geolocation state
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [isLocating, setIsLocating] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
+
+  // Check if geolocation is supported
+  const geolocationSupported = typeof window !== 'undefined' && 'geolocation' in navigator;
 
   // Fetch all pickup points on mount
   useEffect(() => {
@@ -46,7 +58,7 @@ export default function PickupPointSelector({
       const filtered = cities.filter((city) =>
         city.toLowerCase().includes(searchQuery.toLowerCase())
       );
-      setFilteredCities(filtered.slice(0, 10)); // Limit to 10 results
+      setFilteredCities(filtered.slice(0, 10));
       setShowCityDropdown(true);
     } else {
       setFilteredCities([]);
@@ -54,15 +66,28 @@ export default function PickupPointSelector({
     }
   }, [searchQuery, cities]);
 
-  // Filter points when city is selected
-  useEffect(() => {
-    if (selectedCity) {
-      const points = allPoints.filter((p) => p.city === selectedCity);
-      setCityPoints(points);
-    } else {
-      setCityPoints([]);
+  // Calculate distances and sort points when city is selected
+  const cityPoints = useMemo((): PointWithDistance[] => {
+    if (!selectedCity) return [];
+
+    let points = allPoints.filter((p) => p.city === selectedCity);
+
+    if (userLocation) {
+      points = points.map((point) => ({
+        ...point,
+        distance: calculateDistance(
+          userLocation.lat,
+          userLocation.lng,
+          parseFloat(point.latitude),
+          parseFloat(point.longitude)
+        ),
+      }));
+      // Sort by distance
+      points.sort((a, b) => (a as PointWithDistance).distance! - (b as PointWithDistance).distance!);
     }
-  }, [selectedCity, allPoints]);
+
+    return points;
+  }, [selectedCity, allPoints, userLocation]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -75,11 +100,71 @@ export default function PickupPointSelector({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleUseMyLocation = () => {
+    if (!geolocationSupported) return;
+
+    setIsLocating(true);
+    setLocationError(null);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setUserLocation({ lat: latitude, lng: longitude });
+        setIsLocating(false);
+
+        // Find the nearest city
+        if (allPoints.length > 0) {
+          let nearestPoint: PickupPoint | null = null;
+          let minDistance = Infinity;
+
+          for (const point of allPoints) {
+            const dist = calculateDistance(
+              latitude,
+              longitude,
+              parseFloat(point.latitude),
+              parseFloat(point.longitude)
+            );
+            if (dist < minDistance) {
+              minDistance = dist;
+              nearestPoint = point;
+            }
+          }
+
+          if (nearestPoint) {
+            setSelectedCity(nearestPoint.city);
+            setSearchQuery(nearestPoint.city);
+          }
+        }
+      },
+      (error) => {
+        setIsLocating(false);
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            setLocationError('הגישה למיקום נדחתה. ניתן לחפש עיר ידנית');
+            break;
+          case error.POSITION_UNAVAILABLE:
+            setLocationError('לא ניתן לקבל מיקום. ניתן לחפש עיר ידנית');
+            break;
+          case error.TIMEOUT:
+            setLocationError('הבקשה לקבלת מיקום נכשלה. ניתן לחפש עיר ידנית');
+            break;
+          default:
+            setLocationError('שגיאה בקבלת מיקום. ניתן לחפש עיר ידנית');
+        }
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 300000, // Cache for 5 minutes
+      }
+    );
+  };
+
   const handleCitySelect = (city: string) => {
     setSelectedCity(city);
     setSearchQuery(city);
     setShowCityDropdown(false);
-    onSelect(null); // Clear selected point when city changes
+    onSelect(null);
   };
 
   const handlePointSelect = (point: PickupPoint) => {
@@ -133,6 +218,35 @@ export default function PickupPointSelector({
         )}
       </div>
 
+      {/* Use My Location Button */}
+      {geolocationSupported && !selectedCity && !selectedPoint && (
+        <button
+          type="button"
+          onClick={handleUseMyLocation}
+          disabled={isLocating}
+          className="w-full flex items-center justify-center gap-2 p-3 bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 rounded-xl text-blue-700 font-bold transition-colors disabled:opacity-50"
+        >
+          {isLocating ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              מאתר מיקום...
+            </>
+          ) : (
+            <>
+              <Navigation className="w-5 h-5" />
+              השתמש במיקום שלי
+            </>
+          )}
+        </button>
+      )}
+
+      {/* Location Error */}
+      {locationError && (
+        <p className="text-amber-600 text-sm text-center bg-amber-50 p-2 rounded-lg">
+          {locationError}
+        </p>
+      )}
+
       {/* Selected Point Display */}
       {selectedPoint && (
         <div className="bg-pink-50 border-2 border-pink-500 rounded-xl p-4">
@@ -169,6 +283,7 @@ export default function PickupPointSelector({
         <div className="space-y-2">
           <p className="text-sm text-gray-600 font-medium">
             {cityPoints.length} נקודות איסוף ב{selectedCity}
+            {userLocation && <span className="text-blue-600"> (ממוינות לפי מרחק)</span>}
           </p>
           <div className="max-h-64 overflow-y-auto space-y-2 border-2 border-gray-200 rounded-xl p-2">
             {cityPoints.map((point) => (
@@ -178,17 +293,26 @@ export default function PickupPointSelector({
                 onClick={() => handlePointSelect(point)}
                 className="w-full text-right p-4 bg-gray-50 hover:bg-pink-50 rounded-lg transition-colors border-2 border-transparent hover:border-pink-300"
               >
-                <p className="font-bold">{point.name}</p>
-                <p className="text-gray-600 text-sm flex items-center gap-1">
-                  <MapPin className="w-3 h-3" />
-                  {formatAddress(point)}
-                </p>
-                {point.remarks && (
-                  <p className="text-gray-400 text-xs mt-1 flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    {point.remarks}
-                  </p>
-                )}
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <p className="font-bold">{point.name}</p>
+                    <p className="text-gray-600 text-sm flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />
+                      {formatAddress(point)}
+                    </p>
+                    {point.remarks && (
+                      <p className="text-gray-400 text-xs mt-1 flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {point.remarks}
+                      </p>
+                    )}
+                  </div>
+                  {point.distance !== undefined && (
+                    <span className="text-blue-600 font-bold text-sm whitespace-nowrap mr-2">
+                      {formatDistance(point.distance)}
+                    </span>
+                  )}
+                </div>
               </button>
             ))}
           </div>
@@ -198,7 +322,7 @@ export default function PickupPointSelector({
       {/* No city selected prompt */}
       {!selectedCity && !selectedPoint && (
         <p className="text-gray-500 text-sm text-center py-4">
-          הקלד שם עיר כדי לראות נקודות איסוף זמינות
+          הקלד שם עיר או השתמש במיקום שלי כדי לראות נקודות איסוף זמינות
         </p>
       )}
     </div>
