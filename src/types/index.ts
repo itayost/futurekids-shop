@@ -67,3 +67,14 @@ export interface OrderItem {
   quantity: number;
   price: number;
 }
+
+export interface PickupPoint {
+  code: string;
+  name: string;
+  city: string;
+  street: string;
+  house: string;
+  remarks: string;
+  latitude: string;
+  longitude: string;
+}

@@ -18,9 +18,11 @@ interface CheckoutRequest {
   address: string;
   items: OrderItem[];
   bundleDiscount?: number;
-  shippingMethod?: 'pickup' | 'delivery';
+  shippingMethod?: 'pickup-point' | 'delivery';
   shippingCost?: number;
   total: number;
+  pickupPointCode?: string;
+  pickupPointName?: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -47,8 +49,8 @@ export async function POST(request: NextRequest) {
 
     // Step 1: Create order in database with PENDING status
     const orderResult = await sql`
-      INSERT INTO orders (email, first_name, last_name, phone, address, city, total, status)
-      VALUES (${body.email}, ${body.firstName}, ${body.lastName}, ${body.phone}, ${body.address}, ${body.city}, ${body.total}, 'PENDING')
+      INSERT INTO orders (email, first_name, last_name, phone, address, city, total, status, shipping_method, shipping_cost, pickup_point_code, pickup_point_name)
+      VALUES (${body.email}, ${body.firstName}, ${body.lastName}, ${body.phone}, ${body.address}, ${body.city}, ${body.total}, 'PENDING', ${body.shippingMethod || null}, ${body.shippingCost || null}, ${body.pickupPointCode || null}, ${body.pickupPointName || null})
       RETURNING id, created_at
     `;
 
@@ -87,7 +89,14 @@ export async function POST(request: NextRequest) {
 
       // Add shipping cost
       if (body.shippingCost && body.shippingCost > 0) {
-        const shippingLabel = body.shippingMethod === 'delivery' ? 'משלוח עד הבית' : 'איסוף עצמי';
+        let shippingLabel = 'משלוח';
+        if (body.shippingMethod === 'delivery') {
+          shippingLabel = 'משלוח עד הבית';
+        } else if (body.shippingMethod === 'pickup-point') {
+          shippingLabel = body.pickupPointName
+            ? `נקודת איסוף: ${body.pickupPointName}`
+            : 'נקודת איסוף';
+        }
         icountItems.push({
           name: shippingLabel,
           price: body.shippingCost,

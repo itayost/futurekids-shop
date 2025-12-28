@@ -4,13 +4,15 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ChevronLeft, Lock, ShoppingBag, Gift, Truck, Package } from 'lucide-react';
+import { ChevronLeft, Lock, ShoppingBag, Gift, Truck, MapPin } from 'lucide-react';
 import { useCart } from '@/components/CartProvider';
+import PickupPointSelector from '@/components/PickupPointSelector';
+import { PickupPoint } from '@/types';
 
-type ShippingOption = 'pickup' | 'delivery';
+type ShippingOption = 'pickup-point' | 'delivery';
 
 const SHIPPING_OPTIONS = {
-  pickup: { label: 'איסוף עצמי', price: 20, icon: Package },
+  'pickup-point': { label: 'נקודות איסוף', price: 20, icon: MapPin },
   delivery: { label: 'משלוח עד הבית', price: 40, icon: Truck },
 };
 
@@ -19,7 +21,8 @@ export default function CheckoutPage() {
   const { items, subtotal, bundleDiscount, hasBundle, total } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [shippingMethod, setShippingMethod] = useState<ShippingOption>('pickup');
+  const [shippingMethod, setShippingMethod] = useState<ShippingOption>('pickup-point');
+  const [selectedPickupPoint, setSelectedPickupPoint] = useState<PickupPoint | null>(null);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -44,7 +47,27 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
     setError(null);
 
+    // Validate pickup point selection
+    if (shippingMethod === 'pickup-point' && !selectedPickupPoint) {
+      setError('יש לבחור נקודת איסוף');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
+      // Prepare address data based on shipping method
+      const addressData = shippingMethod === 'pickup-point' && selectedPickupPoint
+        ? {
+            city: selectedPickupPoint.city,
+            address: `${selectedPickupPoint.name} - ${selectedPickupPoint.street} ${selectedPickupPoint.house}`,
+            pickupPointCode: selectedPickupPoint.code,
+            pickupPointName: selectedPickupPoint.name,
+          }
+        : {
+            city: formData.city,
+            address: formData.address,
+          };
+
       // Call checkout API - creates order and returns payment page URL
       const response = await fetch('/api/checkout', {
         method: 'POST',
@@ -52,7 +75,11 @@ export default function CheckoutPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...formData,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          ...addressData,
           items: items.map((item) => ({
             productId: item.productId,
             name: item.name,
@@ -128,7 +155,7 @@ export default function CheckoutPage() {
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {(Object.entries(SHIPPING_OPTIONS) as [ShippingOption, typeof SHIPPING_OPTIONS.pickup][]).map(([key, option]) => {
+                {(Object.entries(SHIPPING_OPTIONS) as [ShippingOption, typeof SHIPPING_OPTIONS['pickup-point']][]).map(([key, option]) => {
                   const Icon = option.icon;
                   const isSelected = shippingMethod === key;
                   return (
@@ -220,30 +247,41 @@ export default function CheckoutPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-md font-bold text-gray-900 mb-2">עיר</label>
-                  <input
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    className="input-brutal w-full rounded-lg p-3 text-lg bg-gray-50"
-                    required
-                  />
+              {/* Pickup Point Selector - shown when pickup-point is selected */}
+              {shippingMethod === 'pickup-point' && (
+                <PickupPointSelector
+                  selectedPoint={selectedPickupPoint}
+                  onSelect={setSelectedPickupPoint}
+                />
+              )}
+
+              {/* City/Address - shown only for home delivery */}
+              {shippingMethod === 'delivery' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-md font-bold text-gray-900 mb-2">עיר</label>
+                    <input
+                      type="text"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleChange}
+                      className="input-brutal w-full rounded-lg p-3 text-lg bg-gray-50"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-md font-bold text-gray-900 mb-2">כתובת</label>
+                    <input
+                      type="text"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      className="input-brutal w-full rounded-lg p-3 text-lg bg-gray-50"
+                      required
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-md font-bold text-gray-900 mb-2">כתובת</label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    className="input-brutal w-full rounded-lg p-3 text-lg bg-gray-50"
-                    required
-                  />
-                </div>
-              </div>
+              )}
 
               {error && (
                 <div className="bg-red-50 border-2 border-red-500 rounded-xl p-4 text-red-700 font-bold text-center">
@@ -314,7 +352,7 @@ export default function CheckoutPage() {
                 {/* Shipping */}
                 <div className="flex justify-between items-center text-gray-600">
                   <span className="flex items-center gap-1">
-                    {shippingMethod === 'delivery' ? <Truck size={16} /> : <Package size={16} />}
+                    {shippingMethod === 'delivery' ? <Truck size={16} /> : <MapPin size={16} />}
                     {SHIPPING_OPTIONS[shippingMethod].label}:
                   </span>
                   <span className="font-bold">₪{shippingCost}</span>
