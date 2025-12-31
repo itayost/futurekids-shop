@@ -84,7 +84,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start animate-hero-4">
             <a
               href="#books"
-              className="btn-retro bg-pink-400 text-white px-8 py-4 rounded-xl font-black text-lg border-2 border-black hover:bg-pink-500 flex items-center justify-center gap-2"
+              className="btn-retro bg-pink-400 text-white px-8 py-4 rounded-xl font-black text-lg border-2 border-[#545454] hover:bg-pink-500 flex items-center justify-center gap-2"
             >
               <ChevronDown className="w-5 h-5" />
               אני רוצה להזמין
@@ -92,7 +92,7 @@ export default function Home() {
           </div>
         </div>
         <div className="md:w-1/2 flex justify-center animate-hero-scale">
-          <div className="bg-white border-4 border-black rounded-3xl p-8 hard-shadow-lg">
+          <div className="bg-white border-4 border-[#545454] rounded-3xl p-8 hard-shadow-lg">
             <BookComposite size="md" />
           </div>
         </div>
@@ -133,10 +133,10 @@ export default function Home() {
         </div>
 
         {/* Bundle Section with Tabs */}
-        <div className="mt-16 bg-pink-100 border-4 border-black rounded-3xl p-4 sm:p-8 md:p-12 hard-shadow">
+        <div className="mt-16 bg-pink-100 border-4 border-[#545454] rounded-3xl p-4 sm:p-8 md:p-12 hard-shadow">
           {/* Bundle Tabs */}
           <div className="flex justify-center mb-8">
-            <div ref={tabsContainerRef} className="bg-white border-2 border-black rounded-xl p-1.5 max-w-full overflow-x-auto">
+            <div ref={tabsContainerRef} className="bg-white border-2 border-[#545454] rounded-xl p-1.5 max-w-full overflow-x-auto">
               <div className="flex gap-1.5 min-w-max">
                 {bundles.map((bundle, index) => (
                   <button
@@ -152,7 +152,7 @@ export default function Home() {
                     <span className="hidden sm:inline">{bundle.name}</span>
                     <span className="sm:hidden">{bundle.subtitle}</span>
                     {index === 1 && (
-                      <span className="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs px-1.5 py-0.5 rounded-full border border-black">
+                      <span className="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs px-1.5 py-0.5 rounded-full border border-[#545454]">
                         פופולרי
                       </span>
                     )}
@@ -183,13 +183,13 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={handleAddBundle}
-                className="btn-retro bg-pink-500 text-white px-10 py-4 rounded-xl font-black text-lg border-2 border-black hover:bg-pink-600"
+                className="btn-retro bg-pink-500 text-white px-10 py-4 rounded-xl font-black text-lg border-2 border-[#545454] hover:bg-pink-600"
               >
                 הוסף לסל
               </button>
               <Link
                 href={`/bundle?selected=${selectedBundleIndex}`}
-                className="btn-retro bg-white text-pink-500 px-10 py-4 rounded-xl font-black text-lg border-2 border-black hover:bg-pink-50"
+                className="btn-retro bg-white text-pink-500 px-10 py-4 rounded-xl font-black text-lg border-2 border-[#545454] hover:bg-pink-50"
               >
                 לפרטים נוספים
               </Link>
@@ -200,14 +200,14 @@ export default function Home() {
 
       {/* Author Section */}
       <section className="container mx-auto px-6 py-16">
-        <div className="bg-blue-50 border-4 border-black rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 relative">
-          <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-white border-2 border-black px-6 py-2 rounded-full font-bold shadow-[4px_4px_0px_0px_#000000] flex items-center gap-2">
+        <div className="bg-blue-50 border-4 border-[#545454] rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 relative">
+          <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-white border-2 border-[#545454] px-6 py-2 rounded-full font-bold shadow-[4px_4px_0px_0px_#000000] flex items-center gap-2">
             <User className="w-5 h-5" />
             מי אני?
           </div>
 
           <div className="md:w-1/3">
-            <div className="w-48 h-48 bg-white border-4 border-black rounded-full mx-auto overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)]">
+            <div className="w-48 h-48 bg-white border-4 border-[#545454] rounded-full mx-auto overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)]">
               <Image
                 src="/Stav.png"
                 alt="ד״ר סתיו אלבר"

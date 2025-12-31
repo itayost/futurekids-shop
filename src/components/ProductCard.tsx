@@ -38,7 +38,7 @@ export default function ProductCard({ product, isCompact = false }: ProductCardP
     return (
       <Link href={`/products/${product.slug}`} className="block group">
         <div
-          className={`bg-white border-2 border-black rounded-xl p-4 shadow-[2px_2px_0px_0px_#000000] ${colors.hover} transition-all duration-200`}
+          className={`bg-white border-2 border-[#545454] rounded-xl p-4 shadow-[2px_2px_0px_0px_#000000] ${colors.hover} transition-all duration-200`}
         >
           <div className="flex items-center gap-4">
             <div
@@ -72,7 +72,7 @@ export default function ProductCard({ product, isCompact = false }: ProductCardP
   return (
     <Link href={`/products/${product.slug}`} className="block group">
       <div
-        className={`bg-white border-4 border-black rounded-2xl p-6 hard-shadow ${colors.hover} transition-all duration-200`}
+        className={`bg-white border-4 border-[#545454] rounded-2xl p-6 hard-shadow ${colors.hover} transition-all duration-200`}
       >
         <div
           className={`${colors.bg} rounded-xl h-48 flex items-center justify-center mb-4 overflow-hidden`}

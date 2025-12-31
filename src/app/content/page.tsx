@@ -156,8 +156,8 @@ export default function MediaPage() {
     <div className="bg-amber-50 min-h-screen">
       <div className="container mx-auto px-6 py-16">
         {/* Author Card */}
-        <div className="bg-white border-4 border-black rounded-3xl p-8 mb-16 hard-shadow flex flex-col md:flex-row items-center gap-8">
-          <div className="w-32 h-32 bg-pink-100 border-4 border-black rounded-full overflow-hidden flex-shrink-0">
+        <div className="bg-white border-4 border-[#545454] rounded-3xl p-8 mb-16 hard-shadow flex flex-col md:flex-row items-center gap-8">
+          <div className="w-32 h-32 bg-pink-100 border-4 border-[#545454] rounded-full overflow-hidden flex-shrink-0">
             <Image
               src="/Stav.png"
               alt="ד״ר סתיו אלבר"
@@ -177,7 +177,7 @@ export default function MediaPage() {
         {/* Articles - now first as requested */}
         <section className="mb-16">
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 bg-sky-500 text-white rounded-xl flex items-center justify-center border-2 border-black">
+            <div className="w-12 h-12 bg-sky-500 text-white rounded-xl flex items-center justify-center border-2 border-[#545454]">
               <FileText className="w-6 h-6" />
             </div>
             <h2 className="text-3xl font-black">כתבות ומאמרים</h2>
@@ -190,10 +190,10 @@ export default function MediaPage() {
                 href={article.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white border-4 border-black rounded-2xl p-6 hard-shadow hover:translate-x-1 hover:-translate-y-1 transition-transform block"
+                className="bg-white border-4 border-[#545454] rounded-2xl p-6 hard-shadow hover:translate-x-1 hover:-translate-y-1 transition-transform block"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-black flex-shrink-0 bg-white p-1">
+                  <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-[#545454] flex-shrink-0 bg-white p-1">
                     <Image
                       src={article.logo}
                       alt={article.publication}
@@ -216,7 +216,7 @@ export default function MediaPage() {
         {/* Podcasts - changed from "הופעות בפודקאסטים" to "פודקאסטים" */}
         <section>
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 bg-pink-500 text-white rounded-xl flex items-center justify-center border-2 border-black">
+            <div className="w-12 h-12 bg-pink-500 text-white rounded-xl flex items-center justify-center border-2 border-[#545454]">
               <Mic className="w-6 h-6" />
             </div>
             <h2 className="text-3xl font-black">פודקאסטים</h2>
@@ -226,10 +226,10 @@ export default function MediaPage() {
             {podcasts.map((podcast) => (
               <div
                 key={podcast.id}
-                className="bg-white border-4 border-black rounded-2xl p-6 hard-shadow"
+                className="bg-white border-4 border-[#545454] rounded-2xl p-6 hard-shadow"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-black flex-shrink-0 bg-white p-1">
+                  <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-[#545454] flex-shrink-0 bg-white p-1">
                     <Image
                       src={podcast.logo}
                       alt={podcast.showName}

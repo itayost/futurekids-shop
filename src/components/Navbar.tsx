@@ -35,7 +35,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="bg-white border-b-4 border-black sticky top-0 z-50">
+      <nav className="bg-white border-b-4 border-[#545454] sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <Link href="/" className="flex-shrink-0">
             <Image

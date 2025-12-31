@@ -58,13 +58,13 @@ export default async function ProductPage({ params }: Props) {
             החנות
           </Link>
           <ChevronLeft className="inline w-4 h-4 mx-1" />
-          <span className="text-black">{product.name}</span>
+          <span className="text-[#545454]">{product.name}</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Product Image */}
-          <div className="bg-white border-4 border-black rounded-3xl p-6 hard-shadow relative">
-            <div className="absolute -top-4 left-2 sm:-top-6 sm:-left-6 bg-yellow-400 border-4 border-black text-black font-black text-xl sm:text-2xl px-4 sm:px-6 py-2 sm:py-3 rounded-full transform -rotate-12 shadow-lg">
+          <div className="bg-white border-4 border-[#545454] rounded-3xl p-6 hard-shadow relative">
+            <div className="absolute -top-4 left-2 sm:-top-6 sm:-left-6 bg-yellow-400 border-4 border-[#545454] text-[#545454] font-black text-xl sm:text-2xl px-4 sm:px-6 py-2 sm:py-3 rounded-full transform -rotate-12 shadow-lg">
               ₪{product.price}
             </div>
 
@@ -85,8 +85,8 @@ export default async function ProductPage({ params }: Props) {
               {product.name}
             </h1>
             <div className="text-lg font-medium text-gray-600 mb-6 border-b-2 border-gray-200 pb-6">
-              מאת: <span className="text-black font-bold">ד&quot;ר סתיו אלבר</span> | איור:{' '}
-              <span className="text-black font-bold">שמרית שולמן</span>
+              מאת: <span className="text-[#545454] font-bold">ד&quot;ר סתיו אלבר</span> | איור:{' '}
+              <span className="text-[#545454] font-bold">שמרית שולמן</span>
             </div>
 
             <p className="text-xl text-gray-800 leading-relaxed mb-8">{product.description}</p>
@@ -94,7 +94,7 @@ export default async function ProductPage({ params }: Props) {
             <ProductPageCTA product={product} colorClasses={colors} />
 
             {/* Features */}
-            <div className="bg-white border-4 border-black rounded-xl p-6 mb-6">
+            <div className="bg-white border-4 border-[#545454] rounded-xl p-6 mb-6">
               <h3 className="font-black text-xl mb-4 flex items-center gap-2">
                 <BookOpen className={`w-6 h-6 ${colors.text}`} />
                 מה מגלים בפנים?
@@ -111,7 +111,7 @@ export default async function ProductPage({ params }: Props) {
 
             {/* Audience */}
             {product.audience && (
-              <div className={`${colors.bgLight} border-4 border-black rounded-xl p-6`}>
+              <div className={`${colors.bgLight} border-4 border-[#545454] rounded-xl p-6`}>
                 <h3 className="font-black text-xl mb-4 flex items-center gap-2">
                   <Users className={`w-6 h-6 ${colors.text}`} />
                   {product.type === 'workbook' ? 'למי החוברת מתאימה?' : 'למי הספר מתאים?'}

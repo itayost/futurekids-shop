@@ -117,13 +117,13 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <div className="bg-gray-50 min-h-screen flex items-center justify-center p-6">
-        <div className="bg-white border-4 border-black rounded-2xl p-12 hard-shadow text-center max-w-md">
+        <div className="bg-white border-4 border-[#545454] rounded-2xl p-12 hard-shadow text-center max-w-md">
           <ShoppingBag className="w-16 h-16 mx-auto text-gray-300 mb-4" />
           <h1 className="text-2xl font-black mb-4">הסל ריק</h1>
           <p className="text-gray-600 mb-6">הוסיפו ספרים לסל כדי להמשיך לתשלום</p>
           <Link
             href="/"
-            className="btn-retro inline-block bg-pink-500 text-white px-8 py-3 rounded-xl font-bold border-2 border-black hover:bg-pink-600"
+            className="btn-retro inline-block bg-pink-500 text-white px-8 py-3 rounded-xl font-bold border-2 border-[#545454] hover:bg-pink-600"
           >
             חזרה לחנות
           </Link>
@@ -137,7 +137,7 @@ export default function CheckoutPage() {
       <div className="container mx-auto px-6 max-w-5xl">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 font-bold text-gray-600 mb-8 hover:text-black"
+          className="inline-flex items-center gap-2 font-bold text-gray-600 mb-8 hover:text-[#545454]"
         >
           <ChevronLeft className="w-5 h-5" />
           חזרה לחנות
@@ -147,7 +147,7 @@ export default function CheckoutPage() {
           {/* Form Section */}
           <div className="lg:w-2/3 space-y-6">
             {/* Shipping Selection */}
-            <div className="bg-white border-4 border-black rounded-2xl p-8 hard-shadow">
+            <div className="bg-white border-4 border-[#545454] rounded-2xl p-8 hard-shadow">
               <h2 className="text-3xl font-black mb-6 flex items-center gap-3">
                 <span className="bg-black text-white w-10 h-10 rounded-full flex items-center justify-center text-lg">
                   1
@@ -190,7 +190,7 @@ export default function CheckoutPage() {
             </div>
 
             {/* Customer Details */}
-            <div className="bg-white border-4 border-black rounded-2xl p-8 hard-shadow">
+            <div className="bg-white border-4 border-[#545454] rounded-2xl p-8 hard-shadow">
               <h2 className="text-3xl font-black mb-6 flex items-center gap-3">
                 <span className="bg-black text-white w-10 h-10 rounded-full flex items-center justify-center text-lg">
                   2
@@ -293,7 +293,7 @@ export default function CheckoutPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="btn-retro bg-pink-500 text-white text-xl w-full py-4 rounded-xl font-black border-2 border-black hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-retro bg-pink-500 text-white text-xl w-full py-4 rounded-xl font-black border-2 border-[#545454] hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'מעבר לתשלום...' : 'המשך לתשלום מאובטח'}
               </button>
@@ -308,7 +308,7 @@ export default function CheckoutPage() {
 
           {/* Order Summary */}
           <div className="lg:w-1/3">
-            <div className="bg-white border-4 border-black rounded-2xl p-6 hard-shadow lg:sticky lg:top-24">
+            <div className="bg-white border-4 border-[#545454] rounded-2xl p-6 hard-shadow lg:sticky lg:top-24">
               <h2 className="text-xl font-black mb-6">סיכום הזמנה</h2>
 
               <div className="space-y-4 mb-6">
@@ -332,7 +332,7 @@ export default function CheckoutPage() {
                 ))}
               </div>
 
-              <div className="border-t-2 border-black pt-4 space-y-2">
+              <div className="border-t-2 border-[#545454] pt-4 space-y-2">
                 {/* Subtotal */}
                 <div className="flex justify-between items-center text-gray-600">
                   <span>סכום ביניים:</span>

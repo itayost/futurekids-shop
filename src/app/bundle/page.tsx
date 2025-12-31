@@ -79,14 +79,14 @@ function BundleContent() {
     <div className="max-w-6xl mx-auto">
       {/* Bundle Selector Tabs */}
       <div className="flex justify-center mb-8 mt-4">
-        <div className="bg-white border-4 border-black rounded-2xl p-2 flex gap-2 hard-shadow">
+        <div className="bg-white border-4 border-[#545454] rounded-2xl p-2 flex gap-2 hard-shadow">
           {bundles.map((bundle, index) => (
             <button
               key={bundle.id}
               onClick={() => setSelectedIndex(index)}
               className={`relative px-4 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${
                 selectedIndex === index
-                  ? 'bg-pink-500 text-white border-2 border-black'
+                  ? 'bg-pink-500 text-white border-2 border-[#545454]'
                   : 'bg-gray-100 text-gray-700 border-2 border-transparent hover:bg-gray-200'
               }`}
             >
@@ -94,7 +94,7 @@ function BundleContent() {
               <span className="hidden sm:inline">{bundle.name}</span>
               <span className="sm:hidden">{bundle.subtitle}</span>
               {index === 1 && (
-                <span className="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs px-2 py-0.5 rounded-full border border-black">
+                <span className="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs px-2 py-0.5 rounded-full border border-[#545454]">
                   פופולרי
                 </span>
               )}
@@ -104,12 +104,12 @@ function BundleContent() {
       </div>
 
       {/* Main Content Card */}
-      <div className="w-full bg-white border-4 border-black rounded-3xl overflow-hidden hard-shadow flex flex-col md:flex-row">
+      <div className="w-full bg-white border-4 border-[#545454] rounded-3xl overflow-hidden hard-shadow flex flex-col md:flex-row">
         {/* Image Section */}
-        <div className="md:w-1/2 bg-pink-100 flex items-center justify-center p-6 md:p-12 border-b-4 md:border-b-0 md:border-l-4 border-black relative">
+        <div className="md:w-1/2 bg-pink-100 flex items-center justify-center p-6 md:p-12 border-b-4 md:border-b-0 md:border-l-4 border-[#545454] relative">
           <BookComposite size="md" />
           {selectedBundle.workbookQuantity > 0 && (
-            <div className="absolute bottom-4 right-4 bg-white border-2 border-black rounded-lg px-3 py-2 text-sm font-bold">
+            <div className="absolute bottom-4 right-4 bg-white border-2 border-[#545454] rounded-lg px-3 py-2 text-sm font-bold">
               + {selectedBundle.workbookQuantity * 3} חוברות פעילות
             </div>
           )}
@@ -117,7 +117,7 @@ function BundleContent() {
 
         {/* Content Section */}
         <div className="md:w-1/2 p-6 md:p-10 flex flex-col justify-center bg-white">
-          <div className="inline-block bg-pink-500 text-white px-4 py-1 rounded-full border-2 border-black font-bold text-sm mb-6 w-fit flex items-center gap-2">
+          <div className="inline-block bg-pink-500 text-white px-4 py-1 rounded-full border-2 border-[#545454] font-bold text-sm mb-6 w-fit flex items-center gap-2">
             <Star className="w-4 h-4" fill="currentColor" />
             {selectedIndex === 1 ? 'הכי פופולרי' : selectedIndex === 2 ? 'הכי משתלם' : 'בסיסי'}
           </div>
@@ -152,7 +152,7 @@ function BundleContent() {
 
           <button
             onClick={handleAddBundle}
-            className="btn-retro bg-pink-500 text-white text-xl w-full py-5 rounded-xl font-black border-2 border-black hover:bg-pink-600"
+            className="btn-retro bg-pink-500 text-white text-xl w-full py-5 rounded-xl font-black border-2 border-[#545454] hover:bg-pink-600"
           >
             אני רוצה את המארז הזה!
           </button>

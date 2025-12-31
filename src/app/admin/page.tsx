@@ -217,8 +217,8 @@ export default function AdminPage() {
   if (!isAuthenticated) {
     return (
       <div className="bg-gray-100 min-h-screen flex items-center justify-center p-6">
-        <div className="bg-white border-4 border-black rounded-2xl p-8 hard-shadow max-w-md w-full">
-          <div className="w-16 h-16 bg-pink-100 border-4 border-black rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="bg-white border-4 border-[#545454] rounded-2xl p-8 hard-shadow max-w-md w-full">
+          <div className="w-16 h-16 bg-pink-100 border-4 border-[#545454] rounded-full flex items-center justify-center mx-auto mb-6">
             <Lock className="w-8 h-8 text-pink-600" />
           </div>
           <h1 className="text-2xl font-black text-center mb-6">ניהול הזמנות</h1>
@@ -244,7 +244,7 @@ export default function AdminPage() {
             <button
               type="submit"
               disabled={isLoggingIn}
-              className="btn-retro bg-pink-500 text-white w-full py-3 rounded-xl font-black border-2 border-black hover:bg-pink-600 disabled:opacity-50"
+              className="btn-retro bg-pink-500 text-white w-full py-3 rounded-xl font-black border-2 border-[#545454] hover:bg-pink-600 disabled:opacity-50"
             >
               {isLoggingIn ? 'מתחבר...' : 'כניסה'}
             </button>
@@ -264,14 +264,14 @@ export default function AdminPage() {
           </h1>
           <button
             onClick={handleLogout}
-            className="text-gray-600 hover:text-black font-bold"
+            className="text-gray-600 hover:text-[#545454] font-bold"
           >
             התנתק
           </button>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white border-4 border-black rounded-xl p-4 hard-shadow mb-6">
+        <div className="bg-white border-4 border-[#545454] rounded-xl p-4 hard-shadow mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Search */}
             <div className="flex-1 relative">
@@ -300,12 +300,12 @@ export default function AdminPage() {
         </div>
 
         {loading ? (
-          <div className="bg-white border-4 border-black rounded-2xl p-12 hard-shadow text-center">
+          <div className="bg-white border-4 border-[#545454] rounded-2xl p-12 hard-shadow text-center">
             <div className="animate-spin w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full mx-auto mb-4"></div>
             <p className="text-gray-600 font-bold">טוען הזמנות...</p>
           </div>
         ) : filteredOrders.length === 0 ? (
-          <div className="bg-white border-4 border-black rounded-2xl p-12 hard-shadow text-center">
+          <div className="bg-white border-4 border-[#545454] rounded-2xl p-12 hard-shadow text-center">
             <ShoppingBag className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h2 className="text-xl font-black mb-2">
               {orders.length === 0 ? 'אין הזמנות עדיין' : 'לא נמצאו הזמנות'}
@@ -316,7 +316,7 @@ export default function AdminPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="bg-white border-4 border-black rounded-xl p-4 hard-shadow flex justify-between items-center">
+            <div className="bg-white border-4 border-[#545454] rounded-xl p-4 hard-shadow flex justify-between items-center">
               <p className="font-bold text-gray-600">
                 {filteredOrders.length === orders.length
                   ? `סה"כ ${orders.length} הזמנות`
@@ -328,7 +328,7 @@ export default function AdminPage() {
             {filteredOrders.map((order) => (
               <div
                 key={order.id}
-                className="bg-white border-4 border-black rounded-2xl hard-shadow overflow-hidden"
+                className="bg-white border-4 border-[#545454] rounded-2xl hard-shadow overflow-hidden"
               >
                 <div className="p-6">
                   <div className="flex justify-between items-start gap-4">
@@ -390,7 +390,7 @@ export default function AdminPage() {
                 </div>
 
                 {expandedOrder === order.id && (
-                  <div className="border-t-4 border-black p-6 bg-gray-50">
+                  <div className="border-t-4 border-[#545454] p-6 bg-gray-50">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                       <div className="space-y-3">
                         <h3 className="font-black text-lg mb-3">פרטי לקוח</h3>
@@ -423,7 +423,7 @@ export default function AdminPage() {
                           {order.items.map((item) => (
                             <div
                               key={item.id}
-                              className="flex justify-between items-center bg-white p-3 rounded-lg border-2 border-black"
+                              className="flex justify-between items-center bg-white p-3 rounded-lg border-2 border-[#545454]"
                             >
                               <div>
                                 <p className="font-bold">{item.productName}</p>

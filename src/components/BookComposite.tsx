@@ -21,7 +21,7 @@ export default function BookComposite({ size = 'md' }: BookCompositeProps) {
         alt="אלגוריתמים לילדים"
         width={size === 'lg' ? 208 : size === 'md' ? 160 : 112}
         height={size === 'lg' ? 208 : size === 'md' ? 160 : 112}
-        className={`absolute ${book} object-cover border-2 border-black shadow-lg rounded-xl transform -rotate-12 -translate-x-16 z-10`}
+        className={`absolute ${book} object-cover border-2 border-[#545454] shadow-lg rounded-xl transform -rotate-12 -translate-x-16 z-10`}
       />
       {/* Encryption book (middle) */}
       <Image
@@ -29,7 +29,7 @@ export default function BookComposite({ size = 'md' }: BookCompositeProps) {
         alt="סודות ההצפנה לילדים"
         width={size === 'lg' ? 208 : size === 'md' ? 160 : 112}
         height={size === 'lg' ? 208 : size === 'md' ? 160 : 112}
-        className={`absolute ${book} object-cover border-2 border-black shadow-lg rounded-xl transform rotate-0 z-20`}
+        className={`absolute ${book} object-cover border-2 border-[#545454] shadow-lg rounded-xl transform rotate-0 z-20`}
       />
       {/* AI book (front) */}
       <Image
@@ -37,7 +37,7 @@ export default function BookComposite({ size = 'md' }: BookCompositeProps) {
         alt="בינה מלאכותית לילדים"
         width={size === 'lg' ? 208 : size === 'md' ? 160 : 112}
         height={size === 'lg' ? 208 : size === 'md' ? 160 : 112}
-        className={`absolute ${book} object-cover border-2 border-black shadow-lg rounded-xl transform rotate-12 translate-x-16 z-30`}
+        className={`absolute ${book} object-cover border-2 border-[#545454] shadow-lg rounded-xl transform rotate-12 translate-x-16 z-30`}
       />
     </div>
   );

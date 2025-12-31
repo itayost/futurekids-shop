@@ -7,8 +7,8 @@ export default function GamesPage() {
     <div className="bg-amber-50 min-h-screen">
       <div className="container mx-auto px-6 py-16">
         {/* Author Intro Card */}
-        <div className="bg-white border-4 border-black rounded-3xl p-8 mb-16 hard-shadow flex flex-col md:flex-row items-center gap-8">
-          <div className="w-32 h-32 bg-emerald-100 border-4 border-black rounded-full overflow-hidden flex-shrink-0">
+        <div className="bg-white border-4 border-[#545454] rounded-3xl p-8 mb-16 hard-shadow flex flex-col md:flex-row items-center gap-8">
+          <div className="w-32 h-32 bg-emerald-100 border-4 border-[#545454] rounded-full overflow-hidden flex-shrink-0">
             <Image
               src="/Stav.png"
               alt="ד״ר סתיו אלבר"
@@ -26,9 +26,9 @@ export default function GamesPage() {
         </div>
 
         {/* Organizations Section */}
-        <div className="bg-white border-4 border-black rounded-3xl p-8 hard-shadow mb-16">
+        <div className="bg-white border-4 border-[#545454] rounded-3xl p-8 hard-shadow mb-16">
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 bg-emerald-500 text-white rounded-xl flex items-center justify-center border-2 border-black">
+            <div className="w-12 h-12 bg-emerald-500 text-white rounded-xl flex items-center justify-center border-2 border-[#545454]">
               <Building2 className="w-6 h-6" />
             </div>
             <h2 className="text-3xl font-black">גופים וארגונים שבחרו בחוויה</h2>
@@ -76,7 +76,7 @@ export default function GamesPage() {
         </div>
 
         {/* CTA - Check out the books */}
-        <div className="bg-emerald-50 border-4 border-black rounded-3xl p-8 text-center hard-shadow">
+        <div className="bg-emerald-50 border-4 border-[#545454] rounded-3xl p-8 text-center hard-shadow">
           <Sparkles className="w-12 h-12 mx-auto text-emerald-500 mb-4" />
           <h3 className="text-2xl font-black mb-4">בינתיים, הכירו את הספרים!</h3>
           <p className="text-gray-700 max-w-xl mx-auto mb-6">
@@ -84,7 +84,7 @@ export default function GamesPage() {
           </p>
           <Link
             href="/#books"
-            className="btn-retro inline-flex items-center gap-2 bg-emerald-500 text-white px-8 py-4 rounded-xl font-black text-lg border-2 border-black hover:bg-emerald-600"
+            className="btn-retro inline-flex items-center gap-2 bg-emerald-500 text-white px-8 py-4 rounded-xl font-black text-lg border-2 border-[#545454] hover:bg-emerald-600"
           >
             <ArrowLeft className="w-5 h-5" />
             לספרים שלנו

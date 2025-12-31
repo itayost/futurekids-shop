@@ -47,11 +47,11 @@ export function CompanionProductModal({
       onClick={onClose}
     >
       <div
-        className="bg-white border-4 border-black rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto hard-shadow-lg animate-scale-in"
+        className="bg-white border-4 border-[#545454] rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto hard-shadow-lg animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-pink-100 to-sky-100 border-b-4 border-black p-6 rounded-t-2xl">
+        <div className="sticky top-0 bg-gradient-to-r from-pink-100 to-sky-100 border-b-4 border-[#545454] p-6 rounded-t-2xl">
           <button
             onClick={onClose}
             className="absolute top-4 left-4 p-2 hover:bg-white/50 rounded-full transition-colors"
@@ -60,7 +60,7 @@ export function CompanionProductModal({
             <X className="w-6 h-6" />
           </button>
           <div className="text-center">
-            <div className="inline-block bg-yellow-400 border-2 border-black px-4 py-1 rounded-full font-bold text-sm mb-3 transform -rotate-2">
+            <div className="inline-block bg-yellow-400 border-2 border-[#545454] px-4 py-1 rounded-full font-bold text-sm mb-3 transform -rotate-2">
               המלצה חמה!
             </div>
             <h2 className="text-2xl font-black">
@@ -74,7 +74,7 @@ export function CompanionProductModal({
           {/* Product Preview */}
           <div className="flex gap-3 items-center justify-center">
             <ProductPreview product={baseProduct} isAdded />
-            <div className="flex-shrink-0 bg-gray-100 rounded-full p-2 border-2 border-black">
+            <div className="flex-shrink-0 bg-gray-100 rounded-full p-2 border-2 border-[#545454]">
               <Plus className="w-6 h-6" />
             </div>
             <ProductPreview product={companionProduct} />
@@ -96,7 +96,7 @@ export function CompanionProductModal({
           <div className="space-y-3">
             <button
               onClick={onAddCompanion}
-              className="btn-retro bg-emerald-500 hover:bg-emerald-600 text-white text-xl py-4 rounded-xl font-black border-4 border-black w-full transition-transform hover:scale-[1.02]"
+              className="btn-retro bg-emerald-500 hover:bg-emerald-600 text-white text-xl py-4 rounded-xl font-black border-4 border-[#545454] w-full transition-transform hover:scale-[1.02]"
             >
               כן! הוסף גם {companionProduct.type === 'book' ? 'את הספר' : 'את החוברת'} - ₪{companionProduct.price}
             </button>
@@ -123,11 +123,11 @@ function ProductPreview({ product, isAdded = false }: { product: Product; isAdde
   return (
     <div className="flex-1 max-w-[140px] relative">
       {isAdded && (
-        <div className="absolute -top-2 -right-2 z-10 bg-emerald-500 rounded-full p-1.5 border-2 border-black">
+        <div className="absolute -top-2 -right-2 z-10 bg-emerald-500 rounded-full p-1.5 border-2 border-[#545454]">
           <Check className="w-4 h-4 text-white" strokeWidth={3} />
         </div>
       )}
-      <div className={`${colorBg[product.color]} rounded-xl p-3 border-3 border-black ${isAdded ? 'opacity-75' : ''}`}>
+      <div className={`${colorBg[product.color]} rounded-xl p-3 border-3 border-[#545454] ${isAdded ? 'opacity-75' : ''}`}>
         <Image
           src={product.image}
           alt={product.name}

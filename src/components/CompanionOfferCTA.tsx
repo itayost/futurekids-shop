@@ -50,7 +50,7 @@ export function CompanionOfferCTA({ offer, colorClasses }: CompanionOfferCTAProp
         {/* Primary CTA: Bundle */}
         <button
           onClick={handleAddBoth}
-          className={`btn-retro ${colorClasses.accent} ${colorClasses.accentHover} text-white text-xl w-full py-5 rounded-xl font-black border-2 border-black text-center transition-transform hover:scale-[1.02]`}
+          className={`btn-retro ${colorClasses.accent} ${colorClasses.accentHover} text-white text-xl w-full py-5 rounded-xl font-black border-2 border-[#545454] text-center transition-transform hover:scale-[1.02]`}
         >
           <div className="flex items-center justify-center gap-3">
             <Package className="w-7 h-7" />
@@ -72,7 +72,7 @@ export function CompanionOfferCTA({ offer, colorClasses }: CompanionOfferCTAProp
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={handleAddSingle}
-            className={`btn-retro ${colorClasses.button} text-white py-4 rounded-xl font-bold border-2 border-black text-center transition-transform hover:scale-[1.02]`}
+            className={`btn-retro ${colorClasses.button} text-white py-4 rounded-xl font-bold border-2 border-[#545454] text-center transition-transform hover:scale-[1.02]`}
           >
             <ShoppingCart className="w-5 h-5 mx-auto mb-1" />
             <div className="text-sm">רק {baseProduct.type === 'book' ? 'הספר' : 'החוברת'}</div>
@@ -80,7 +80,7 @@ export function CompanionOfferCTA({ offer, colorClasses }: CompanionOfferCTAProp
           </button>
           <Link
             href={`/products/${companionProduct.slug}`}
-            className="btn-retro bg-white hover:bg-gray-50 text-gray-800 py-4 rounded-xl font-bold border-2 border-black text-center transition-transform hover:scale-[1.02] flex flex-col items-center justify-center"
+            className="btn-retro bg-white hover:bg-gray-50 text-gray-800 py-4 rounded-xl font-bold border-2 border-[#545454] text-center transition-transform hover:scale-[1.02] flex flex-col items-center justify-center"
           >
             <div className="text-sm">רק {companionProduct.type === 'book' ? 'הספר' : 'החוברת'}</div>
             <div className="text-xl font-black">₪{companionProduct.price}</div>

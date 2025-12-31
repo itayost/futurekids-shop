@@ -25,14 +25,14 @@ function ToastItem({ toast, onDismiss }: ToastProps) {
   }, [toast.id, toast.type, onDismiss]);
 
   return (
-    <div className="animate-slide-up bg-white border-4 border-black rounded-xl p-4 hard-shadow flex items-center gap-3 min-w-[280px]">
+    <div className="animate-slide-up bg-white border-4 border-[#545454] rounded-xl p-4 hard-shadow flex items-center gap-3 min-w-[280px]">
       {toast.type === 'success' && (
-        <div className="w-8 h-8 bg-emerald-100 border-2 border-black rounded-full flex items-center justify-center flex-shrink-0">
+        <div className="w-8 h-8 bg-emerald-100 border-2 border-[#545454] rounded-full flex items-center justify-center flex-shrink-0">
           <Check className="w-4 h-4 text-emerald-600" strokeWidth={3} />
         </div>
       )}
       {toast.type === 'undo' && (
-        <div className="w-8 h-8 bg-gray-100 border-2 border-black rounded-full flex items-center justify-center flex-shrink-0">
+        <div className="w-8 h-8 bg-gray-100 border-2 border-[#545454] rounded-full flex items-center justify-center flex-shrink-0">
           <X className="w-4 h-4 text-gray-600" strokeWidth={3} />
         </div>
       )}

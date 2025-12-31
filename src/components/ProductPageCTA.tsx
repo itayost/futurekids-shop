@@ -27,7 +27,7 @@ export function ProductPageCTA({ product, colorClasses }: ProductPageCTAProps) {
     <div className="flex gap-4 mb-10">
       <AddToCartButton
         product={product}
-        className={`btn-retro ${colorClasses.button} text-white text-xl w-full py-4 rounded-xl font-bold border-2 border-black text-center`}
+        className={`btn-retro ${colorClasses.button} text-white text-xl w-full py-4 rounded-xl font-bold border-2 border-[#545454] text-center`}
       />
     </div>
   );

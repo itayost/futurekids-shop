@@ -6,7 +6,7 @@
 
 :root {
   --background: #fefce8;
-  --foreground: #171717;
+  --foreground: #545454;
 }
 
 body {
@@ -29,32 +29,32 @@ body {
 
 /* Neubrutalism shadows */
 .hard-shadow {
-  box-shadow: 6px 6px 0px 0px #000000;
+  box-shadow: 6px 6px 0px 0px #545454;
 }
 
 .hard-shadow-lg {
-  box-shadow: 8px 8px 0px 0px #000000;
+  box-shadow: 8px 8px 0px 0px #545454;
 }
 
 /* Retro button effect */
 .btn-retro {
-  box-shadow: 4px 4px 0px 0px #000000;
+  box-shadow: 4px 4px 0px 0px #545454;
   transition: all 0.1s;
 }
 
 .btn-retro:hover {
   transform: translate(-1px, -1px);
-  box-shadow: 5px 5px 0px 0px #000000;
+  box-shadow: 5px 5px 0px 0px #545454;
 }
 
 .btn-retro:active {
   transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0px 0px #000000;
+  box-shadow: 2px 2px 0px 0px #545454;
 }
 
 /* Input styling */
 .input-brutal {
-  border: 3px solid #000;
+  border: 3px solid #545454;
   transition: all 0.2s;
   -webkit-appearance: none;
   appearance: none;
@@ -64,7 +64,7 @@ body {
 
 .input-brutal:focus {
   outline: none;
-  box-shadow: 4px 4px 0px 0px #000;
+  box-shadow: 4px 4px 0px 0px #545454;
 }
 
 /* Prevent iOS zoom on select elements */

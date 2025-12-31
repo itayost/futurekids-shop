@@ -36,8 +36,8 @@ export default function LessonsPage() {
     <div className="bg-amber-50 min-h-screen">
       <div className="container mx-auto px-6 py-16">
         {/* Author Intro Card */}
-        <div className="bg-white border-4 border-black rounded-3xl p-8 mb-16 hard-shadow flex flex-col md:flex-row items-center gap-8">
-          <div className="w-32 h-32 bg-sky-100 border-4 border-black rounded-full overflow-hidden flex-shrink-0">
+        <div className="bg-white border-4 border-[#545454] rounded-3xl p-8 mb-16 hard-shadow flex flex-col md:flex-row items-center gap-8">
+          <div className="w-32 h-32 bg-sky-100 border-4 border-[#545454] rounded-full overflow-hidden flex-shrink-0">
             <Image
               src="/Stav.png"
               alt="ד״ר סתיו אלבר"
@@ -57,8 +57,8 @@ export default function LessonsPage() {
         {/* Lessons Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {lessons.map((lesson) => (
-            <div key={lesson.id} className="bg-white border-4 border-black rounded-3xl p-8 hard-shadow">
-              <div className={`w-16 h-16 ${lesson.bgColor} ${lesson.textColor} rounded-2xl flex items-center justify-center border-2 border-black mb-6`}>
+            <div key={lesson.id} className="bg-white border-4 border-[#545454] rounded-3xl p-8 hard-shadow">
+              <div className={`w-16 h-16 ${lesson.bgColor} ${lesson.textColor} rounded-2xl flex items-center justify-center border-2 border-[#545454] mb-6`}>
                 <BookOpen className="w-8 h-8" />
               </div>
               <h3 className="text-2xl font-black mb-4">{lesson.title}</h3>
@@ -68,7 +68,7 @@ export default function LessonsPage() {
               <a
                 href={lesson.downloadUrl}
                 download
-                className={`w-full ${lesson.bgColor} ${lesson.textColor} border-2 border-black rounded-xl p-4 font-bold flex items-center justify-center gap-2 hover:opacity-80 transition-opacity`}
+                className={`w-full ${lesson.bgColor} ${lesson.textColor} border-2 border-[#545454] rounded-xl p-4 font-bold flex items-center justify-center gap-2 hover:opacity-80 transition-opacity`}
               >
                 <FileDown className="w-5 h-5" />
                 הורדה
@@ -78,7 +78,7 @@ export default function LessonsPage() {
         </div>
 
         {/* Info Box */}
-        <div className="mt-16 bg-sky-50 border-4 border-black rounded-3xl p-8 text-center hard-shadow max-w-2xl mx-auto">
+        <div className="mt-16 bg-sky-50 border-4 border-[#545454] rounded-3xl p-8 text-center hard-shadow max-w-2xl mx-auto">
           <Download className="w-12 h-12 mx-auto text-sky-500 mb-4" />
           <h3 className="text-2xl font-black mb-4">שימוש חופשי</h3>
           <p className="text-gray-700">

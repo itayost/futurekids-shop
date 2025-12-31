@@ -18,7 +18,7 @@ function ContactContent() {
           <p className="text-gray-600 mb-6">תודה שפניתם אליי. אחזור אליכם בהקדם.</p>
           <a
             href="/contact"
-            className="btn-retro inline-block bg-pink-500 text-white px-6 py-3 rounded-xl font-bold border-2 border-black hover:bg-pink-600"
+            className="btn-retro inline-block bg-pink-500 text-white px-6 py-3 rounded-xl font-bold border-2 border-[#545454] hover:bg-pink-600"
           >
             שליחת הודעה נוספת
           </a>

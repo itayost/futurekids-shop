@@ -76,7 +76,7 @@ export default function BookWorkbookPairCard({ book, workbook }: BookWorkbookPai
 
   return (
     <>
-      <div className={`${colors.bg} border-4 border-black rounded-3xl overflow-hidden hard-shadow`}>
+      <div className={`${colors.bg} border-4 border-[#545454] rounded-3xl overflow-hidden hard-shadow`}>
         {/* Product Images */}
         <div className={`${colors.bgLight} p-6 relative`}>
           <div className="flex gap-4 justify-center items-end">
@@ -87,7 +87,7 @@ export default function BookWorkbookPairCard({ book, workbook }: BookWorkbookPai
                 alt={book.name}
                 width={140}
                 height={200}
-                className="rounded-lg border-2 border-black shadow-lg"
+                className="rounded-lg border-2 border-[#545454] shadow-lg"
               />
             </div>
             {/* Workbook Image */}
@@ -97,12 +97,12 @@ export default function BookWorkbookPairCard({ book, workbook }: BookWorkbookPai
                 alt={workbook.name}
                 width={100}
                 height={140}
-                className="rounded-lg border-2 border-black shadow-lg"
+                className="rounded-lg border-2 border-[#545454] shadow-lg"
               />
             </div>
           </div>
           {/* Price Badge */}
-          <div className="absolute top-3 left-3 bg-yellow-400 border-2 border-black text-black font-black text-lg px-3 py-1 rounded-full transform -rotate-6">
+          <div className="absolute top-3 left-3 bg-yellow-400 border-2 border-[#545454] text-[#545454] font-black text-lg px-3 py-1 rounded-full transform -rotate-6">
             ₪{bundlePrice}
           </div>
         </div>
@@ -118,7 +118,7 @@ export default function BookWorkbookPairCard({ book, workbook }: BookWorkbookPai
           {/* Main CTA: Buy Both */}
           <button
             onClick={handleAddBoth}
-            className={`btn-retro ${colors.accent} ${colors.accentHover} text-white w-full py-3 rounded-xl font-bold border-2 border-black mb-3 flex items-center justify-center gap-2`}
+            className={`btn-retro ${colors.accent} ${colors.accentHover} text-white w-full py-3 rounded-xl font-bold border-2 border-[#545454] mb-3 flex items-center justify-center gap-2`}
           >
             <Package className="w-5 h-5" />
             <span>ספר + חוברת ביחד</span>
@@ -136,7 +136,7 @@ export default function BookWorkbookPairCard({ book, workbook }: BookWorkbookPai
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={handleAddBookOnly}
-              className="btn-retro bg-white hover:bg-gray-50 text-gray-800 py-2 rounded-lg text-sm font-bold border-2 border-black flex flex-col items-center"
+              className="btn-retro bg-white hover:bg-gray-50 text-gray-800 py-2 rounded-lg text-sm font-bold border-2 border-[#545454] flex flex-col items-center"
             >
               <ShoppingCart className="w-4 h-4 mb-1" />
               <span>רק ספר</span>
@@ -144,7 +144,7 @@ export default function BookWorkbookPairCard({ book, workbook }: BookWorkbookPai
             </button>
             <button
               onClick={handleAddWorkbookOnly}
-              className="btn-retro bg-white hover:bg-gray-50 text-gray-800 py-2 rounded-lg text-sm font-bold border-2 border-black flex flex-col items-center"
+              className="btn-retro bg-white hover:bg-gray-50 text-gray-800 py-2 rounded-lg text-sm font-bold border-2 border-[#545454] flex flex-col items-center"
             >
               <ShoppingCart className="w-4 h-4 mb-1" />
               <span>רק חוברת</span>

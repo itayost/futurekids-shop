@@ -203,7 +203,7 @@ export default function PickupPointSelector({
 
         {/* City Dropdown */}
         {showCityDropdown && filteredCities.length > 0 && (
-          <div className="absolute z-10 w-full mt-1 bg-white border-2 border-black rounded-xl shadow-lg max-h-60 overflow-y-auto">
+          <div className="absolute z-10 w-full mt-1 bg-white border-2 border-[#545454] rounded-xl shadow-lg max-h-60 overflow-y-auto">
             {filteredCities.map((city) => (
               <button
                 key={city}

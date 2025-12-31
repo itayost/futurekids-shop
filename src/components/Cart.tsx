@@ -83,9 +83,9 @@ export default function Cart() {
       />
 
       {/* Sidebar */}
-      <div className={`fixed top-0 left-0 h-full w-full sm:max-w-md bg-white z-50 border-r-4 border-black flex flex-col ${isClosing ? 'animate-slide-out-left' : 'animate-slide-in-left'}`}>
+      <div className={`fixed top-0 left-0 h-full w-full sm:max-w-md bg-white z-50 border-r-4 border-[#545454] flex flex-col ${isClosing ? 'animate-slide-out-left' : 'animate-slide-in-left'}`}>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b-4 border-black">
+        <div className="flex items-center justify-between p-6 border-b-4 border-[#545454]">
           <h2 className="text-2xl font-black flex items-center gap-2">
             <ShoppingBag size={24} />
             סל הקניות
@@ -155,7 +155,7 @@ export default function Cart() {
                     <button
                       key={product.id}
                       onClick={() => addItem(product)}
-                      className="w-full flex items-center gap-3 bg-gray-50 border-2 border-black rounded-xl p-3 hover:bg-gray-100 transition text-right"
+                      className="w-full flex items-center gap-3 bg-gray-50 border-2 border-[#545454] rounded-xl p-3 hover:bg-gray-100 transition text-right"
                     >
                       <div className="w-14 h-18 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
                         <Image
@@ -183,7 +183,7 @@ export default function Cart() {
               {items.map((item) => (
                 <div
                   key={item.productId}
-                  className="flex gap-4 bg-gray-50 border-2 border-black rounded-xl p-4"
+                  className="flex gap-4 bg-gray-50 border-2 border-[#545454] rounded-xl p-4"
                 >
                   <div className="w-20 h-24 bg-white rounded-lg flex items-center justify-center overflow-hidden">
                     <Image
@@ -200,7 +200,7 @@ export default function Cart() {
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                        className="w-10 h-10 bg-white border-2 border-black rounded-lg flex items-center justify-center hover:bg-gray-100 active:scale-95 transition-transform"
+                        className="w-10 h-10 bg-white border-2 border-[#545454] rounded-lg flex items-center justify-center hover:bg-gray-100 active:scale-95 transition-transform"
                       >
                         <Minus size={18} />
                       </button>
@@ -212,7 +212,7 @@ export default function Cart() {
                       </span>
                       <button
                         onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                        className="w-10 h-10 bg-white border-2 border-black rounded-lg flex items-center justify-center hover:bg-gray-100 active:scale-95 transition-transform"
+                        className="w-10 h-10 bg-white border-2 border-[#545454] rounded-lg flex items-center justify-center hover:bg-gray-100 active:scale-95 transition-transform"
                       >
                         <Plus size={18} />
                       </button>
@@ -241,7 +241,7 @@ export default function Cart() {
                   <button
                     key={product.id}
                     onClick={() => addItem(product)}
-                    className="w-full flex items-center gap-3 bg-gray-50 border-2 border-black rounded-xl p-3 hover:bg-gray-100 transition text-right"
+                    className="w-full flex items-center gap-3 bg-gray-50 border-2 border-[#545454] rounded-xl p-3 hover:bg-gray-100 transition text-right"
                   >
                     <div className="w-14 h-18 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
                       <Image
@@ -268,7 +268,7 @@ export default function Cart() {
 
         {/* Footer */}
         {items.length > 0 && (
-          <div className="p-6 border-t-4 border-black bg-gray-50">
+          <div className="p-6 border-t-4 border-[#545454] bg-gray-50">
             {/* Subtotal */}
             <div className="flex items-center justify-between mb-2">
               <span className="text-gray-600">סכום ביניים:</span>
@@ -296,7 +296,7 @@ export default function Cart() {
             <Link
               href="/checkout"
               onClick={handleClose}
-              className="btn-retro block w-full bg-pink-500 text-white text-center py-4 rounded-xl font-black border-2 border-black hover:bg-pink-600"
+              className="btn-retro block w-full bg-pink-500 text-white text-center py-4 rounded-xl font-black border-2 border-[#545454] hover:bg-pink-600"
             >
               לתשלום
             </Link>
