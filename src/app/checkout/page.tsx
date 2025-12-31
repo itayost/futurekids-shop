@@ -149,7 +149,7 @@ export default function CheckoutPage() {
             {/* Shipping Selection */}
             <div className="bg-white border-4 border-[#545454] rounded-2xl p-8 hard-shadow">
               <h2 className="text-3xl font-black mb-6 flex items-center gap-3">
-                <span className="bg-black text-white w-10 h-10 rounded-full flex items-center justify-center text-lg">
+                <span className="bg-[#545454] text-white w-10 h-10 rounded-full flex items-center justify-center text-lg">
                   1
                 </span>
                 אופן קבלת ההזמנה
@@ -192,7 +192,7 @@ export default function CheckoutPage() {
             {/* Customer Details */}
             <div className="bg-white border-4 border-[#545454] rounded-2xl p-8 hard-shadow">
               <h2 className="text-3xl font-black mb-6 flex items-center gap-3">
-                <span className="bg-black text-white w-10 h-10 rounded-full flex items-center justify-center text-lg">
+                <span className="bg-[#545454] text-white w-10 h-10 rounded-full flex items-center justify-center text-lg">
                   2
                 </span>
                 פרטים למשלוח

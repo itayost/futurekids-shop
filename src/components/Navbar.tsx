@@ -57,7 +57,7 @@ export default function Navbar() {
             ))}
             <button
               onClick={() => setIsOpen(true)}
-              className="flex items-center gap-2 bg-black text-white px-5 py-2 rounded-lg hover:bg-gray-800 transition relative mr-4"
+              className="flex items-center gap-2 bg-[#545454] text-white px-5 py-2 rounded-lg hover:bg-gray-600 transition relative mr-4"
             >
               <ShoppingCart size={20} />
               הסל שלי
@@ -76,7 +76,7 @@ export default function Navbar() {
           <div className="md:hidden flex items-center gap-3">
             <button
               onClick={() => setIsOpen(true)}
-              className="flex items-center gap-2 bg-black text-white p-3 rounded-lg relative"
+              className="flex items-center gap-2 bg-[#545454] text-white p-3 rounded-lg relative"
               aria-label="הסל שלי"
             >
               <ShoppingCart size={20} />
@@ -91,7 +91,7 @@ export default function Navbar() {
             </button>
             <button
               onClick={() => setMenuOpen(true)}
-              className="flex items-center bg-black text-white p-3 rounded-lg"
+              className="flex items-center bg-[#545454] text-white p-3 rounded-lg"
               aria-label="תפריט"
             >
               <Menu size={20} />
@@ -102,7 +102,7 @@ export default function Navbar() {
 
       {/* Full-Screen Mobile Menu Overlay */}
       {menuOpen && (
-        <div className={`fixed inset-0 bg-black z-[60] flex flex-col ${isMenuClosing ? 'animate-fade-out' : 'animate-fade-in'}`}>
+        <div className={`fixed inset-0 bg-[#545454] z-[60] flex flex-col ${isMenuClosing ? 'animate-fade-out' : 'animate-fade-in'}`}>
           {/* Header */}
           <div className="flex justify-between items-center p-6 border-b-4 border-pink-500">
             <Image
@@ -114,7 +114,7 @@ export default function Navbar() {
             />
             <button
               onClick={handleCloseMenu}
-              className="p-3 text-white hover:bg-gray-800 rounded-lg transition"
+              className="p-3 text-white hover:bg-gray-600 rounded-lg transition"
               aria-label="סגור תפריט"
             >
               <X size={28} />

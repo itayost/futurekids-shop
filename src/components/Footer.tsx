@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="bg-black text-white py-12 border-t-8 border-pink-400">
+    <footer className="bg-[#545454] text-white py-12 border-t-8 border-pink-400">
       <div className="container mx-auto px-6 text-center">
         <p className="font-bold text-xl mb-2">Kid<span className="text-pink-400">Code</span></p>
         <p className="text-gray-400 text-sm">כל הזכויות שמורות לד&quot;ר סתיו אלבר © 2025</p>

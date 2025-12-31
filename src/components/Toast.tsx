@@ -48,7 +48,7 @@ function ToastItem({ toast, onDismiss }: ToastProps) {
             toast.undoAction?.();
             onDismiss(toast.id);
           }}
-          className="flex items-center gap-1 bg-black text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-gray-800 transition"
+          className="flex items-center gap-1 bg-[#545454] text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-gray-600 transition"
         >
           <Undo2 className="w-3 h-3" />
           בטל

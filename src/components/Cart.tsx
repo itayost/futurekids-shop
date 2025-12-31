@@ -78,7 +78,7 @@ export default function Cart() {
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 bg-black/50 z-50 ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`}
+        className={`fixed inset-0 bg-[#545454]/50 z-50 ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`}
         onClick={handleClose}
       />
 
@@ -170,7 +170,7 @@ export default function Cart() {
                         <p className="font-bold text-sm truncate">{product.name}</p>
                         <p className="text-pink-500 font-black">₪{product.price}</p>
                       </div>
-                      <div className="bg-black text-white px-3 py-1.5 rounded-lg text-xs font-bold flex-shrink-0">
+                      <div className="bg-[#545454] text-white px-3 py-1.5 rounded-lg text-xs font-bold flex-shrink-0">
                         + הוסף
                       </div>
                     </button>
@@ -256,7 +256,7 @@ export default function Cart() {
                       <p className="font-bold text-sm truncate">{product.name}</p>
                       <p className="text-pink-500 font-black">₪{product.price}</p>
                     </div>
-                    <div className="bg-black text-white px-3 py-1.5 rounded-lg text-xs font-bold flex-shrink-0">
+                    <div className="bg-[#545454] text-white px-3 py-1.5 rounded-lg text-xs font-bold flex-shrink-0">
                       + הוסף
                     </div>
                   </button>

@@ -99,7 +99,7 @@ export default function Home() {
       </header>
 
       {/* Features Bar */}
-      <section className="bg-black text-white py-6">
+      <section className="bg-[#545454] text-white py-6">
         <div className="container mx-auto px-6 flex flex-wrap justify-center gap-8 text-center font-bold">
           <div className="flex items-center gap-2">
             <Cpu className="w-6 h-6 text-sky-400" />
