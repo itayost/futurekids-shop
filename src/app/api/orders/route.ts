@@ -90,7 +90,7 @@ export async function PATCH(request: NextRequest) {
 
     const result = await sql`
       UPDATE orders
-      SET status = ${status}, updated_at = NOW()
+      SET status = ${status}
       WHERE id = ${orderId}
       RETURNING id, status
     `;
