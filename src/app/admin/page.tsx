@@ -225,7 +225,7 @@ export default function AdminPage() {
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-md font-bold text-gray-900 mb-2">סיסמה</label>
+              <label className="block text-md font-bold text-[#545454] mb-2">סיסמה</label>
               <input
                 type="password"
                 value={password}

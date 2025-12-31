@@ -10,7 +10,7 @@ function LoadingFallback() {
     <div className="bg-gray-50 min-h-screen flex items-center justify-center p-6">
       <div className="bg-white border-4 border-[#545454] rounded-3xl p-12 hard-shadow text-center max-w-lg">
         <Loader2 className="w-16 h-16 mx-auto text-pink-500 animate-spin mb-6" />
-        <h1 className="text-2xl font-black text-gray-900 mb-4">טוען...</h1>
+        <h1 className="text-2xl font-black text-[#545454] mb-4">טוען...</h1>
       </div>
     </div>
   );
@@ -66,7 +66,7 @@ function PaymentSuccessContent() {
       <div className="bg-gray-50 min-h-screen flex items-center justify-center p-6">
         <div className="bg-white border-4 border-[#545454] rounded-3xl p-12 hard-shadow text-center max-w-lg">
           <Loader2 className="w-16 h-16 mx-auto text-pink-500 animate-spin mb-6" />
-          <h1 className="text-2xl font-black text-gray-900 mb-4">מאמת את התשלום...</h1>
+          <h1 className="text-2xl font-black text-[#545454] mb-4">מאמת את התשלום...</h1>
           <p className="text-gray-600">אנא המתינו רגע</p>
         </div>
       </div>
@@ -80,7 +80,7 @@ function PaymentSuccessContent() {
           <div className="w-24 h-24 bg-red-100 border-4 border-[#545454] rounded-full flex items-center justify-center mx-auto mb-8">
             <span className="text-4xl">❌</span>
           </div>
-          <h1 className="text-3xl font-black text-gray-900 mb-4">שגיאה</h1>
+          <h1 className="text-3xl font-black text-[#545454] mb-4">שגיאה</h1>
           <p className="text-lg text-gray-700 mb-8">{error}</p>
           <Link
             href="/"
@@ -101,7 +101,7 @@ function PaymentSuccessContent() {
           <CheckCircle className="w-12 h-12 text-emerald-600" strokeWidth={3} />
         </div>
 
-        <h1 className="text-4xl font-black text-gray-900 mb-4">התשלום הושלם!</h1>
+        <h1 className="text-4xl font-black text-[#545454] mb-4">התשלום הושלם!</h1>
 
         <p className="text-xl text-gray-700 mb-8 leading-relaxed">
           תודה רבה על הרכישה! הספרים שלכם בדרך אליכם.

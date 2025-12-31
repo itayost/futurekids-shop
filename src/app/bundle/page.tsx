@@ -122,7 +122,7 @@ function BundleContent() {
             {selectedIndex === 1 ? 'הכי פופולרי' : selectedIndex === 2 ? 'הכי משתלם' : 'בסיסי'}
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl font-black text-[#545454] mb-6 leading-tight">
             {selectedBundle.name}
             <span className="block text-pink-500 text-2xl mt-2 font-bold">
               {selectedBundle.subtitle}
@@ -141,7 +141,7 @@ function BundleContent() {
           </ul>
 
           <div className="flex flex-wrap items-end gap-3 sm:gap-4 mb-8">
-            <div className="text-5xl sm:text-6xl font-black text-gray-900">₪{selectedBundle.price}</div>
+            <div className="text-5xl sm:text-6xl font-black text-[#545454]">₪{selectedBundle.price}</div>
             <div className="text-xl sm:text-2xl text-gray-400 line-through font-bold mb-1 sm:mb-2">
               ₪{selectedBundle.originalPrice}
             </div>

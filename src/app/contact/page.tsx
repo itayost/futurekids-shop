@@ -43,7 +43,7 @@ export default function ContactPage() {
           <div className="inline-block bg-pink-500 text-white px-4 py-2 rounded-full font-bold text-sm mb-4">
             דברו איתי
           </div>
-          <h1 className="text-5xl font-black text-gray-900 mb-6">צור קשר</h1>
+          <h1 className="text-5xl font-black text-[#545454] mb-6">צור קשר</h1>
           <p className="text-xl text-gray-700 max-w-2xl mx-auto">
             יש לכם שאלה? רוצים להזמין הרצאה או סדנה? אשמח לשמוע מכם!
           </p>

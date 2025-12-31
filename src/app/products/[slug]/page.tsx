@@ -81,7 +81,7 @@ export default async function ProductPage({ params }: Props) {
 
           {/* Product Info */}
           <div>
-            <h1 className="text-5xl font-black mb-4 leading-tight text-gray-900">
+            <h1 className="text-5xl font-black mb-4 leading-tight text-[#545454]">
               {product.name}
             </h1>
             <div className="text-lg font-medium text-gray-600 mb-6 border-b-2 border-gray-200 pb-6">

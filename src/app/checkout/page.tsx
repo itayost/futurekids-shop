@@ -201,7 +201,7 @@ export default function CheckoutPage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-md font-bold text-gray-900 mb-2">שם פרטי</label>
+                  <label className="block text-md font-bold text-[#545454] mb-2">שם פרטי</label>
                   <input
                     type="text"
                     name="firstName"
@@ -212,7 +212,7 @@ export default function CheckoutPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-md font-bold text-gray-900 mb-2">שם משפחה</label>
+                  <label className="block text-md font-bold text-[#545454] mb-2">שם משפחה</label>
                   <input
                     type="text"
                     name="lastName"
@@ -225,7 +225,7 @@ export default function CheckoutPage() {
               </div>
 
               <div>
-                <label className="block text-md font-bold text-gray-900 mb-2">אימייל</label>
+                <label className="block text-md font-bold text-[#545454] mb-2">אימייל</label>
                 <input
                   type="email"
                   name="email"
@@ -237,7 +237,7 @@ export default function CheckoutPage() {
               </div>
 
               <div>
-                <label className="block text-md font-bold text-gray-900 mb-2">טלפון</label>
+                <label className="block text-md font-bold text-[#545454] mb-2">טלפון</label>
                 <input
                   type="tel"
                   name="phone"
@@ -260,7 +260,7 @@ export default function CheckoutPage() {
               {shippingMethod === 'delivery' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-md font-bold text-gray-900 mb-2">עיר</label>
+                    <label className="block text-md font-bold text-[#545454] mb-2">עיר</label>
                     <input
                       type="text"
                       name="city"
@@ -271,7 +271,7 @@ export default function CheckoutPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-md font-bold text-gray-900 mb-2">כתובת</label>
+                    <label className="block text-md font-bold text-[#545454] mb-2">כתובת</label>
                     <input
                       type="text"
                       name="address"

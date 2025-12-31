@@ -74,7 +74,7 @@ export default function Home() {
       {/* Hero Section */}
       <header className="container mx-auto px-6 py-16 flex flex-col md:flex-row items-center gap-12">
         <div className="md:w-1/2 text-center md:text-right">
-          <h1 className="text-4xl md:text-5xl font-black text-gray-900 leading-tight mb-6 animate-hero-2">
+          <h1 className="text-4xl md:text-5xl font-black text-[#545454] leading-tight mb-6 animate-hero-2">
             הדור הבא של מומחי
             <span className="block">הטכנולוגיה גדל כאן</span>
           </h1>
@@ -119,7 +119,7 @@ export default function Home() {
       {/* Products Section */}
       <section id="books" className="container mx-auto px-6 py-20">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-black text-gray-900 mb-4">ארגז הכלים לילדי העתיד</h2>
+          <h2 className="text-4xl font-black text-[#545454] mb-4">ארגז הכלים לילדי העתיד</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

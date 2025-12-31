@@ -17,7 +17,7 @@ function PaymentFailedContent() {
           <XCircle className="w-12 h-12 text-red-600" strokeWidth={3} />
         </div>
 
-        <h1 className="text-4xl font-black text-gray-900 mb-4">התשלום נכשל</h1>
+        <h1 className="text-4xl font-black text-[#545454] mb-4">התשלום נכשל</h1>
 
         <p className="text-xl text-gray-700 mb-8 leading-relaxed">
           {errorMessage || 'לא הצלחנו לעבד את התשלום. אנא נסו שוב.'}
@@ -40,7 +40,7 @@ function PaymentFailedContent() {
 
           <Link
             href="/"
-            className="btn-retro inline-flex items-center justify-center gap-2 bg-white text-gray-900 px-8 py-4 rounded-xl font-bold text-lg border-2 border-[#545454] hover:bg-gray-50 w-full"
+            className="btn-retro inline-flex items-center justify-center gap-2 bg-white text-[#545454] px-8 py-4 rounded-xl font-bold text-lg border-2 border-[#545454] hover:bg-gray-50 w-full"
           >
             <Home className="w-5 h-5" />
             חזרה לחנות

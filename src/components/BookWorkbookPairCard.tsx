@@ -110,7 +110,7 @@ export default function BookWorkbookPairCard({ book, workbook }: BookWorkbookPai
         {/* Content */}
         <div className="p-5">
           {/* Title */}
-          <h3 className="font-black text-xl mb-2 text-gray-900">{book.name}</h3>
+          <h3 className="font-black text-xl mb-2 text-[#545454]">{book.name}</h3>
           <p className="text-sm text-gray-600 mb-4 line-clamp-2">
             {book.description.split('\n')[0]}
           </p>

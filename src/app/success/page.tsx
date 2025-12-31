@@ -9,7 +9,7 @@ export default function SuccessPage() {
           <CheckCircle className="w-12 h-12 text-emerald-600" strokeWidth={3} />
         </div>
 
-        <h1 className="text-4xl font-black text-gray-900 mb-4">ההזמנה התקבלה!</h1>
+        <h1 className="text-4xl font-black text-[#545454] mb-4">ההזמנה התקבלה!</h1>
 
         <p className="text-xl text-gray-700 mb-8 leading-relaxed">
           תודה רבה על הרכישה! הספרים שלכם בדרך אליכם.

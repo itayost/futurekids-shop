@@ -38,7 +38,7 @@ function ToastItem({ toast, onDismiss }: ToastProps) {
       )}
       <div className="flex-1">
         {toast.productName && (
-          <p className="font-bold text-sm text-gray-900">{toast.productName}</p>
+          <p className="font-bold text-sm text-[#545454]">{toast.productName}</p>
         )}
         <p className="text-sm text-gray-600">{toast.message}</p>
       </div>

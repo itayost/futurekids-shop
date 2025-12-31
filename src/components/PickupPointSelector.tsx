@@ -187,7 +187,7 @@ export default function PickupPointSelector({
     <div className="space-y-4">
       {/* City Search */}
       <div className="relative" ref={dropdownRef}>
-        <label className="block text-md font-bold text-gray-900 mb-2">
+        <label className="block text-md font-bold text-[#545454] mb-2">
           חפש עיר
         </label>
         <div className="relative">
