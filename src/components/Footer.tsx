@@ -9,7 +9,7 @@ export default function Footer() {
           alt="KidCode"
           width={120}
           height={40}
-          className="mx-auto mb-2 brightness-0 invert"
+          className="mx-auto mb-2"
         />
         <p className="text-gray-400 text-sm">כל הזכויות שמורות לד&quot;ר סתיו אלבר © 2025</p>
         <p className="text-gray-400 text-xs mt-4">
