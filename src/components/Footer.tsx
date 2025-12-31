@@ -1,8 +1,16 @@
+import Image from 'next/image';
+
 export default function Footer() {
   return (
     <footer className="bg-[#545454] text-white py-12 border-t-8 border-pink-400">
       <div className="container mx-auto px-6 text-center">
-        <p className="font-bold text-xl mb-2">Kid<span className="text-pink-400">Code</span></p>
+        <Image
+          src="/logo.png"
+          alt="KidCode"
+          width={120}
+          height={40}
+          className="mx-auto mb-2 brightness-0 invert"
+        />
         <p className="text-gray-400 text-sm">כל הזכויות שמורות לד&quot;ר סתיו אלבר © 2025</p>
         <p className="text-gray-400 text-xs mt-4">
           בנייה ועיצוב:{' '}
