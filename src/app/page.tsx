@@ -114,7 +114,7 @@ export default function Home() {
                 />
               </div>
               {/* Book 3 - Algorithms (front center) */}
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[45%] z-10 animate-book-3">
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[35%] z-10 animate-book-3">
                 <Image
                   src="/algorythm.png"
                   alt="אלגוריתמים לילדים"
