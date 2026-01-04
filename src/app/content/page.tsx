@@ -49,7 +49,7 @@ const articles = [
     publication: 'מאקו',
     title: 'לגדול עם AI: הספר החדש שמקרב את הבינה המלאכותית לילדים',
     link: 'https://www.mako.co.il/home-family-kids/Article-182a489c211f691026.htm',
-    logo: '/content/articles/mako.jpg',
+    logo: '/content/articles/mako.svg',
   },
   {
     id: 8,
@@ -84,7 +84,7 @@ const articles = [
     publication: 'מאקו',
     title: '7 חידות צופן שיעבירו לכם את כל כיפור',
     link: 'https://www.mako.co.il/home-family-kids/Article-e0712c3e1bf8991026.htm',
-    logo: '/content/articles/mako.jpg',
+    logo: '/content/articles/mako.svg',
   },
 ];
 

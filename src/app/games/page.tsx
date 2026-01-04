@@ -65,7 +65,7 @@ export default function GamesPage() {
             </div>
             <div className="h-16 md:h-20 flex items-center">
               <Image
-                src="/games/logos/לוגו-מלא-שקוף.png"
+                src="/games/logos/לוגו-מלא-שקוף.webp"
                 alt="ארגון"
                 width={120}
                 height={60}

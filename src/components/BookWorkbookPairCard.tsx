@@ -77,29 +77,16 @@ export default function BookWorkbookPairCard({ book, workbook }: BookWorkbookPai
   return (
     <>
       <div className={`${colors.bg} border-4 border-[#545454] rounded-3xl overflow-hidden hard-shadow`}>
-        {/* Product Images */}
+        {/* Product Image - Pack (book + workbook) */}
         <div className={`${colors.bgLight} p-6 relative`}>
-          <div className="flex gap-4 justify-center items-end">
-            {/* Book Image */}
-            <div className="relative">
-              <Image
-                src={book.image}
-                alt={book.name}
-                width={140}
-                height={200}
-                className="rounded-lg border-2 border-[#545454] shadow-lg"
-              />
-            </div>
-            {/* Workbook Image */}
-            <div className="relative -mr-8">
-              <Image
-                src={workbook.image}
-                alt={workbook.name}
-                width={100}
-                height={140}
-                className="rounded-lg border-2 border-[#545454] shadow-lg"
-              />
-            </div>
+          <div className="flex justify-center">
+            <Image
+              src={book.image.replace('.png', '-pack.png')}
+              alt={`${book.name} + חוברת פעילויות`}
+              width={280}
+              height={280}
+              className="w-full max-w-[280px] h-auto"
+            />
           </div>
           {/* Price Badge */}
           <div className="absolute top-3 left-3 bg-yellow-400 border-2 border-[#545454] text-[#545454] font-black text-lg px-3 py-1 rounded-full transform -rotate-6">

@@ -5,7 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Star, ChevronDown, Cpu, Lock, GitBranch, User, BookOpen, Gift, Users } from 'lucide-react';
 import BookWorkbookPairCard from '@/components/BookWorkbookPairCard';
-import BookComposite from '@/components/BookComposite';
 import { books, workbooks, bundles } from '@/lib/products';
 import { useCart } from '@/components/CartProvider';
 
@@ -91,9 +90,41 @@ export default function Home() {
             </a>
           </div>
         </div>
-        <div className="md:w-1/2 flex justify-center animate-hero-scale">
-          <div className="bg-white border-4 border-[#545454] rounded-3xl p-8 hard-shadow-lg">
-            <BookComposite size="md" />
+        <div className="md:w-1/2 flex justify-center animate-hero-scale pb-3 pr-3 md:pb-4 md:pr-4">
+          <div className="bg-white border-4 border-[#545454] rounded-2xl md:rounded-3xl p-4 md:p-8 hard-shadow-lg flex items-center justify-center">
+            <div className="relative w-[240px] h-[210px] md:w-[320px] md:h-[280px]">
+              {/* Book 1 - AI (back left) */}
+              <div className="absolute left-0 top-1/2 -translate-y-[60%] transform -rotate-12 animate-book-1">
+                <Image
+                  src="/AI.png"
+                  alt="בינה מלאכותית לילדים"
+                  width={160}
+                  height={220}
+                  className="w-[120px] md:w-[160px] h-auto drop-shadow-[4px_6px_8px_rgba(0,0,0,0.25)]"
+                />
+              </div>
+              {/* Book 2 - Encryption (back right) */}
+              <div className="absolute right-0 top-1/2 -translate-y-[60%] transform rotate-12 animate-book-2">
+                <Image
+                  src="/encryption.png"
+                  alt="סודות ההצפנה לילדים"
+                  width={160}
+                  height={220}
+                  className="w-[120px] md:w-[160px] h-auto drop-shadow-[4px_6px_8px_rgba(0,0,0,0.25)]"
+                />
+              </div>
+              {/* Book 3 - Algorithms (front center) */}
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[45%] z-10 animate-book-3">
+                <Image
+                  src="/algorythm.png"
+                  alt="אלגוריתמים לילדים"
+                  width={170}
+                  height={230}
+                  className="w-[130px] md:w-[170px] h-auto drop-shadow-[4px_8px_10px_rgba(0,0,0,0.3)]"
+                  priority
+                />
+              </div>
+            </div>
           </div>
         </div>
       </header>
@@ -201,7 +232,7 @@ export default function Home() {
       {/* Author Section */}
       <section className="container mx-auto px-6 py-16">
         <div className="bg-blue-50 border-4 border-[#545454] rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 relative">
-          <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-white border-2 border-[#545454] px-6 py-2 rounded-full font-bold shadow-[4px_4px_0px_0px_#000000] flex items-center gap-2">
+          <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-white border-2 border-[#545454] px-6 py-2 rounded-full font-bold shadow-[4px_4px_0px_0px_#545454] flex items-center gap-2">
             <User className="w-5 h-5" />
             מי אני?
           </div>
