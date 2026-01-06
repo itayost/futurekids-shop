@@ -15,6 +15,9 @@ const rubik = Rubik({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.kidcode.org.il'),
+  verification: {
+    google: 'hWpcti1E6fMKdAhE1LppXvjRnDgTvGWWokQUfHIeSqo',
+  },
   title: "KidCode - ספרי מדע וטכנולוגיה לילדים",
   description: "סדרת ספרי KidCode מנגישה לילדים את עולם הטכנולוגיה - בינה מלאכותית, הצפנה ואלגוריתמים. מאת ד\"ר סתיו אלבר, מהנדסת תוכנה ב-Google ומרצה בטכניון.",
   keywords: ["ספרי ילדים", "מדע לילדים", "בינה מלאכותית", "הצפנה", "אלגוריתמים", "ד\"ר סתיו אלבר", "KidCode"],
