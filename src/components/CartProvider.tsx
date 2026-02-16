@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { CartItem, CartContextType, Product, Toast } from '@/types';
 import ToastContainer from './Toast';
+import { trackAddToCart } from '@/lib/pixel';
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
@@ -64,6 +65,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
           image: product.image,
         },
       ];
+    });
+    trackAddToCart({
+      content_name: product.name,
+      content_ids: [product.id],
+      value: product.price,
     });
     // Show toast instead of opening cart
     addToast({

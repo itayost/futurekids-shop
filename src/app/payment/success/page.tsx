@@ -4,6 +4,8 @@ import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircle, Home, Mail, Loader2 } from 'lucide-react';
+import { trackPurchase } from '@/lib/pixel';
+import { CartItem } from '@/types';
 
 function LoadingFallback() {
   return (
@@ -46,6 +48,21 @@ function PaymentSuccessContent() {
 
         if (response.ok && result.success) {
           setVerified(true);
+
+          // Fire Meta Pixel Purchase event (before clearing cart)
+          const cartData = localStorage.getItem('futurekids-cart');
+          if (cartData && orderId) {
+            try {
+              const cartItems: CartItem[] = JSON.parse(cartData);
+              trackPurchase({
+                event_id: orderId,
+                content_ids: cartItems.map((i) => i.productId),
+                num_items: cartItems.reduce((sum, i) => sum + i.quantity, 0),
+                value: cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0),
+              });
+            } catch { /* ignore parse errors */ }
+          }
+
           // Clear cart from localStorage
           localStorage.removeItem('futurekids-cart');
         } else {

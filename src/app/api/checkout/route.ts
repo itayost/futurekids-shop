@@ -24,6 +24,8 @@ interface CheckoutRequest {
   total: number;
   pickupPointCode?: string;
   pickupPointName?: string;
+  fbc?: string | null;
+  fbp?: string | null;
 }
 
 export async function POST(request: NextRequest) {
@@ -45,13 +47,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Capture Meta tracking params for CAPI
+    const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null;
+    const clientUa = request.headers.get('user-agent') || null;
+
     // Get PayPage ID from environment
     const paypageId = parseInt(process.env.ICOUNT_PAYPAGE_ID || '6');
 
     // Step 1: Create order in database with PENDING status
     const orderResult = await sql`
-      INSERT INTO orders (email, first_name, last_name, phone, address, city, total, status, shipping_method, shipping_cost, pickup_point_code, pickup_point_name, bundle_discount, bundle_name)
-      VALUES (${body.email}, ${body.firstName}, ${body.lastName}, ${body.phone}, ${body.address}, ${body.city}, ${body.total}, 'PENDING', ${body.shippingMethod || null}, ${body.shippingCost || null}, ${body.pickupPointCode || null}, ${body.pickupPointName || null}, ${body.bundleDiscount || 0}, ${body.bundleName || null})
+      INSERT INTO orders (email, first_name, last_name, phone, address, city, total, status, shipping_method, shipping_cost, pickup_point_code, pickup_point_name, bundle_discount, bundle_name, fb_click_id, fb_browser_id, client_ip, client_ua)
+      VALUES (${body.email}, ${body.firstName}, ${body.lastName}, ${body.phone}, ${body.address}, ${body.city}, ${body.total}, 'PENDING', ${body.shippingMethod || null}, ${body.shippingCost || null}, ${body.pickupPointCode || null}, ${body.pickupPointName || null}, ${body.bundleDiscount || 0}, ${body.bundleName || null}, ${body.fbc || null}, ${body.fbp || null}, ${clientIp}, ${clientUa})
       RETURNING id, created_at
     `;
 

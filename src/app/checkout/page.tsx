@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -8,6 +8,7 @@ import { ChevronLeft, Lock, ShoppingBag, Gift, Truck, MapPin } from 'lucide-reac
 import { useCart } from '@/components/CartProvider';
 import PickupPointSelector from '@/components/PickupPointSelector';
 import { PickupPoint } from '@/types';
+import { trackInitiateCheckout, getFbCookies } from '@/lib/pixel';
 
 type ShippingOption = 'pickup-point' | 'delivery';
 
@@ -34,6 +35,18 @@ export default function CheckoutPage() {
 
   const shippingCost = SHIPPING_OPTIONS[shippingMethod].price;
   const finalTotal = total + shippingCost;
+
+  // Track InitiateCheckout on page load
+  useEffect(() => {
+    if (items.length > 0) {
+      trackInitiateCheckout({
+        content_ids: items.map((i) => i.productId),
+        num_items: items.reduce((sum, i) => sum + i.quantity, 0),
+        value: finalTotal,
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -68,6 +81,9 @@ export default function CheckoutPage() {
             address: formData.address,
           };
 
+      // Read Meta cookies for CAPI attribution
+      const { fbc, fbp } = getFbCookies();
+
       // Call checkout API - creates order and returns payment page URL
       const response = await fetch('/api/checkout', {
         method: 'POST',
@@ -91,6 +107,8 @@ export default function CheckoutPage() {
           shippingMethod,
           shippingCost,
           total: finalTotal,
+          fbc,
+          fbp,
         }),
       });
 
