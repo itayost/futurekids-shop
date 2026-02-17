@@ -1,11 +1,26 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Script from 'next/script';
+import { getConsent } from '@/lib/consent';
 
 const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 
 export default function MetaPixel() {
-  if (!PIXEL_ID) return null;
+  const [consented, setConsented] = useState(false);
+
+  useEffect(() => {
+    setConsented(getConsent() === 'accepted');
+
+    const handleConsentChange = () => {
+      setConsented(getConsent() === 'accepted');
+    };
+
+    window.addEventListener('consent-changed', handleConsentChange);
+    return () => window.removeEventListener('consent-changed', handleConsentChange);
+  }, []);
+
+  if (!PIXEL_ID || !consented) return null;
 
   return (
     <>

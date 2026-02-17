@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import Cart from "@/components/Cart";
 import JsonLd from "./JsonLd";
 import MetaPixel from "@/components/MetaPixel";
+import CookieBanner from "@/components/CookieBanner";
 
 const rubik = Rubik({
   variable: "--font-rubik",
@@ -82,6 +83,7 @@ export default function RootLayout({
           </main>
           <Footer />
           <Cart />
+          <CookieBanner />
         </CartProvider>
       </body>
     </html>

@@ -1,3 +1,5 @@
+import { hasConsent } from '@/lib/consent';
+
 declare global {
   interface Window {
     fbq?: (...args: unknown[]) => void;
@@ -5,7 +7,7 @@ declare global {
 }
 
 function fbq(...args: unknown[]) {
-  if (typeof window !== 'undefined' && window.fbq) {
+  if (typeof window !== 'undefined' && window.fbq && hasConsent()) {
     window.fbq(...args);
   }
 }
