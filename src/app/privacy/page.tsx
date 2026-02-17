@@ -136,10 +136,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-bold text-[#545454] mb-3">יצירת קשר</h2>
             <p>
-              לשאלות, בקשות או תלונות בנושא פרטיות, ניתן לפנות אלינו בדוא&quot;ל:{' '}
-              <a href="mailto:stav.elbar@gmail.com" className="text-pink-500 underline font-bold hover:text-pink-600">
-                stav.elbar@gmail.com
-              </a>
+              לשאלות, בקשות או תלונות בנושא פרטיות, ניתן לפנות אלינו דרך עמוד יצירת הקשר באתר.
             </p>
           </section>
 
