@@ -55,8 +55,8 @@ export async function POST(request: NextRequest) {
         UPDATE orders
         SET
           status = 'PAID',
-          icount_doc_id = ${docId || saleUniqid},
-          updated_at = NOW()
+          paid_at = COALESCE(paid_at, NOW()),
+          icount_doc_id = ${docId || saleUniqid}
         WHERE id = ${order.id} AND status = 'PENDING'
         RETURNING id
       `;
@@ -74,9 +74,7 @@ export async function POST(request: NextRequest) {
       // path already confirmed as PAID.
       await sql`
         UPDATE orders
-        SET
-          status = 'FAILED',
-          updated_at = NOW()
+        SET status = 'FAILED'
         WHERE id = ${order.id} AND status = 'PENDING'
       `;
 
