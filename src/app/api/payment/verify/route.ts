@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
+import { sendOrderPurchaseEvent } from '@/lib/purchase-event';
 
 // This route verifies payment and updates order status
 // Called from the success page after iCount redirect
@@ -15,15 +16,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Update order status to PAID
+    // Only overwrite icount_doc_id when the redirect actually carried a value.
+    // Otherwise keep the sale_uniqid stored at checkout, which the IPN handler
+    // relies on to look the order up as a fallback path.
+    const docValue = docId || paymentId || null;
+
+    // Update order status to PAID. The status = 'PENDING' guard makes this an
+    // atomic transition: only the first request (browser verify or IPN) to flip
+    // the order wins the returned row and is responsible for sending CAPI.
     const result = await sql`
       UPDATE orders
       SET status = 'PAID',
           paid_at = NOW(),
-          icount_doc_id = ${docId || paymentId || null}
+          icount_doc_id = COALESCE(${docValue}::text, icount_doc_id)
       WHERE id = ${orderId} AND status = 'PENDING'
       RETURNING id, status
     `;
+
+    // Won the PENDING -> PAID transition: fire the Purchase event exactly once.
+    if (result.length > 0) {
+      sendOrderPurchaseEvent(orderId).catch((err: unknown) =>
+        console.error('Meta CAPI failed (verify):', err)
+      );
+    }
 
     if (result.length === 0) {
       // Order not found or already processed

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
-import { sendPurchaseEvent } from '@/lib/meta-capi';
+import { sendOrderPurchaseEvent } from '@/lib/purchase-event';
 
 // IPN (Instant Payment Notification) handler
 // iCount calls this endpoint server-to-server when payment is completed
@@ -47,58 +47,37 @@ export async function POST(request: NextRequest) {
 
     // Update order with payment confirmation
     if (status === 'success' || confirmationCode) {
-      await sql`
+      // Atomic PENDING -> PAID transition. If the browser verify path already
+      // confirmed this order, no row is returned and we skip CAPI so the event
+      // is never sent twice. This path is the fallback for when the customer
+      // never lands back on the success page (e.g. closed the tab).
+      const paidResult = await sql`
         UPDATE orders
         SET
           status = 'PAID',
           icount_doc_id = ${docId || saleUniqid},
           updated_at = NOW()
-        WHERE id = ${order.id}
+        WHERE id = ${order.id} AND status = 'PENDING'
+        RETURNING id
       `;
 
-      console.log(`Order ${order.id} marked as PAID. Doc: ${docNumber || docId}`);
+      console.log(`Order ${order.id} IPN processed. Doc: ${docNumber || docId}. Won transition: ${paidResult.length > 0}`);
 
-      // Send Purchase event to Meta Conversions API (non-blocking)
-      const orderDetails = await sql`
-        SELECT o.id, o.email, o.first_name, o.last_name, o.phone, o.city, o.total,
-               o.fb_click_id, o.fb_browser_id, o.client_ip, o.client_ua
-        FROM orders o WHERE o.id = ${order.id}
-      `;
-      const orderItems = await sql`
-        SELECT product_id, quantity FROM order_items WHERE order_id = ${order.id}
-      `;
-
-      if (orderDetails.length > 0) {
-        const o = orderDetails[0];
-        sendPurchaseEvent({
-          event_id: o.id,
-          value: parseFloat(o.total),
-          content_ids: orderItems.map((i) => i.product_id as string),
-          contents: orderItems.map((i) => ({
-            id: i.product_id as string,
-            quantity: Number(i.quantity),
-          })),
-          num_items: orderItems.reduce((sum, i) => sum + Number(i.quantity), 0),
-          user: {
-            email: o.email,
-            phone: o.phone,
-            firstName: o.first_name,
-            lastName: o.last_name,
-            city: o.city,
-          },
-          fbc: o.fb_click_id,
-          fbp: o.fb_browser_id,
-          client_ip: o.client_ip,
-          client_ua: o.client_ua,
-        }).catch((err: unknown) => console.error('Meta CAPI failed:', err));
+      // Won the PENDING -> PAID transition: send the Purchase event (non-blocking).
+      if (paidResult.length > 0) {
+        sendOrderPurchaseEvent(order.id).catch((err: unknown) =>
+          console.error('Meta CAPI failed (ipn):', err)
+        );
       }
     } else {
+      // Only fail orders still pending. Never overwrite an order the verify
+      // path already confirmed as PAID.
       await sql`
         UPDATE orders
         SET
           status = 'FAILED',
           updated_at = NOW()
-        WHERE id = ${order.id}
+        WHERE id = ${order.id} AND status = 'PENDING'
       `;
 
       console.log(`Order ${order.id} payment failed`);
