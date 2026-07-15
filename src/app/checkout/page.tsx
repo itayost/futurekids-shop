@@ -32,9 +32,13 @@ export default function CheckoutPage() {
     city: '',
     address: '',
   });
+  const [couponInput, setCouponInput] = useState('');
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponApplied, setCouponApplied] = useState(false);
+  const [couponMsg, setCouponMsg] = useState<string | null>(null);
 
   const shippingCost = SHIPPING_OPTIONS[shippingMethod].price;
-  const finalTotal = total + shippingCost;
+  const finalTotal = total + shippingCost - couponDiscount;
 
   // Track InitiateCheckout on page load
   useEffect(() => {
@@ -53,6 +57,24 @@ export default function CheckoutPage() {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const applyCoupon = async () => {
+    setCouponMsg(null);
+    const res = await fetch('/api/coupons/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: couponInput, subtotal, bundleDiscount }),
+    });
+    const data = await res.json();
+    if (data.valid) {
+      setCouponDiscount(data.discount);
+      setCouponApplied(true);
+    } else {
+      setCouponDiscount(0);
+      setCouponApplied(false);
+    }
+    setCouponMsg(data.message);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -104,6 +126,7 @@ export default function CheckoutPage() {
           })),
           bundleDiscount,
           bundleName,
+          couponCode: couponApplied ? couponInput : undefined,
           shippingMethod,
           shippingCost,
           total: finalTotal,
@@ -365,6 +388,33 @@ export default function CheckoutPage() {
                       הנחת מארז:
                     </span>
                     <span className="font-bold">-₪{bundleDiscount}</span>
+                  </div>
+                )}
+
+                {/* Coupon input */}
+                <div className="flex gap-2 py-2">
+                  <input
+                    type="text"
+                    value={couponInput}
+                    onChange={(e) => setCouponInput(e.target.value)}
+                    placeholder="קוד קופון"
+                    className="input-brutal flex-1 rounded-lg p-2 bg-gray-50 text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={applyCoupon}
+                    className="btn-retro bg-[#545454] text-white font-bold rounded-lg px-4 py-2 border-2 border-[#545454] text-sm"
+                  >
+                    החל
+                  </button>
+                </div>
+                {couponMsg && (
+                  <p className={`text-sm ${couponApplied ? 'text-emerald-600' : 'text-red-600'}`}>{couponMsg}</p>
+                )}
+                {couponDiscount > 0 && (
+                  <div className="flex justify-between items-center text-emerald-600">
+                    <span>הנחת קופון:</span>
+                    <span className="font-bold">-₪{couponDiscount}</span>
                   </div>
                 )}
 
