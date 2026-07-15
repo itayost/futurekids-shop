@@ -49,7 +49,9 @@ export default function LogoMarquee() {
       <div className="container mx-auto px-6 mb-6 text-center">
         <h2 className="text-lg md:text-2xl font-black text-[#545454]">זכינו להופיע ב-</h2>
       </div>
-      <div className="flex w-max animate-marquee">
+      {/* dir=ltr so the duplicated track sits to the right and fills the
+          scroll seamlessly (parent page is rtl, which would otherwise gap) */}
+      <div dir="ltr" className="flex w-max animate-marquee">
         <LogoTrack />
         <LogoTrack ariaHidden />
       </div>
