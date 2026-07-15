@@ -9,12 +9,13 @@ import { useCart } from '@/components/CartProvider';
 import PickupPointSelector from '@/components/PickupPointSelector';
 import { PickupPoint } from '@/types';
 import { trackInitiateCheckout, getFbCookies } from '@/lib/pixel';
+import { SHIPPING_COSTS } from '@/lib/shipping';
 
 type ShippingOption = 'pickup-point' | 'delivery';
 
 const SHIPPING_OPTIONS = {
-  'pickup-point': { label: 'נקודות איסוף', price: 20, icon: MapPin },
-  delivery: { label: 'משלוח עד הבית', price: 40, icon: Truck },
+  'pickup-point': { label: 'נקודות איסוף', price: SHIPPING_COSTS['pickup-point'], icon: MapPin },
+  delivery: { label: 'משלוח עד הבית', price: SHIPPING_COSTS.delivery, icon: Truck },
 };
 
 export default function CheckoutPage() {

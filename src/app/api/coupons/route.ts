@@ -26,6 +26,9 @@ export async function POST(request: NextRequest) {
   }
   const value = Number(body.discount_value);
   if (!(value > 0)) return NextResponse.json({ error: 'ערך הנחה לא תקין' }, { status: 400 });
+  if (body.discount_type === 'percent' && value > 100) {
+    return NextResponse.json({ error: 'אחוז הנחה לא יכול לעלות על 100' }, { status: 400 });
+  }
 
   const minSubtotal =
     body.min_subtotal !== undefined && body.min_subtotal !== null && body.min_subtotal !== ''
@@ -45,7 +48,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ coupon: rows[0] });
   } catch (error) {
     console.error('Create coupon error:', error);
-    return NextResponse.json({ error: 'קוד קופון כבר קיים' }, { status: 409 });
+    // 23505 = Postgres unique_violation (duplicate code); anything else is a real error.
+    if ((error as { code?: string })?.code === '23505') {
+      return NextResponse.json({ error: 'קוד קופון כבר קיים' }, { status: 409 });
+    }
+    return NextResponse.json({ error: 'שגיאה ביצירת קופון' }, { status: 400 });
   }
 }
 
@@ -53,15 +60,28 @@ export async function PATCH(request: NextRequest) {
   if (!(await isAdmin())) return unauthorized();
   const body = await request.json();
   if (!body.id) return NextResponse.json({ error: 'Missing id' }, { status: 400 });
-  const rows = await sql`UPDATE coupons SET active = ${body.active} WHERE id = ${body.id} RETURNING *`;
-  if (rows.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-  return NextResponse.json({ coupon: rows[0] });
+  if (typeof body.active !== 'boolean') {
+    return NextResponse.json({ error: 'Invalid active flag' }, { status: 400 });
+  }
+  try {
+    const rows = await sql`UPDATE coupons SET active = ${body.active} WHERE id = ${body.id} RETURNING *`;
+    if (rows.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    return NextResponse.json({ coupon: rows[0] });
+  } catch (error) {
+    console.error('Update coupon error:', error);
+    return NextResponse.json({ error: 'Failed to update coupon' }, { status: 400 });
+  }
 }
 
 export async function DELETE(request: NextRequest) {
   if (!(await isAdmin())) return unauthorized();
   const id = new URL(request.url).searchParams.get('id');
   if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 });
-  await sql`DELETE FROM coupons WHERE id = ${id}`;
-  return NextResponse.json({ success: true });
+  try {
+    await sql`DELETE FROM coupons WHERE id = ${id}`;
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Delete coupon error:', error);
+    return NextResponse.json({ error: 'Failed to delete coupon' }, { status: 400 });
+  }
 }

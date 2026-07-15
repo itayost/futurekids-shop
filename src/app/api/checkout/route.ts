@@ -4,12 +4,7 @@ import { createPaymentUrl } from '@/lib/icount';
 import { computeBundleDiscount } from '@/lib/bundle-discount';
 import { normalizeCode, parseCouponRow, validateCoupon } from '@/lib/coupons';
 import { getProductById } from '@/lib/products';
-
-// Shipping is derived from the method server-side, never trusted from the client.
-const SHIPPING_COSTS: Record<'pickup-point' | 'delivery', number> = {
-  'pickup-point': 20,
-  delivery: 40,
-};
+import { SHIPPING_COSTS } from '@/lib/shipping';
 
 interface OrderItem {
   productId: string;
@@ -26,12 +21,8 @@ interface CheckoutRequest {
   city: string;
   address: string;
   items: OrderItem[];
-  bundleDiscount?: number;
-  bundleName?: string;
   couponCode?: string;
   shippingMethod?: 'pickup-point' | 'delivery';
-  shippingCost?: number;
-  total: number;
   pickupPointCode?: string;
   pickupPointName?: string;
   fbc?: string | null;

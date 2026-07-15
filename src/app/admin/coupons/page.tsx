@@ -16,12 +16,19 @@ export default function CouponsAdminPage() {
 
   const load = async () => {
     setLoading(true);
-    const res = await fetch('/api/coupons');
-    if (res.ok) {
-      const data = await res.json();
-      setCoupons(data.coupons || []);
+    try {
+      const res = await fetch('/api/coupons');
+      if (res.ok) {
+        const data = await res.json();
+        setCoupons(data.coupons || []);
+      } else {
+        setError('שגיאה בטעינת קופונים');
+      }
+    } catch {
+      setError('שגיאה בטעינת קופונים');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => { load(); }, []);
@@ -29,32 +36,44 @@ export default function CouponsAdminPage() {
   const create = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    const res = await fetch('/api/coupons', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
-    });
-    if (res.ok) {
-      setForm({ code: '', discount_type: 'percent', discount_value: '', min_subtotal: '', max_uses: '', expires_at: '' });
-      load();
-    } else {
-      const data = await res.json();
-      setError(data.error || 'שגיאה ביצירת קופון');
+    try {
+      const res = await fetch('/api/coupons', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) {
+        setForm({ code: '', discount_type: 'percent', discount_value: '', min_subtotal: '', max_uses: '', expires_at: '' });
+        load();
+      } else {
+        const data = await res.json();
+        setError(data.error || 'שגיאה ביצירת קופון');
+      }
+    } catch {
+      setError('שגיאה ביצירת קופון');
     }
   };
 
   const toggle = async (c: Coupon) => {
-    await fetch('/api/coupons', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: c.id, active: !c.active }),
-    });
-    load();
+    try {
+      await fetch('/api/coupons', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: c.id, active: !c.active }),
+      });
+      load();
+    } catch {
+      setError('שגיאה בעדכון קופון');
+    }
   };
 
   const remove = async (id: string) => {
-    await fetch(`/api/coupons?id=${id}`, { method: 'DELETE' });
-    load();
+    try {
+      await fetch(`/api/coupons?id=${id}`, { method: 'DELETE' });
+      load();
+    } catch {
+      setError('שגיאה במחיקת קופון');
+    }
   };
 
   return (
