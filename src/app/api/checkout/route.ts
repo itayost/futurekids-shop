@@ -91,7 +91,11 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const shippingCost = body.shippingMethod ? SHIPPING_COSTS[body.shippingMethod] : 0;
+    // Whitelist the shipping method so it can't be omitted (free) or forged (NaN total).
+    if (body.shippingMethod !== 'pickup-point' && body.shippingMethod !== 'delivery') {
+      return NextResponse.json({ error: 'Invalid shipping method' }, { status: 400 });
+    }
+    const shippingCost = SHIPPING_COSTS[body.shippingMethod];
     const total = subtotal - bundleDiscount - couponDiscount + shippingCost;
 
     // Capture Meta tracking params for CAPI
