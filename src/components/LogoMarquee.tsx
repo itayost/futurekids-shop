@@ -36,7 +36,7 @@ function LogoTrack({ ariaHidden = false }: { ariaHidden?: boolean }) {
           alt={ariaHidden ? '' : logo.alt}
           width={120}
           height={48}
-          className="h-10 md:h-12 w-auto object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition"
+          className="h-10 md:h-12 w-auto object-contain"
         />
       ))}
     </div>
