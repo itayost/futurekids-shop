@@ -1,9 +1,7 @@
 import Image from 'next/image';
 
 // Outlets & institutions that featured KidCode (assets in public/press-logos/).
-// Real intrinsic dimensions are required so each logo reserves its correct
-// width before the image loads — otherwise the duplicated track collapses and
-// the marquee loop shows an empty gap.
+// Real intrinsic dimensions so each logo reserves correct width before load.
 const pressLogos = [
   { src: '/press-logos/themarker.webp', alt: 'דה מרקר', w: 1280, h: 268 },
   { src: '/press-logos/ynet.webp', alt: 'Ynet', w: 960, h: 411 },
@@ -26,38 +24,30 @@ const pressLogos = [
   // Pending identification: green-unknown.webp
 ];
 
-function LogoTrack({ ariaHidden = false }: { ariaHidden?: boolean }) {
-  return (
-    <div
-      className="flex items-center gap-12 pl-12 shrink-0"
-      aria-hidden={ariaHidden || undefined}
-    >
-      {pressLogos.map((logo) => (
-        <Image
-          key={logo.src}
-          src={logo.src}
-          alt={ariaHidden ? '' : logo.alt}
-          width={logo.w}
-          height={logo.h}
-          loading="eager"
-          className="h-10 md:h-12 w-auto object-contain"
-        />
-      ))}
-    </div>
-  );
-}
-
 export default function LogoMarquee() {
   return (
     <section className="bg-white border-b-4 border-[#545454] py-8 overflow-hidden">
       <div className="container mx-auto px-6 mb-6 text-center">
         <h2 className="text-lg md:text-2xl font-black text-[#545454]">זכינו להופיע ב-</h2>
       </div>
-      {/* dir=ltr so the duplicated track sits to the right and fills the
-          scroll seamlessly (parent page is rtl, which would otherwise gap) */}
-      <div dir="ltr" className="flex w-max animate-marquee">
-        <LogoTrack />
-        <LogoTrack ariaHidden />
+      <div className="overflow-hidden">
+        {/* Single track with the logo list duplicated; the doubled width plus a
+            translateX(50%) loop makes the scroll seamless. Proven pattern
+            ported from the Improvement-center repo. */}
+        <div className="flex items-center gap-12 w-max animate-marquee px-6">
+          {[...pressLogos, ...pressLogos].map((logo, idx) => (
+            <Image
+              key={idx}
+              src={logo.src}
+              alt={idx < pressLogos.length ? logo.alt : ''}
+              width={logo.w}
+              height={logo.h}
+              loading="eager"
+              aria-hidden={idx >= pressLogos.length || undefined}
+              className="h-10 md:h-12 w-auto object-contain shrink-0"
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

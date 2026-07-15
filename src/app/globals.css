@@ -256,10 +256,10 @@ select.input-brutal {
   opacity: 0;
 }
 
-/* Logo marquee ("featured in") */
+/* Logo marquee ("featured in") — positive translate for RTL page context */
 @keyframes marquee {
   from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  to { transform: translateX(50%); }
 }
 
 .animate-marquee {
