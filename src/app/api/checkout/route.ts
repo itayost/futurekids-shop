@@ -3,6 +3,13 @@ import { sql } from '@/lib/db';
 import { createPaymentUrl } from '@/lib/icount';
 import { computeBundleDiscount } from '@/lib/bundle-discount';
 import { normalizeCode, parseCouponRow, validateCoupon } from '@/lib/coupons';
+import { getProductById } from '@/lib/products';
+
+// Shipping is derived from the method server-side, never trusted from the client.
+const SHIPPING_COSTS: Record<'pickup-point' | 'delivery', number> = {
+  'pickup-point': 20,
+  delivery: 40,
+};
 
 interface OrderItem {
   productId: string;
@@ -50,10 +57,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Server-authoritative line items: resolve price + name from the catalog by
+    // productId; the client is trusted only for quantity. Never trust client prices.
+    const lineItems: { productId: string; name: string; price: number; quantity: number }[] = [];
+    for (const it of body.items) {
+      const product = getProductById(it.productId);
+      if (!product) {
+        return NextResponse.json({ error: 'Invalid product in order' }, { status: 400 });
+      }
+      const quantity = Number(it.quantity);
+      if (!Number.isInteger(quantity) || quantity <= 0) {
+        return NextResponse.json({ error: 'Invalid quantity in order' }, { status: 400 });
+      }
+      lineItems.push({ productId: product.id, name: product.name, price: product.price, quantity });
+    }
+
     // Server-authoritative amounts — never trust client-sent totals.
-    const subtotal = body.items.reduce((sum, it) => sum + it.price * it.quantity, 0);
+    const subtotal = lineItems.reduce((sum, it) => sum + it.price * it.quantity, 0);
     const { bundleDiscount, bundleName } = computeBundleDiscount(
-      body.items.map((it) => ({ productId: it.productId, quantity: it.quantity }))
+      lineItems.map((it) => ({ productId: it.productId, quantity: it.quantity }))
     );
 
     let couponCode: string | null = null;
@@ -69,7 +91,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const shippingCost = body.shippingCost && body.shippingCost > 0 ? body.shippingCost : 0;
+    const shippingCost = body.shippingMethod ? SHIPPING_COSTS[body.shippingMethod] : 0;
     const total = subtotal - bundleDiscount - couponDiscount + shippingCost;
 
     // Capture Meta tracking params for CAPI
@@ -88,8 +110,8 @@ export async function POST(request: NextRequest) {
 
     const order = orderResult[0];
 
-    // Create order items
-    for (const item of body.items) {
+    // Create order items (catalog-authoritative name + price)
+    for (const item of lineItems) {
       await sql`
         INSERT INTO order_items (order_id, product_id, product_name, quantity, price)
         VALUES (${order.id}, ${item.productId}, ${item.name}, ${item.quantity}, ${item.price})
@@ -103,8 +125,8 @@ export async function POST(request: NextRequest) {
     const ipnUrl = `${baseUrl}/api/payment/ipn`;
 
     try {
-      // Build items list for iCount
-      const icountItems = body.items.map((item) => ({
+      // Build items list for iCount (catalog-authoritative)
+      const icountItems = lineItems.map((item) => ({
         name: item.name,
         price: item.price,
         quantity: item.quantity,
@@ -118,8 +140,8 @@ export async function POST(request: NextRequest) {
         icountItems.push({ name: `קופון: ${couponCode}`, price: -couponDiscount, quantity: 1 });
       }
 
-      // Add shipping cost
-      if (body.shippingCost && body.shippingCost > 0) {
+      // Add shipping cost (server-derived)
+      if (shippingCost > 0) {
         let shippingLabel = 'משלוח';
         if (body.shippingMethod === 'delivery') {
           shippingLabel = 'משלוח עד הבית';
@@ -130,7 +152,7 @@ export async function POST(request: NextRequest) {
         }
         icountItems.push({
           name: shippingLabel,
-          price: body.shippingCost,
+          price: shippingCost,
           quantity: 1,
         });
       }
