@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Lock, Package, User, MapPin, Phone, Mail, Calendar, ShoppingBag, ChevronDown, ChevronUp, Search, Trash2, Truck, Gift } from 'lucide-react';
+import { Lock, Package, User, MapPin, Phone, Mail, Calendar, ShoppingBag, ChevronDown, ChevronUp, Search, Trash2, Truck, Gift, Download } from 'lucide-react';
 
 interface OrderItem {
   id: string;
@@ -155,6 +155,11 @@ export default function AdminPage() {
     }
   };
 
+  const handleExport = (type: 'delivery' | 'pickup-point') => {
+    // GET download; the admin_session cookie authorizes the request
+    window.location.href = `/api/admin/orders/export?type=${type}`;
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('he-IL', {
       year: 'numeric',
@@ -296,6 +301,29 @@ export default function AdminPage() {
                 <option key={s.value} value={s.value}>{s.label}</option>
               ))}
             </select>
+          </div>
+
+          {/* Shipping exports (Chita) */}
+          <div className="border-t-2 border-gray-200 mt-4 pt-4">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => handleExport('delivery')}
+                className="btn-retro bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-lg px-4 py-3 border-2 border-[#545454] flex items-center justify-center gap-2 flex-1"
+              >
+                <Download className="w-5 h-5" />
+                ייצוא משלוחים עד הבית
+              </button>
+              <button
+                onClick={() => handleExport('pickup-point')}
+                className="btn-retro bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg px-4 py-3 border-2 border-[#545454] flex items-center justify-center gap-2 flex-1"
+              >
+                <Download className="w-5 h-5" />
+                ייצוא נקודות חלוקה
+              </button>
+            </div>
+            <p className="text-sm text-gray-500 mt-2 text-center">
+              מייצא הזמנות ששולמו (סטטוס: שולם) בפורמט קליטת קובץ של חיתה
+            </p>
           </div>
         </div>
 
