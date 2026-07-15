@@ -322,7 +322,7 @@ export default function AdminPage() {
               </button>
             </div>
             <p className="text-sm text-gray-500 mt-2 text-center">
-              מייצא הזמנות ששולמו (סטטוס: שולם) בפורמט קליטת קובץ של חיתה
+              מייצא הזמנות ששולמו (סטטוס: שולם) בפורמט קליטת קובץ של צ'יטה
             </p>
           </div>
         </div>
