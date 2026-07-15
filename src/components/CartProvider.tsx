@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useEffect, useCallback, ReactNode 
 import { CartItem, CartContextType, Product, Toast } from '@/types';
 import ToastContainer from './Toast';
 import { trackAddToCart } from '@/lib/pixel';
+import { computeBundleDiscount } from '@/lib/bundle-discount';
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
@@ -158,42 +159,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems([]);
   };
 
-  // Bundle detection: check which bundle applies and give best discount
-  const BUNDLE_BOOK_IDS = ['ai-book', 'encryption-book', 'algorithms-book'];
-  const BUNDLE_WORKBOOK_IDS = ['ai-workbook', 'encryption-workbook', 'algorithms-workbook'];
-
-  // Helper to count items by ID
-  const getItemQuantity = (productId: string) => {
-    const item = items.find((i) => i.productId === productId);
-    return item?.quantity || 0;
-  };
-
-  // Check if all 3 books are in cart
-  const hasAllBooks = BUNDLE_BOOK_IDS.every((bookId) => getItemQuantity(bookId) >= 1);
-
-  // Count workbooks
-  const workbookCounts = BUNDLE_WORKBOOK_IDS.map((id) => getItemQuantity(id));
-  const minWorkbookCount = Math.min(...workbookCounts);
-
-  // Determine which bundle applies (check from highest discount first)
-  let bundleDiscount = 0;
-  let bundleName: string | null = null;
-
-  if (hasAllBooks) {
-    if (minWorkbookCount >= 2) {
-      // Bundle 3: 3 books + 6 workbooks (2 of each) - saves 115₪
-      bundleDiscount = 115;
-      bundleName = 'מארז המומחים';
-    } else if (minWorkbookCount >= 1) {
-      // Bundle 2: 3 books + 3 workbooks - saves 45₪
-      bundleDiscount = 45;
-      bundleName = 'מארז החוקרים הצעירים';
-    } else {
-      // Bundle 1: 3 books only - saves 15₪
-      bundleDiscount = 15;
-      bundleName = 'מארז הספרים';
-    }
-  }
+  // Bundle detection (shared with the checkout server so both agree)
+  const { bundleDiscount, bundleName } = computeBundleDiscount(
+    items.map((i) => ({ productId: i.productId, quantity: i.quantity }))
+  );
 
   const hasBundle = bundleDiscount > 0;
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
