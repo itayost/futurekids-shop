@@ -411,7 +411,7 @@ export default function CheckoutPage() {
                   <button
                     type="button"
                     onClick={applyCoupon}
-                    className="btn-retro bg-[#545454] text-white font-bold rounded-lg px-4 py-2 border-2 border-[#545454] text-sm"
+                    className="btn-retro bg-pink-500 hover:bg-pink-600 text-white font-bold rounded-lg px-4 py-2 border-2 border-[#545454] text-sm"
                   >
                     החל
                   </button>
