@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { sql } from '@/lib/db';
+
+async function isAdmin(): Promise<boolean> {
+  const session = (await cookies()).get('admin_session');
+  return session?.value === 'authenticated';
+}
 
 interface OrderItem {
   productId: string;
@@ -21,6 +27,10 @@ interface CreateOrderRequest {
 
 export async function GET() {
   try {
+    if (!(await isAdmin())) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const orders = await sql`
       SELECT
         o.id,
@@ -71,6 +81,10 @@ export async function GET() {
 // Update order status
 export async function PATCH(request: NextRequest) {
   try {
+    if (!(await isAdmin())) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { orderId, status } = await request.json();
 
     if (!orderId || !status) {
@@ -115,6 +129,10 @@ export async function PATCH(request: NextRequest) {
 // Delete order
 export async function DELETE(request: NextRequest) {
   try {
+    if (!(await isAdmin())) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const orderId = searchParams.get('id');
 
