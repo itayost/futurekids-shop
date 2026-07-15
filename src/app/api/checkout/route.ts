@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { createPaymentUrl } from '@/lib/icount';
+import { computeBundleDiscount } from '@/lib/bundle-discount';
+import { normalizeCode, parseCouponRow, validateCoupon } from '@/lib/coupons';
 
 interface OrderItem {
   productId: string;
@@ -19,6 +21,7 @@ interface CheckoutRequest {
   items: OrderItem[];
   bundleDiscount?: number;
   bundleName?: string;
+  couponCode?: string;
   shippingMethod?: 'pickup-point' | 'delivery';
   shippingCost?: number;
   total: number;
@@ -47,6 +50,28 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Server-authoritative amounts — never trust client-sent totals.
+    const subtotal = body.items.reduce((sum, it) => sum + it.price * it.quantity, 0);
+    const { bundleDiscount, bundleName } = computeBundleDiscount(
+      body.items.map((it) => ({ productId: it.productId, quantity: it.quantity }))
+    );
+
+    let couponCode: string | null = null;
+    let couponDiscount = 0;
+    const rawCode = normalizeCode(body.couponCode || '');
+    if (rawCode) {
+      const couponRows = await sql`SELECT * FROM coupons WHERE code = ${rawCode} LIMIT 1`;
+      const coupon = couponRows[0] ? parseCouponRow(couponRows[0] as Record<string, unknown>) : null;
+      const check = validateCoupon(coupon, subtotal, bundleDiscount, new Date());
+      if (check.valid) {
+        couponCode = check.code;
+        couponDiscount = check.discount;
+      }
+    }
+
+    const shippingCost = body.shippingCost && body.shippingCost > 0 ? body.shippingCost : 0;
+    const total = subtotal - bundleDiscount - couponDiscount + shippingCost;
+
     // Capture Meta tracking params for CAPI
     const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null;
     const clientUa = request.headers.get('user-agent') || null;
@@ -56,8 +81,8 @@ export async function POST(request: NextRequest) {
 
     // Step 1: Create order in database with PENDING status
     const orderResult = await sql`
-      INSERT INTO orders (email, first_name, last_name, phone, address, city, total, status, shipping_method, shipping_cost, pickup_point_code, pickup_point_name, bundle_discount, bundle_name, fb_click_id, fb_browser_id, client_ip, client_ua)
-      VALUES (${body.email}, ${body.firstName}, ${body.lastName}, ${body.phone}, ${body.address}, ${body.city}, ${body.total}, 'PENDING', ${body.shippingMethod || null}, ${body.shippingCost || null}, ${body.pickupPointCode || null}, ${body.pickupPointName || null}, ${body.bundleDiscount || 0}, ${body.bundleName || null}, ${body.fbc || null}, ${body.fbp || null}, ${clientIp}, ${clientUa})
+      INSERT INTO orders (email, first_name, last_name, phone, address, city, total, status, shipping_method, shipping_cost, pickup_point_code, pickup_point_name, bundle_discount, bundle_name, coupon_code, coupon_discount, fb_click_id, fb_browser_id, client_ip, client_ua)
+      VALUES (${body.email}, ${body.firstName}, ${body.lastName}, ${body.phone}, ${body.address}, ${body.city}, ${total}, 'PENDING', ${body.shippingMethod || null}, ${shippingCost || null}, ${body.pickupPointCode || null}, ${body.pickupPointName || null}, ${bundleDiscount}, ${bundleName}, ${couponCode}, ${couponDiscount}, ${body.fbc || null}, ${body.fbp || null}, ${clientIp}, ${clientUa})
       RETURNING id, created_at
     `;
 
@@ -85,13 +110,12 @@ export async function POST(request: NextRequest) {
         quantity: item.quantity,
       }));
 
-      // Add discount line if bundle discount applies
-      if (body.bundleDiscount && body.bundleDiscount > 0) {
-        icountItems.push({
-          name: 'הנחת מארז',
-          price: -body.bundleDiscount,
-          quantity: 1,
-        });
+      // Add discount lines (server-computed)
+      if (bundleDiscount > 0) {
+        icountItems.push({ name: 'הנחת מארז', price: -bundleDiscount, quantity: 1 });
+      }
+      if (couponDiscount > 0 && couponCode) {
+        icountItems.push({ name: `קופון: ${couponCode}`, price: -couponDiscount, quantity: 1 });
       }
 
       // Add shipping cost
