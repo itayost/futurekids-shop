@@ -1,25 +1,28 @@
 import Image from 'next/image';
 
-// Outlets & institutions that featured KidCode (assets in public/press-logos/)
+// Outlets & institutions that featured KidCode (assets in public/press-logos/).
+// Real intrinsic dimensions are required so each logo reserves its correct
+// width before the image loads — otherwise the duplicated track collapses and
+// the marquee loop shows an empty gap.
 const pressLogos = [
-  { src: '/press-logos/themarker.webp', alt: 'דה מרקר' },
-  { src: '/press-logos/ynet.webp', alt: 'Ynet' },
-  { src: '/press-logos/calcalist.webp', alt: 'כלכליסט' },
-  { src: '/press-logos/haaretz.webp', alt: 'הארץ' },
-  { src: '/press-logos/jpost.webp', alt: 'The Jerusalem Post' },
-  { src: '/press-logos/n12.webp', alt: 'N12' },
-  { src: '/press-logos/mako.webp', alt: 'מאקו' },
-  { src: '/press-logos/walla.webp', alt: 'וואלה' },
-  { src: '/press-logos/kan.webp', alt: 'כאן' },
-  { src: '/press-logos/reshet13.webp', alt: 'רשת 13' },
-  { src: '/press-logos/geektime.webp', alt: 'גיקטיים' },
-  { src: '/press-logos/economy-channel.webp', alt: 'ערוץ הכלכלה' },
-  { src: '/press-logos/laisha.webp', alt: 'לאשה' },
-  { src: '/press-logos/madatech.webp', alt: 'מדעטק' },
-  { src: '/press-logos/technion.webp', alt: 'הטכניון' },
-  { src: '/press-logos/google.webp', alt: 'Google' },
-  { src: '/press-logos/osim-historia.webp', alt: 'עושים היסטוריה' },
-  { src: '/press-logos/think-drink-different.webp', alt: 'Think&Drink Different' },
+  { src: '/press-logos/themarker.webp', alt: 'דה מרקר', w: 1280, h: 268 },
+  { src: '/press-logos/ynet.webp', alt: 'Ynet', w: 960, h: 411 },
+  { src: '/press-logos/calcalist.webp', alt: 'כלכליסט', w: 960, h: 191 },
+  { src: '/press-logos/haaretz.webp', alt: 'הארץ', w: 497, h: 152 },
+  { src: '/press-logos/jpost.webp', alt: 'The Jerusalem Post', w: 1256, h: 162 },
+  { src: '/press-logos/n12.webp', alt: 'N12', w: 3840, h: 832 },
+  { src: '/press-logos/mako.webp', alt: 'מאקו', w: 250, h: 101 },
+  { src: '/press-logos/walla.webp', alt: 'וואלה', w: 500, h: 141 },
+  { src: '/press-logos/kan.webp', alt: 'כאן', w: 960, h: 235 },
+  { src: '/press-logos/reshet13.webp', alt: 'רשת 13', w: 783, h: 238 },
+  { src: '/press-logos/geektime.webp', alt: 'גיקטיים', w: 626, h: 111 },
+  { src: '/press-logos/economy-channel.webp', alt: 'ערוץ הכלכלה', w: 1225, h: 260 },
+  { src: '/press-logos/laisha.webp', alt: 'לאשה', w: 420, h: 81 },
+  { src: '/press-logos/madatech.webp', alt: 'מדעטק', w: 236, h: 132 },
+  { src: '/press-logos/technion.webp', alt: 'הטכניון', w: 384, h: 185 },
+  { src: '/press-logos/google.webp', alt: 'Google', w: 256, h: 87 },
+  { src: '/press-logos/osim-historia.webp', alt: 'עושים היסטוריה', w: 1200, h: 520 },
+  { src: '/press-logos/think-drink-different.webp', alt: 'Think&Drink Different', w: 982, h: 1024 },
   // Pending identification: green-unknown.webp
 ];
 
@@ -34,8 +37,9 @@ function LogoTrack({ ariaHidden = false }: { ariaHidden?: boolean }) {
           key={logo.src}
           src={logo.src}
           alt={ariaHidden ? '' : logo.alt}
-          width={120}
-          height={48}
+          width={logo.w}
+          height={logo.h}
+          loading="eager"
           className="h-10 md:h-12 w-auto object-contain"
         />
       ))}
