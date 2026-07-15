@@ -79,6 +79,52 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  // Add several products at once (e.g. a full bundle) with a single toast
+  const addItems = (productsToAdd: Product[]) => {
+    if (productsToAdd.length === 0) return;
+
+    setItems((current) =>
+      productsToAdd.reduce<CartItem[]>((acc, product) => {
+        const existing = acc.find((item) => item.productId === product.id);
+        if (existing) {
+          return acc.map((item) =>
+            item.productId === product.id
+              ? { ...item, quantity: item.quantity + 1 }
+              : item
+          );
+        }
+        return [
+          ...acc,
+          {
+            productId: product.id,
+            slug: product.slug,
+            name: product.name,
+            price: product.price,
+            quantity: 1,
+            image: product.image,
+          },
+        ];
+      }, current)
+    );
+
+    // Fire one pixel event per unique product
+    const tracked = new Set<string>();
+    productsToAdd.forEach((product) => {
+      if (tracked.has(product.id)) return;
+      tracked.add(product.id);
+      trackAddToCart({
+        content_name: product.name,
+        content_ids: [product.id],
+        value: product.price,
+      });
+    });
+
+    addToast({
+      type: 'success',
+      message: 'המארז נוסף לסל!',
+    });
+  };
+
   const removeItem = (productId: string) => {
     const removedItem = items.find((item) => item.productId === productId);
     if (!removedItem) return;
@@ -159,6 +205,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       value={{
         items,
         addItem,
+        addItems,
         removeItem,
         updateQuantity,
         clearCart,

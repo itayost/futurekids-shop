@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import Cart from "@/components/Cart";
 import JsonLd from "./JsonLd";
 import MetaPixel from "@/components/MetaPixel";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import CookieBanner from "@/components/CookieBanner";
 
 const rubik = Rubik({
@@ -76,6 +77,7 @@ export default function RootLayout({
       <body className={`${rubik.variable} font-sans antialiased min-h-screen flex flex-col`}>
         <JsonLd />
         <MetaPixel />
+        <GoogleAnalytics />
         <CartProvider>
           <Navbar />
           <main className="flex-grow">
