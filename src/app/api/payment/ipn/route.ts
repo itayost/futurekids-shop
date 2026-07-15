@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { sendOrderPurchaseEvent } from '@/lib/purchase-event';
+import { incrementCouponUsageForOrder } from '@/lib/coupon-usage';
 
 // IPN (Instant Payment Notification) handler
 // iCount calls this endpoint server-to-server when payment is completed
@@ -67,6 +68,10 @@ export async function POST(request: NextRequest) {
       if (paidResult.length > 0) {
         sendOrderPurchaseEvent(order.id).catch((err: unknown) =>
           console.error('Meta CAPI failed (ipn):', err)
+        );
+
+        incrementCouponUsageForOrder(order.id).catch((err: unknown) =>
+          console.error('Coupon usage bump failed (ipn):', err)
         );
       }
     } else {

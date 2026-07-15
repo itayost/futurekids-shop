@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { sendOrderPurchaseEvent } from '@/lib/purchase-event';
+import { incrementCouponUsageForOrder } from '@/lib/coupon-usage';
 
 // This route verifies payment and updates order status
 // Called from the success page after iCount redirect
@@ -37,6 +38,10 @@ export async function POST(request: NextRequest) {
     if (result.length > 0) {
       sendOrderPurchaseEvent(orderId).catch((err: unknown) =>
         console.error('Meta CAPI failed (verify):', err)
+      );
+
+      incrementCouponUsageForOrder(orderId).catch((err: unknown) =>
+        console.error('Coupon usage bump failed (verify):', err)
       );
     }
 
