@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Star, ChevronDown, Cpu, Lock, GitBranch, User, BookOpen, Gift, Users } from 'lucide-react';
 import BookWorkbookPairCard from '@/components/BookWorkbookPairCard';
+import LogoMarquee from '@/components/LogoMarquee';
 import { books, workbooks, bundles } from '@/lib/products';
 import { useCart } from '@/components/CartProvider';
 
@@ -146,6 +147,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Featured In - Press Logo Marquee */}
+      <LogoMarquee />
 
       {/* Products Section */}
       <section id="books" className="container mx-auto px-6 py-20">
