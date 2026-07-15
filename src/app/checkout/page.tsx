@@ -138,6 +138,17 @@ export default function CheckoutPage() {
 
       const result = await response.json();
 
+      // Coupon became invalid between preview and submit — drop it, show the
+      // updated price, and let the customer confirm rather than silently charging more.
+      if (result.couponRejected) {
+        setCouponApplied(false);
+        setCouponDiscount(0);
+        setCouponMsg(result.message || 'הקופון כבר אינו בתוקף');
+        setError('הקופון כבר אינו בתוקף. הסכום עודכן — אנא בדקו ונסו שוב.');
+        setIsSubmitting(false);
+        return;
+      }
+
       if (!response.ok) {
         throw new Error(result.error || 'Failed to create order');
       }
