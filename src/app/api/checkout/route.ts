@@ -69,6 +69,12 @@ export async function POST(request: NextRequest) {
       lineItems.map((it) => ({ productId: it.productId, quantity: it.quantity }))
     );
 
+    // Whitelist the shipping method so it can't be omitted (free) or forged (NaN total).
+    if (body.shippingMethod !== 'pickup-point' && body.shippingMethod !== 'delivery') {
+      return NextResponse.json({ error: 'Invalid shipping method' }, { status: 400 });
+    }
+    const shippingCost = SHIPPING_COSTS[body.shippingMethod];
+
     let couponCode: string | null = null;
     let couponDiscount = 0;
     const rawCode = normalizeCode(body.couponCode || '');
@@ -79,14 +85,16 @@ export async function POST(request: NextRequest) {
       if (check.valid) {
         couponCode = check.code;
         couponDiscount = check.discount;
+      } else {
+        // Coupon was applied by the client but is no longer valid — do not silently
+        // charge full price. Return the updated total for the customer to confirm.
+        return NextResponse.json(
+          { couponRejected: true, message: check.message, total: subtotal - bundleDiscount + shippingCost },
+          { status: 409 }
+        );
       }
     }
 
-    // Whitelist the shipping method so it can't be omitted (free) or forged (NaN total).
-    if (body.shippingMethod !== 'pickup-point' && body.shippingMethod !== 'delivery') {
-      return NextResponse.json({ error: 'Invalid shipping method' }, { status: 400 });
-    }
-    const shippingCost = SHIPPING_COSTS[body.shippingMethod];
     const total = subtotal - bundleDiscount - couponDiscount + shippingCost;
 
     // Capture Meta tracking params for CAPI
