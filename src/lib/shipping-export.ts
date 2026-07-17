@@ -37,20 +37,54 @@ export function parseStreetAndHouse(address: string): { street: string; house: s
   return { street: primary, house: '' };
 }
 
-// Short Hebrew summary of order contents, e.g. "3 ספרים + 3 חוברות".
+// Short names per title, matching the shorthand used on the packing side
+// (e.g. "אלגו ס+ח" = ספר + חוברת של אלגוריתמים).
+const TITLE_SHORT: Record<string, string> = {
+  ai: 'בינה',
+  encryption: 'הצפנה',
+  algorithms: 'אלגו',
+};
+
+// Per-title Hebrew shorthand of order contents, e.g. "אלגו ס+ח" or
+// "בינה 2ס+2ח, הצפנה ס". ס = ספר, ח = חוברת; count prefix omitted when 1.
 export function contentsSummary(items: ExportOrderItem[]): string {
-  let books = 0;
-  let workbooks = 0;
+  const byTitle = new Map<string, { books: number; workbooks: number }>();
+
   for (const item of items || []) {
     const isWorkbook =
       /workbook/i.test(item.productId) || (item.productName || '').includes('חוברת');
-    if (isWorkbook) workbooks += item.quantity;
-    else books += item.quantity;
+    const key = (item.productId || '').replace(/-(book|workbook)$/i, '');
+    const label = TITLE_SHORT[key] || item.productName || item.productId || '?';
+    const entry = byTitle.get(label) || { books: 0, workbooks: 0 };
+    byTitle.set(label, {
+      books: entry.books + (isWorkbook ? 0 : item.quantity),
+      workbooks: entry.workbooks + (isWorkbook ? item.quantity : 0),
+    });
   }
+
   const parts: string[] = [];
-  if (books > 0) parts.push(`${books} ${books === 1 ? 'ספר' : 'ספרים'}`);
-  if (workbooks > 0) parts.push(`${workbooks} ${workbooks === 1 ? 'חוברת' : 'חוברות'}`);
-  return parts.join(' + ');
+  for (const [label, { books, workbooks }] of byTitle) {
+    const units: string[] = [];
+    if (books > 0) units.push(`${books > 1 ? books : ''}ס`);
+    if (workbooks > 0) units.push(`${workbooks > 1 ? workbooks : ''}ח`);
+    if (units.length > 0) parts.push(`${label} ${units.join('+')}`);
+  }
+  return parts.join(', ');
+}
+
+// Format a phone with a hyphen (050-1234567) so Excel treats it as text and
+// keeps the leading 0 instead of coercing it to a number.
+export function formatPhone(phone: string): string {
+  let digits = (phone || '').replace(/\D/g, '');
+  if (digits.startsWith('972')) digits = '0' + digits.slice(3);
+  if (digits.length === 9 && digits.startsWith('5')) digits = '0' + digits;
+  if (digits.length === 10 && digits.startsWith('0')) {
+    return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  }
+  if (digits.length === 9 && digits.startsWith('0')) {
+    return `${digits.slice(0, 2)}-${digits.slice(2)}`;
+  }
+  return phone || '';
 }
 
 // RFC4180-style escaping: quote a field only if it contains comma/quote/newline.
@@ -121,7 +155,7 @@ export function buildChitaCsv(
       '', // כניסה
       '', // קומה
       '', // דירה
-      order.phone || '',
+      formatPhone(order.phone),
       '', // טלפון משני
       '', // אס' לקוח
       '', // אריזות
