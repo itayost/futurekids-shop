@@ -1,26 +1,43 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import Script from 'next/script';
 import { getConsent } from '@/lib/consent';
 
 const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 
 export default function MetaPixel() {
-  const [consented, setConsented] = useState(false);
+  const [allowed, setAllowed] = useState(false);
+  const pathname = usePathname();
+  const previousPathname = useRef<string | null>(null);
 
   useEffect(() => {
-    setConsented(getConsent() === 'accepted');
+    setAllowed(getConsent() !== 'declined');
 
     const handleConsentChange = () => {
-      setConsented(getConsent() === 'accepted');
+      const declined = getConsent() === 'declined';
+      setAllowed(!declined);
+      if (declined && window.fbq) {
+        window.fbq('consent', 'revoke');
+      }
     };
 
     window.addEventListener('consent-changed', handleConsentChange);
     return () => window.removeEventListener('consent-changed', handleConsentChange);
   }, []);
 
-  if (!PIXEL_ID || !consented) return null;
+  // PageView on client-side navigations; the initial one fires in the inline snippet.
+  useEffect(() => {
+    if (previousPathname.current !== null && previousPathname.current !== pathname) {
+      if (allowed && window.fbq) {
+        window.fbq('track', 'PageView');
+      }
+    }
+    previousPathname.current = pathname;
+  }, [pathname, allowed]);
+
+  if (!PIXEL_ID || !allowed) return null;
 
   return (
     <>

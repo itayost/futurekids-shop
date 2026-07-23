@@ -7,20 +7,25 @@ import { getConsent } from '@/lib/consent';
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 export default function GoogleAnalytics() {
-  const [consented, setConsented] = useState(false);
+  const [allowed, setAllowed] = useState(false);
 
   useEffect(() => {
-    setConsented(getConsent() === 'accepted');
+    setAllowed(getConsent() !== 'declined');
 
     const handleConsentChange = () => {
-      setConsented(getConsent() === 'accepted');
+      const declined = getConsent() === 'declined';
+      setAllowed(!declined);
+      if (declined && GA_ID) {
+        // Documented GA opt-out flag: stops an already-loaded gtag from sending.
+        (window as unknown as Record<string, unknown>)[`ga-disable-${GA_ID}`] = true;
+      }
     };
 
     window.addEventListener('consent-changed', handleConsentChange);
     return () => window.removeEventListener('consent-changed', handleConsentChange);
   }, []);
 
-  if (!GA_ID || !consented) return null;
+  if (!GA_ID || !allowed) return null;
 
   return (
     <>

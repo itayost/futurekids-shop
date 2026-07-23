@@ -13,6 +13,7 @@ export function setConsent(value: ConsentValue): void {
   window.dispatchEvent(new Event('consent-changed'));
 }
 
-export function hasConsent(): boolean {
-  return getConsent() === 'accepted';
+// Opt-out model: tracking runs unless the visitor explicitly declined.
+export function trackingAllowed(): boolean {
+  return getConsent() !== 'declined';
 }

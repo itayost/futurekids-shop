@@ -1,4 +1,4 @@
-import { hasConsent } from '@/lib/consent';
+import { trackingAllowed } from '@/lib/consent';
 
 declare global {
   interface Window {
@@ -7,7 +7,7 @@ declare global {
 }
 
 function fbq(...args: unknown[]) {
-  if (typeof window !== 'undefined' && window.fbq && hasConsent()) {
+  if (typeof window !== 'undefined' && window.fbq && trackingAllowed()) {
     window.fbq(...args);
   }
 }
