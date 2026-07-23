@@ -1,4 +1,22 @@
-import { Product } from '@/types';
+import { ExamplePage, Product } from '@/types';
+
+const SPREAD = { width: 2000, height: 1000 };
+const WORKSHEET = { width: 1414, height: 2000 };
+
+function topicExamplePages(topic: string): ExamplePage[] {
+  return [
+    { src: `/example-pages/${topic}-1.png`, source: 'book', ...SPREAD },
+    { src: `/example-pages/${topic}-2.png`, source: 'book', ...SPREAD },
+    { src: `/example-pages/${topic}-3.png`, source: 'workbook', ...WORKSHEET },
+    { src: `/example-pages/${topic}-4.png`, source: 'workbook', ...WORKSHEET },
+  ];
+}
+
+const examplePagesByTopic = {
+  ai: topicExamplePages('ai'),
+  encryption: topicExamplePages('encryption'),
+  algorithms: topicExamplePages('algorithms'),
+};
 
 export const products: Product[] = [
   // Books
@@ -18,6 +36,7 @@ export const products: Product[] = [
       'נכיר את "מבחן טיורינג" ואת משחק החיקוי, ונבדוק: האם תצליחו לזהות אם אתם מתכתבים עם רובוט או עם חבר?',
     ],
     audience: 'לכל ילד וילדה (גילאי 6-13) סקרנים שרוצים להכיר את שפת העתיד, ולהורים שרוצים לפתוח בפניהם דלת לעולם חדש ומרתק.',
+    examplePages: examplePagesByTopic.ai,
   },
   {
     id: 'encryption-book',
@@ -34,6 +53,7 @@ export const products: Product[] = [
       'נכיר צפנים שנחשבו במשך מאות שנים לבטוחים – ונגלה איך בכל זאת אפשר לשבור אותם.',
     ],
     audience: 'לכל ילד וילדה (גילאי 8-13) סקרנים שרוצים לגלות מה קורה מאחורי הקלעים של העולם הדיגיטלי, ולהורים שרוצים לפתוח בפניהם דלת לעולם חדש ומרתק.',
+    examplePages: examplePagesByTopic.encryption,
   },
   {
     id: 'algorithms-book',
@@ -52,6 +72,7 @@ export const products: Product[] = [
       'נכיר את "הנפה של ארטוסתנס" – שיטה עתיקה ומבריקה למציאת מספרים ראשוניים.',
     ],
     audience: 'לכל ילד וילדה (גילאי 8-13) סקרנים שרוצים להבין את השפה שבה המחשבים מדברים, ולהורים שרוצים לפתוח בפניהם דלת לעולם חדש ומרתק.',
+    examplePages: examplePagesByTopic.algorithms,
   },
   // Workbooks
   {
@@ -70,6 +91,7 @@ export const products: Product[] = [
       'נצייר באמצעות פיקסלים – נבין איך המחשב "רואה" תמונות דרך מספרים וריבועים קטנים.',
     ],
     audience: 'לכל ילד וילדה (גילאי 6-13) שאוהבים חידות, יצירה ואתגרים, ורוצים לקחת את הידע שלהם צעד אחד קדימה דרך הידיים והראש.',
+    examplePages: examplePagesByTopic.ai,
   },
   {
     id: 'encryption-workbook',
@@ -88,6 +110,7 @@ export const products: Product[] = [
       'נלמד את "שפת הבי"ת" – ונבין איך שיר האירוויזיון המפורסם קשור להצפנה.',
     ],
     audience: 'לכל ילד וילדה (גילאי 8-13) שאוהבים חידות, יצירה ואתגרים, ורוצים לקחת את הידע שלהם צעד אחד קדימה דרך הידיים והראש.',
+    examplePages: examplePagesByTopic.encryption,
   },
   {
     id: 'algorithms-workbook',
@@ -106,6 +129,7 @@ export const products: Product[] = [
       'נמיין ונצבע – נבצע "מיון טופולוגי" כדי לגלות באילו צבעים צריך לצבוע ציור מורכב.',
     ],
     audience: 'לכל ילד וילדה (גילאי 8-13) שאוהבים חידות, יצירה ואתגרים, ורוצים לקחת את הידע שלהם צעד אחד קדימה דרך הידיים והראש.',
+    examplePages: examplePagesByTopic.algorithms,
   },
 ];
 

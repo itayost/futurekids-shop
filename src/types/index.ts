@@ -1,3 +1,10 @@
+export interface ExamplePage {
+  src: string;
+  source: 'book' | 'workbook';
+  width: number;
+  height: number;
+}
+
 export interface Product {
   id: string;
   slug: string;
@@ -9,6 +16,7 @@ export interface Product {
   features: string[];
   audience?: string;
   type?: 'book' | 'workbook';
+  examplePages?: ExamplePage[];
 }
 
 export interface CartItem {

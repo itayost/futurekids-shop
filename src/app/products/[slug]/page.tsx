@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { BookOpen, ChevronLeft, Users } from 'lucide-react';
 import { getProductBySlug, products } from '@/lib/products';
 import { ProductPageCTA } from '@/components/ProductPageCTA';
+import { ExamplePagesGallery } from '@/components/ExamplePagesGallery';
 
 const colorClasses = {
   blue: {
@@ -121,6 +122,10 @@ export default async function ProductPage({ params }: Props) {
             )}
           </div>
         </div>
+
+        {product.examplePages && (
+          <ExamplePagesGallery pages={product.examplePages} colorClasses={colors} />
+        )}
       </div>
     </div>
   );
