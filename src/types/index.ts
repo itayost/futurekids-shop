@@ -55,6 +55,9 @@ export interface Order {
   phone: string;
   address: string;
   city: string;
+  street?: string | null;
+  house_number?: string | null;
+  apartment?: string | null;
   status: 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
   total: number;
   items: OrderItem[];

@@ -31,7 +31,9 @@ export default function CheckoutPage() {
     email: '',
     phone: '',
     city: '',
-    address: '',
+    street: '',
+    houseNumber: '',
+    apartment: '',
   });
   const [couponInput, setCouponInput] = useState('');
   const [couponDiscount, setCouponDiscount] = useState(0);
@@ -101,7 +103,9 @@ export default function CheckoutPage() {
           }
         : {
             city: formData.city,
-            address: formData.address,
+            street: formData.street,
+            houseNumber: formData.houseNumber,
+            apartment: formData.apartment || undefined,
           };
 
       // Read Meta cookies for CAPI attribution
@@ -305,30 +309,57 @@ export default function CheckoutPage() {
                 />
               )}
 
-              {/* City/Address - shown only for home delivery */}
+              {/* Structured address - shown only for home delivery */}
               {shippingMethod === 'delivery' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-md font-bold text-[#545454] mb-2">עיר</label>
-                    <input
-                      type="text"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleChange}
-                      className="input-brutal w-full rounded-lg p-3 text-lg bg-gray-50"
-                      required
-                    />
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-md font-bold text-[#545454] mb-2">עיר</label>
+                      <input
+                        type="text"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                        className="input-brutal w-full rounded-lg p-3 text-lg bg-gray-50"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-md font-bold text-[#545454] mb-2">רחוב</label>
+                      <input
+                        type="text"
+                        name="street"
+                        value={formData.street}
+                        onChange={handleChange}
+                        className="input-brutal w-full rounded-lg p-3 text-lg bg-gray-50"
+                        required
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-md font-bold text-[#545454] mb-2">כתובת</label>
-                    <input
-                      type="text"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleChange}
-                      className="input-brutal w-full rounded-lg p-3 text-lg bg-gray-50"
-                      required
-                    />
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-md font-bold text-[#545454] mb-2">מספר בית</label>
+                      <input
+                        type="text"
+                        name="houseNumber"
+                        value={formData.houseNumber}
+                        onChange={handleChange}
+                        maxLength={10}
+                        className="input-brutal w-full rounded-lg p-3 text-lg bg-gray-50"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-md font-bold text-[#545454] mb-2">דירה (אופציונלי)</label>
+                      <input
+                        type="text"
+                        name="apartment"
+                        value={formData.apartment}
+                        onChange={handleChange}
+                        maxLength={10}
+                        className="input-brutal w-full rounded-lg p-3 text-lg bg-gray-50"
+                      />
+                    </div>
                   </div>
                 </div>
               )}

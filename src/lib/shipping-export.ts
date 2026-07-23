@@ -14,6 +14,9 @@ export interface ExportOrder {
   phone: string;
   address: string;
   city: string;
+  street: string | null;
+  house_number: string | null;
+  apartment: string | null;
   shipping_method: string | null;
   pickup_point_code: string | null;
   pickup_point_name: string | null;
@@ -118,13 +121,23 @@ export function buildChitaCsv(
     let cityName = '';
     let streetName = '';
     let house = '';
+    let apartment = '';
     let notes = contentsSummary(order.items);
 
     if (type === 'delivery') {
       cityName = order.city || '';
-      const parsed = parseStreetAndHouse(order.address || '');
-      streetName = parsed.street;
-      house = parsed.house;
+      if (order.street) {
+        // Structured address columns (checkout collects street/house/apartment
+        // separately since mid-2026).
+        streetName = order.street;
+        house = order.house_number || '';
+        apartment = order.apartment || '';
+      } else {
+        // Legacy orders: only the free-text address column exists.
+        const parsed = parseStreetAndHouse(order.address || '');
+        streetName = parsed.street;
+        house = parsed.house;
+      }
     } else {
       // pickup-point: the parcel goes to the distribution point, so use the
       // point's own address (looked up by code from Chita).
@@ -154,7 +167,7 @@ export function buildChitaCsv(
       house,
       '', // כניסה
       '', // קומה
-      '', // דירה
+      apartment, // דירה
       formatPhone(order.phone),
       '', // טלפון משני
       '', // אס' לקוח

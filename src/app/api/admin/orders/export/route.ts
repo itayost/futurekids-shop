@@ -22,6 +22,7 @@ export async function GET(request: NextRequest) {
     // Only PAID orders need shipping labels created.
     const rows = await sql`
       SELECT o.id, o.first_name, o.last_name, o.phone, o.address, o.city,
+             o.street, o.house_number, o.apartment,
              o.shipping_method, o.pickup_point_code, o.pickup_point_name,
              COALESCE(
                json_agg(json_build_object(

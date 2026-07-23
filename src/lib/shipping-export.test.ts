@@ -101,6 +101,9 @@ describe('buildChitaCsv', () => {
     phone: '0501234567',
     address: 'הרצל 5',
     city: 'תל אביב',
+    street: null,
+    house_number: null,
+    apartment: null,
     shipping_method: 'delivery',
     pickup_point_code: null,
     pickup_point_name: null,
@@ -128,5 +131,69 @@ describe('buildChitaCsv', () => {
     const csv = buildChitaCsv([multi], 'delivery', new Map());
     const row = csv.split('\r\n')[1];
     expect(row).toContain('"בינה ס, אלגו ס"');
+  });
+
+  // Field indexes after splitting a row on ',^,':
+  // 0 שם, 1 קוד ישוב, 2 שם ישוב, 3 קוד רחוב, 4 שם רחוב, 5 בית, 6 כניסה,
+  // 7 קומה, 8 דירה, 9 טלפון ראשי, ...
+  const rowFields = (csv: string) => csv.split('\r\n')[1].split(',^,');
+
+  test('structured address columns win over parsing the free text', () => {
+    const structured: ExportOrder = {
+      ...order,
+      street: 'שדרות בן גוריון',
+      house_number: '12א',
+      apartment: '3',
+      address: 'שדרות בן גוריון 12א דירה 3',
+    };
+    const fields = rowFields(buildChitaCsv([structured], 'delivery', new Map()));
+    expect(fields[4]).toBe('שדרות בן גוריון');
+    expect(fields[5]).toBe('12א');
+    expect(fields[8]).toBe('3');
+  });
+
+  test('legacy order without structured columns falls back to parsing', () => {
+    const fields = rowFields(buildChitaCsv([order], 'delivery', new Map()));
+    expect(fields[4]).toBe('הרצל');
+    expect(fields[5]).toBe('5');
+    expect(fields[8]).toBe('');
+  });
+
+  test('apartment stays empty when not provided', () => {
+    const structured: ExportOrder = {
+      ...order,
+      street: 'הרצל',
+      house_number: '5',
+      apartment: null,
+    };
+    const fields = rowFields(buildChitaCsv([structured], 'delivery', new Map()));
+    expect(fields[8]).toBe('');
+  });
+
+  test('pickup-point rows ignore the customer apartment', () => {
+    const pickup: ExportOrder = {
+      ...order,
+      shipping_method: 'pickup-point',
+      pickup_point_code: 'CH1',
+      pickup_point_name: 'סופר שכונתי',
+      apartment: '7',
+    };
+    const point = {
+      code: 'CH1',
+      name: 'סופר שכונתי',
+      city: 'חולון',
+      street: 'סוקולוב',
+      house: '18',
+      remarks: '',
+      latitude: '',
+      longitude: '',
+    };
+    const fields = rowFields(
+      buildChitaCsv([pickup], 'pickup-point', new Map([['CH1', point]]))
+    );
+    expect(fields[2]).toBe('חולון');
+    expect(fields[4]).toBe('סוקולוב');
+    expect(fields[5]).toBe('18');
+    expect(fields[8]).toBe('');
   });
 });

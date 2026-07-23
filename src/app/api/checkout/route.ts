@@ -19,7 +19,12 @@ interface CheckoutRequest {
   email: string;
   phone: string;
   city: string;
-  address: string;
+  // Free-text address label (pickup-point orders send it; for delivery the
+  // server composes it from the structured fields below).
+  address?: string;
+  street?: string;
+  houseNumber?: string;
+  apartment?: string;
   items: OrderItem[];
   couponCode?: string;
   shippingMethod?: 'pickup-point' | 'delivery';
@@ -33,13 +38,32 @@ export async function POST(request: NextRequest) {
   try {
     const body: CheckoutRequest = await request.json();
 
-    // Validate required fields
-    if (!body.firstName || !body.lastName || !body.email || !body.phone || !body.city || !body.address) {
+    // Whitelist the shipping method so it can't be omitted (free) or forged (NaN total).
+    if (body.shippingMethod !== 'pickup-point' && body.shippingMethod !== 'delivery') {
+      return NextResponse.json({ error: 'Invalid shipping method' }, { status: 400 });
+    }
+
+    // Validate required fields; the address shape depends on the shipping method.
+    const missingAddress =
+      body.shippingMethod === 'delivery'
+        ? !body.street || !body.houseNumber
+        : !body.address;
+    if (!body.firstName || !body.lastName || !body.email || !body.phone || !body.city || missingAddress) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
     }
+
+    // Combined address label, kept alongside the structured columns so the
+    // admin UI and iCount keep working off a single string.
+    const street = body.shippingMethod === 'delivery' ? body.street?.trim() || null : null;
+    const houseNumber = body.shippingMethod === 'delivery' ? body.houseNumber?.trim() || null : null;
+    const apartment = body.shippingMethod === 'delivery' ? body.apartment?.trim() || null : null;
+    const address =
+      body.shippingMethod === 'delivery'
+        ? `${street} ${houseNumber}` + (apartment ? `, דירה ${apartment}` : '')
+        : body.address!;
 
     if (!body.items || body.items.length === 0) {
       return NextResponse.json(
@@ -69,10 +93,6 @@ export async function POST(request: NextRequest) {
       lineItems.map((it) => ({ productId: it.productId, quantity: it.quantity }))
     );
 
-    // Whitelist the shipping method so it can't be omitted (free) or forged (NaN total).
-    if (body.shippingMethod !== 'pickup-point' && body.shippingMethod !== 'delivery') {
-      return NextResponse.json({ error: 'Invalid shipping method' }, { status: 400 });
-    }
     const shippingCost = SHIPPING_COSTS[body.shippingMethod];
 
     let couponCode: string | null = null;
@@ -106,8 +126,8 @@ export async function POST(request: NextRequest) {
 
     // Step 1: Create order in database with PENDING status
     const orderResult = await sql`
-      INSERT INTO orders (email, first_name, last_name, phone, address, city, total, status, shipping_method, shipping_cost, pickup_point_code, pickup_point_name, bundle_discount, bundle_name, coupon_code, coupon_discount, fb_click_id, fb_browser_id, client_ip, client_ua)
-      VALUES (${body.email}, ${body.firstName}, ${body.lastName}, ${body.phone}, ${body.address}, ${body.city}, ${total}, 'PENDING', ${body.shippingMethod || null}, ${shippingCost || null}, ${body.pickupPointCode || null}, ${body.pickupPointName || null}, ${bundleDiscount}, ${bundleName}, ${couponCode}, ${couponDiscount}, ${body.fbc || null}, ${body.fbp || null}, ${clientIp}, ${clientUa})
+      INSERT INTO orders (email, first_name, last_name, phone, address, city, street, house_number, apartment, total, status, shipping_method, shipping_cost, pickup_point_code, pickup_point_name, bundle_discount, bundle_name, coupon_code, coupon_discount, fb_click_id, fb_browser_id, client_ip, client_ua)
+      VALUES (${body.email}, ${body.firstName}, ${body.lastName}, ${body.phone}, ${address}, ${body.city}, ${street}, ${houseNumber}, ${apartment}, ${total}, 'PENDING', ${body.shippingMethod || null}, ${shippingCost || null}, ${body.pickupPointCode || null}, ${body.pickupPointName || null}, ${bundleDiscount}, ${bundleName}, ${couponCode}, ${couponDiscount}, ${body.fbc || null}, ${body.fbp || null}, ${clientIp}, ${clientUa})
       RETURNING id, created_at
     `;
 
@@ -168,7 +188,7 @@ export async function POST(request: NextRequest) {
           email: body.email,
           phone: body.phone,
           city: body.city,
-          street: body.address,
+          street: address,
         },
         orderId: order.id,
         successUrl,
