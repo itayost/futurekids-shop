@@ -51,6 +51,7 @@ const opt = (name) => {
 
 const SEND = flag('send');
 const ONLY_ID = opt('id');
+const TEST_CODE = opt('test'); // routes events to the Events Manager Test Events tab
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const from = opt('from') ? new Date(`${opt('from')}T00:00:00Z`) : new Date(Date.now() - 4 * DAY_MS);
@@ -106,6 +107,7 @@ function buildPayload(o, items) {
       },
     ],
     access_token: ACCESS_TOKEN,
+    ...(TEST_CODE ? { test_event_code: TEST_CODE } : {}),
   };
 }
 
