@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { fetchPickupPoints } from '@/lib/pickup-points';
+import { getPickupPoints } from '@/lib/pickup-points';
 
 // Use Next.js route segment config for caching (1 hour)
 export const revalidate = 3600;
@@ -9,7 +9,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const city = searchParams.get('city')?.toLowerCase();
 
-    const allPoints = await fetchPickupPoints();
+    const allPoints = await getPickupPoints();
 
     // If city filter provided, filter points
     if (city) {
