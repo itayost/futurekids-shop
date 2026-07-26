@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { sql } from '@/lib/db';
-import { fetchPickupPoints } from '@/lib/pickup-points';
+import { getPickupPoints } from '@/lib/pickup-points';
 import { buildChitaCsv } from '@/lib/shipping-export';
 import type { ExportOrder } from '@/lib/shipping-export';
 import type { PickupPoint } from '@/types';
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
     let pointsByCode = new Map<string, PickupPoint>();
     if (type === 'pickup-point' && orders.length > 0) {
       try {
-        const points = await fetchPickupPoints();
+        const points = await getPickupPoints();
         pointsByCode = new Map(points.map((p) => [p.code, p]));
       } catch (error) {
         console.error('Failed to fetch pickup points for export:', error);

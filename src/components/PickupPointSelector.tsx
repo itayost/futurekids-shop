@@ -24,6 +24,7 @@ export default function PickupPointSelector({
   const [filteredCities, setFilteredCities] = useState<string[]>([]);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -40,11 +41,16 @@ export default function PickupPointSelector({
     async function fetchPoints() {
       try {
         const response = await fetch('/api/pickup-points');
+        if (!response.ok) {
+          throw new Error(`Pickup points request failed: ${response.status}`);
+        }
         const data = await response.json();
         setCities(data.cities || []);
         setAllPoints(data.points || []);
+        setLoadError((data.cities?.length ?? 0) === 0);
       } catch (error) {
         console.error('Failed to fetch pickup points:', error);
+        setLoadError(true);
       } finally {
         setIsLoading(false);
       }
@@ -179,6 +185,19 @@ export default function PickupPointSelector({
     return (
       <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-6 text-center">
         <div className="animate-pulse">טוען נקודות איסוף...</div>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-6 text-center space-y-1">
+        <p className="font-bold text-amber-800">
+          בחירת נקודת איסוף אינה זמינה כרגע
+        </p>
+        <p className="text-amber-700 text-sm">
+          ניתן לבחור משלוח עד הבית או לנסות שוב מאוחר יותר.
+        </p>
       </div>
     );
   }
