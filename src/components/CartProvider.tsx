@@ -4,12 +4,10 @@ import { createContext, useContext, useState, useEffect, useCallback, ReactNode 
 import { CartItem, CartContextType, Product, Toast } from '@/types';
 import ToastContainer from './Toast';
 import { trackAddToCart } from '@/lib/pixel';
-import { scheduleCartSync } from '@/lib/cart-sync';
+import { CART_STORAGE_KEY, scheduleCartSync } from '@/lib/cart-sync';
 import { computeBundleDiscount } from '@/lib/bundle-discount';
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
-
-const CART_STORAGE_KEY = 'futurekids-cart';
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);

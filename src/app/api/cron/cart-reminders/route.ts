@@ -11,6 +11,10 @@ import { parseMemberCartRow } from '@/lib/cart-snapshot';
 
 const MAX_SENDS_PER_RUN = 50;
 
+// Up to 50 sequential Resend calls plus per-order queries can exceed the
+// default function timeout; give the cron the full window.
+export const maxDuration = 300;
+
 // Hourly Vercel Cron (vercel.json): emails a one-time reminder for checkouts
 // that were started but never paid. A checkout attempt = an order stuck in
 // PENDING/FAILED; the reminder goes out once it is 24h-7d old, unless the
@@ -23,9 +27,11 @@ export async function GET(request: NextRequest) {
 
   try {
     // Latest abandoned order per email; skip emails that purchased afterwards
-    // and emails on the suppression list.
+    // and emails on the suppression list. orders.email is stored as typed by
+    // the customer, while club_members.email is always lowercase, so every
+    // email comparison here must go through LOWER().
     const candidates = await sql`
-      SELECT DISTINCT ON (o.email)
+      SELECT DISTINCT ON (LOWER(o.email))
              o.id, o.email, o.first_name, o.total
       FROM orders o
       WHERE o.status IN ('PENDING', 'FAILED')
@@ -34,14 +40,14 @@ export async function GET(request: NextRequest) {
         AND o.created_at BETWEEN NOW() - interval '7 days' AND NOW() - interval '24 hours'
         AND NOT EXISTS (
           SELECT 1 FROM orders paid
-          WHERE paid.email = o.email AND paid.status = 'PAID'
+          WHERE LOWER(paid.email) = LOWER(o.email) AND paid.status = 'PAID'
             AND paid.created_at >= o.created_at
         )
         AND NOT EXISTS (
           SELECT 1 FROM club_members m
-          WHERE m.email = o.email AND m.unsubscribed_at IS NOT NULL
+          WHERE m.email = LOWER(o.email) AND m.unsubscribed_at IS NOT NULL
         )
-      ORDER BY o.email, o.created_at DESC
+      ORDER BY LOWER(o.email), o.created_at DESC
       LIMIT ${MAX_SENDS_PER_RUN}
     `;
 

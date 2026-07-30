@@ -5,6 +5,16 @@
 
 const RESEND_URL = 'https://api.resend.com/emails';
 
+// Resend rejects the whole request when a "Name <email>" entry contains
+// address-syntax characters, so strip them from user-supplied display names
+// rather than losing the email.
+function sanitizeDisplayName(name: string): string {
+  return name
+    .replace(/[<>"',;:\\\r\n]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 export async function sendEmail(params: {
   toEmail: string;
   toName?: string;
@@ -20,10 +30,11 @@ export async function sendEmail(params: {
   }
 
   const fromName = process.env.EMAIL_FROM_NAME || 'KidCode';
+  const toName = params.toName ? sanitizeDisplayName(params.toName) : '';
 
   const payload: Record<string, unknown> = {
     from: `${fromName} <${fromEmail}>`,
-    to: [params.toName ? `${params.toName} <${params.toEmail}>` : params.toEmail],
+    to: [toName ? `${toName} <${params.toEmail}>` : params.toEmail],
     subject: params.subject,
     html: params.html,
   };

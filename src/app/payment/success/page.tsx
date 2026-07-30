@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircle, Home, Mail, Loader2 } from 'lucide-react';
 import { trackPurchase } from '@/lib/pixel';
+import { CART_STORAGE_KEY, SYNCED_CART_STORAGE_KEY } from '@/lib/cart-sync';
 import { CartItem } from '@/types';
 
 function LoadingFallback() {
@@ -50,7 +51,7 @@ function PaymentSuccessContent() {
           setVerified(true);
 
           // Fire Meta Pixel Purchase event (before clearing cart)
-          const cartData = localStorage.getItem('futurekids-cart');
+          const cartData = localStorage.getItem(CART_STORAGE_KEY);
           if (cartData && orderId) {
             try {
               const cartItems: CartItem[] = JSON.parse(cartData);
@@ -63,8 +64,12 @@ function PaymentSuccessContent() {
             } catch { /* ignore parse errors */ }
           }
 
-          // Clear cart from localStorage
-          localStorage.removeItem('futurekids-cart');
+          // Clear cart from localStorage, including the last-synced
+          // fingerprint - the server snapshot was deleted on payment, so a
+          // stale fingerprint would make an identical future cart skip
+          // syncing and never get a reminder.
+          localStorage.removeItem(CART_STORAGE_KEY);
+          localStorage.removeItem(SYNCED_CART_STORAGE_KEY);
         } else {
           setError(result.error || 'אירעה שגיאה באימות התשלום');
         }

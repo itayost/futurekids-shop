@@ -21,6 +21,11 @@ export function verifyUnsubscribe(email: string, signature: string): boolean {
 }
 
 export function buildUnsubscribeUrl(email: string): string {
+  // With no secret, verifyUnsubscribe rejects everything, so every email
+  // would carry a dead unsubscribe link. Loud log, fail-soft like sendEmail.
+  if (!secret()) {
+    console.error('Unsubscribe: UNSUBSCRIBE_SECRET not set - links will not verify');
+  }
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.kidcode.org.il';
   const encoded = Buffer.from(email.toLowerCase(), 'utf8').toString('base64url');
   return `${baseUrl}/api/club/unsubscribe?e=${encoded}&t=${signUnsubscribe(email)}`;
