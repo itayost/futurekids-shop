@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect, useCallback, ReactNode 
 import { CartItem, CartContextType, Product, Toast } from '@/types';
 import ToastContainer from './Toast';
 import { trackAddToCart } from '@/lib/pixel';
-import { sendClubAddToCart } from '@/lib/club-events';
+import { flashyAddToCart } from '@/lib/flashy-pixel';
 import { computeBundleDiscount } from '@/lib/bundle-discount';
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -73,7 +73,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       content_ids: [product.id],
       value: product.price,
     });
-    sendClubAddToCart({ contentIds: [product.id], value: product.price });
+    flashyAddToCart({ content_ids: [product.id], value: product.price });
     // Show toast instead of opening cart
     addToast({
       type: 'success',
@@ -122,8 +122,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       });
     });
 
-    sendClubAddToCart({
-      contentIds: [...tracked],
+    flashyAddToCart({
+      content_ids: [...tracked],
       value: productsToAdd.reduce((sum, product) => sum + product.price, 0),
     });
 

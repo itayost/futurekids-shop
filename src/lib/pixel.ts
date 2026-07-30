@@ -53,10 +53,6 @@ export function trackPurchase(params: {
   }, { eventID: params.event_id });
 }
 
-export function trackLead() {
-  fbq('track', 'Lead');
-}
-
 export function getFbCookies(): { fbc: string | null; fbp: string | null } {
   if (typeof document === 'undefined') return { fbc: null, fbp: null };
 

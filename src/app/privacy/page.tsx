@@ -92,9 +92,9 @@ export default function PrivacyPage() {
                     <td className="p-3">הכרחי</td>
                   </tr>
                   <tr className="border-t border-gray-200">
-                    <td className="p-3 font-mono text-xs">club_popup</td>
-                    <td className="p-3">שמירת הבחירה שלך לגבי חלון ההצטרפות למועדון</td>
-                    <td className="p-3">הכרחי</td>
+                    <td className="p-3 font-mono text-xs">anonymous_id, flashy_attribution</td>
+                    <td className="p-3">זיהוי מבקר ושיוך פעילות של מערכת הדיוור Flashy (כולל הצגת חלון ההצטרפות למועדון)</td>
+                    <td className="p-3">שיווקי</td>
                   </tr>
                 </tbody>
               </table>
