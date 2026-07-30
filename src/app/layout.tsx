@@ -9,6 +9,7 @@ import JsonLd from "./JsonLd";
 import MetaPixel from "@/components/MetaPixel";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import CookieBanner from "@/components/CookieBanner";
+import ClubPopup from "@/components/ClubPopup";
 
 const rubik = Rubik({
   variable: "--font-rubik",
@@ -86,6 +87,7 @@ export default function RootLayout({
           <Footer />
           <Cart />
           <CookieBanner />
+          <ClubPopup />
         </CartProvider>
       </body>
     </html>
