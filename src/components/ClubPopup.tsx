@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { X, Check, Copy, Gift } from 'lucide-react';
 import { getConsent } from '@/lib/consent';
 import { trackLead } from '@/lib/pixel';
+import { forceCartSync } from '@/lib/cart-sync';
 import {
   CLUB_COUPON_CODE,
   CLUB_POPUP_STORAGE_KEY,
@@ -113,6 +114,8 @@ export default function ClubPopup() {
       const data = await res.json();
       if (res.ok && data.success) {
         writeState({ status: 'joined', ts: Date.now(), email: email.trim().toLowerCase() });
+        // Capture a cart built before joining, now that the member is known.
+        forceCartSync();
         setAlreadyMember(Boolean(data.alreadyMember));
         trackLead();
         setStep('success');

@@ -72,6 +72,24 @@ loses the reminder (preferred over duplicates). Cap 50/run.
 No marketing events are sent anywhere - the cron reads the DB directly.
 Meta pixel/CAPI tracking is unchanged.
 
+### Member cart snapshots (pre-checkout abandonment)
+
+Identified club members also get reminders for carts that never reached
+checkout. `CartProvider` debounce-syncs cart changes to `POST /api/club/cart`
+(guest = silent no-op; localStorage last-synced guard avoids redundant
+writes; `ClubPopup` force-syncs right after joining). The route re-resolves
+names/prices from the catalog (`src/lib/cart-snapshot.ts` - deterministic
+merged/sorted items, bundle discount applied) and upserts `member_carts`
+(email PK, items jsonb, total, updated_at, reminder_sent_at) - `updated_at`
+and `reminder_sent_at` move ONLY when contents actually changed
+(`IS DISTINCT FROM`), so visiting neither resets the idle clock nor re-arms.
+Non-members receive `{success:true}` no-op (no membership oracle). Cron phase
+2 mails carts idle 24h-7d, max one reminder per 7 days, excluding anyone with
+an orders row created after the cart's last change (the order path owns
+them; all order-email comparisons use LOWER()). Snapshots are deleted on
+purchase (both PENDING->PAID winner blocks via
+`clearMemberCartForOrder`) and on unsubscribe.
+
 ## Env vars
 
 `RESEND_API_KEY` (sending-only key from the direct resend.com account),

@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useEffect, useCallback, ReactNode 
 import { CartItem, CartContextType, Product, Toast } from '@/types';
 import ToastContainer from './Toast';
 import { trackAddToCart } from '@/lib/pixel';
+import { scheduleCartSync } from '@/lib/cart-sync';
 import { computeBundleDiscount } from '@/lib/bundle-discount';
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -29,10 +30,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setIsLoaded(true);
   }, []);
 
-  // Save cart to localStorage when items change
+  // Save cart to localStorage when items change; also sync a snapshot to the
+  // server for identified club members (silent no-op for guests).
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+      scheduleCartSync(items);
     }
   }, [items, isLoaded]);
 

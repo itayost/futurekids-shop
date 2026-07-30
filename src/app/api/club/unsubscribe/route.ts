@@ -39,6 +39,7 @@ async function unsubscribe(request: NextRequest): Promise<Response> {
       VALUES (${email}, NOW())
       ON CONFLICT (email) DO UPDATE SET unsubscribed_at = NOW()
     `;
+    await sql`DELETE FROM member_carts WHERE email = ${email}`;
 
     return htmlPage(
       'הוסרת מרשימת התפוצה',

@@ -7,6 +7,7 @@ import {
   type ReminderItem,
 } from '@/lib/cart-reminder-email';
 import { buildUnsubscribeUrl } from '@/lib/unsubscribe';
+import { parseMemberCartRow } from '@/lib/cart-snapshot';
 
 const MAX_SENDS_PER_RUN = 50;
 
@@ -91,7 +92,75 @@ export async function GET(request: NextRequest) {
       else skipped++;
     }
 
-    return NextResponse.json({ sent, skipped, candidates: candidates.length });
+    // Phase 2: member cart snapshots that never reached checkout. A cart is
+    // eligible once idle for 24h (updated_at moves only on real changes);
+    // anyone who progressed into checkout after the cart's last change is
+    // owned by the order path above; hard cap of one reminder per 7 days.
+    let cartSent = 0;
+    let cartSkipped = 0;
+    const remaining = MAX_SENDS_PER_RUN - sent;
+
+    const cartCandidates =
+      remaining > 0
+        ? await sql`
+            SELECT mc.email, m.first_name
+            FROM member_carts mc
+            JOIN club_members m ON m.email = mc.email AND m.unsubscribed_at IS NULL
+            WHERE mc.updated_at BETWEEN NOW() - interval '7 days' AND NOW() - interval '24 hours'
+              AND (mc.reminder_sent_at IS NULL OR mc.reminder_sent_at < NOW() - interval '7 days')
+              AND NOT EXISTS (
+                SELECT 1 FROM orders o
+                WHERE LOWER(o.email) = mc.email AND o.created_at >= mc.updated_at
+              )
+            LIMIT ${remaining}
+          `
+        : [];
+
+    for (const cart of cartCandidates) {
+      const claimed = await sql`
+        UPDATE member_carts SET reminder_sent_at = NOW()
+        WHERE email = ${cart.email}
+          AND (reminder_sent_at IS NULL OR reminder_sent_at < NOW() - interval '7 days')
+        RETURNING items, total
+      `;
+      if (claimed.length === 0) {
+        cartSkipped++;
+        continue;
+      }
+
+      const snapshot = parseMemberCartRow(claimed[0]);
+      if (!snapshot) {
+        cartSkipped++;
+        continue;
+      }
+
+      const email = cart.email as string;
+      const firstName = (cart.first_name as string) || undefined;
+      const ok = await sendEmail({
+        toEmail: email,
+        toName: firstName,
+        subject: CART_REMINDER_SUBJECT,
+        html: buildCartReminderEmailHtml({
+          firstName,
+          items: snapshot.items,
+          total: snapshot.total,
+          unsubscribeUrl: buildUnsubscribeUrl(email),
+        }),
+        unsubscribeUrl: buildUnsubscribeUrl(email),
+      });
+
+      if (ok) cartSent++;
+      else cartSkipped++;
+    }
+
+    return NextResponse.json({
+      sent,
+      skipped,
+      candidates: candidates.length,
+      cartSent,
+      cartSkipped,
+      cartCandidates: cartCandidates.length,
+    });
   } catch (error) {
     console.error('Cart reminders cron error:', error);
     return NextResponse.json({ error: 'Cron failed' }, { status: 500 });

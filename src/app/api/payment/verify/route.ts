@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { sendOrderPurchaseEvent } from '@/lib/purchase-event';
 import { incrementCouponUsageForOrder } from '@/lib/coupon-usage';
+import { clearMemberCartForOrder } from '@/lib/member-cart';
 
 // This route verifies payment and updates order status
 // Called from the success page after iCount redirect
@@ -42,6 +43,10 @@ export async function POST(request: NextRequest) {
 
       incrementCouponUsageForOrder(orderId).catch((err: unknown) =>
         console.error('Coupon usage bump failed (verify):', err)
+      );
+
+      clearMemberCartForOrder(orderId).catch((err: unknown) =>
+        console.error('Member cart cleanup failed (verify):', err)
       );
     }
 
