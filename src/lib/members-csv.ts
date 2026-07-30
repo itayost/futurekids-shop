@@ -9,10 +9,13 @@ export interface MemberCsvRow {
 }
 
 function escapeCsvField(value: string): string {
-  if (/[",\n\r]/.test(value)) {
-    return `"${value.replace(/"/g, '""')}"`;
+  // Excel executes leading =, +, -, @ (and tab/CR) as formulas - neutralize
+  // so a member-supplied name cannot run code when the export is opened.
+  const guarded = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+  if (/[",\n\r]/.test(guarded)) {
+    return `"${guarded.replace(/"/g, '""')}"`;
   }
-  return value;
+  return guarded;
 }
 
 export function buildMembersCsv(members: MemberCsvRow[]): string {

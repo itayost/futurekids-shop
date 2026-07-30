@@ -32,4 +32,15 @@ describe('buildMembersCsv', () => {
     ]);
     expect(csv).toContain('"Cohen, ""Dana""\nJr"');
   });
+
+  test('neutralizes Excel formula injection in member-supplied fields', () => {
+    const csv = buildMembersCsv([
+      { ...BASE, first_name: '=HYPERLINK("http://evil.example")' },
+      { ...BASE, email: '+cmd@example.com', first_name: '@SUM(1)' },
+    ]);
+    expect(csv).not.toMatch(/(^|,)=HYPERLINK/m);
+    expect(csv).toContain(`"'=HYPERLINK`);
+    expect(csv).toContain(`'+cmd@example.com`);
+    expect(csv).toContain(`'@SUM(1)`);
+  });
 });
