@@ -12,6 +12,7 @@ export interface ClubPopupState {
   status: 'dismissed' | 'joined';
   ts: number;
   email?: string;
+  token?: string;
 }
 
 // Safe parse of the stored state; anything malformed becomes null and gets
@@ -27,10 +28,14 @@ export function parseClubPopupState(raw: string | null): ClubPopupState | null {
     if (typeof candidate.ts !== 'number' || !Number.isFinite(candidate.ts)) return null;
 
     const state: ClubPopupState = { status: candidate.status, ts: candidate.ts };
-    if (typeof candidate.email === 'string' && candidate.email) {
-      return { ...state, email: candidate.email };
+    const withEmail =
+      typeof candidate.email === 'string' && candidate.email
+        ? { ...state, email: candidate.email }
+        : state;
+    if (typeof candidate.token === 'string' && candidate.token) {
+      return { ...withEmail, token: candidate.token };
     }
-    return state;
+    return withEmail;
   } catch {
     return null;
   }
@@ -56,4 +61,12 @@ export function isPopupEligible(
 export function getMemberEmail(state: ClubPopupState | null): string | null {
   if (state?.status !== 'joined') return null;
   return state.email ?? null;
+}
+
+// Email + ownership token pair needed for cart syncs; null unless both exist.
+export function getMemberIdentity(
+  state: ClubPopupState | null
+): { email: string; token: string } | null {
+  if (state?.status !== 'joined' || !state.email || !state.token) return null;
+  return { email: state.email, token: state.token };
 }

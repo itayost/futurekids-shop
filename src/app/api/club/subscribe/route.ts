@@ -3,16 +3,21 @@ import { sql } from '@/lib/db';
 import { sendEmail } from '@/lib/email';
 import { buildWelcomeEmailHtml, WELCOME_EMAIL_SUBJECT } from '@/lib/welcome-email';
 import { buildUnsubscribeUrl } from '@/lib/unsubscribe';
+import { signMemberToken } from '@/lib/member-token';
+import { clientIp, rateLimitAllows } from '@/lib/rate-limit';
 import { CLUB_COUPON_CODE } from '@/lib/club-popup';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_EMAIL_LENGTH = 254;
 const MAX_NAME_LENGTH = 100;
+const RATE_LIMIT = 10;
+const RATE_WINDOW_SECONDS = 60 * 60;
 
 // Joins a visitor to the members club: upserts the club_members row and sends
 // the welcome email with the coupon code. An address that is already an
-// active member gets no second email (idempotent); an unsubscribed address
-// that signs up again is reactivated (explicit re-consent).
+// active member gets no second email, but the response is identical either
+// way so the endpoint cannot be used to probe who is on the list; an
+// unsubscribed address that signs up again is reactivated (re-consent).
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -38,14 +43,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const allowed = await rateLimitAllows({
+      scope: 'subscribe',
+      ip: clientIp(request),
+      limit: RATE_LIMIT,
+      windowSeconds: RATE_WINDOW_SECONDS,
+    });
+    if (!allowed) {
+      return NextResponse.json(
+        { success: false, message: 'יותר מדי ניסיונות, נסו שוב מאוחר יותר' },
+        { status: 429 }
+      );
+    }
+
     const existing = await sql`
       SELECT id, unsubscribed_at FROM club_members WHERE email = ${email}
     `;
     if (existing.length > 0 && existing[0].unsubscribed_at === null) {
+      // Already an active member: no second welcome email, but the response
+      // shape matches the fresh-signup one (no membership oracle).
       return NextResponse.json({
         success: true,
-        alreadyMember: true,
-        message: `הכתובת כבר רשומה למועדון. קוד ההנחה: ${CLUB_COUPON_CODE}`,
+        memberToken: signMemberToken(email),
+        message: 'ברוכים הבאים למועדון!',
       });
     }
 
@@ -73,7 +93,11 @@ export async function POST(request: NextRequest) {
       console.error('Club subscribe: welcome email send failed');
     }
 
-    return NextResponse.json({ success: true, message: 'ברוכים הבאים למועדון!' });
+    return NextResponse.json({
+      success: true,
+      memberToken: signMemberToken(email),
+      message: 'ברוכים הבאים למועדון!',
+    });
   } catch (error) {
     console.error('Club subscribe error:', error);
     return NextResponse.json(

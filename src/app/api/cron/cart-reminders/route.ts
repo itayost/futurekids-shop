@@ -159,6 +159,9 @@ export async function GET(request: NextRequest) {
       else cartSkipped++;
     }
 
+    // Housekeeping: expired rate-limit windows are dead weight.
+    await sql`DELETE FROM rate_limits WHERE window_start < NOW() - interval '1 day'`;
+
     return NextResponse.json({
       sent,
       skipped,

@@ -1,6 +1,6 @@
 import {
   CLUB_POPUP_STORAGE_KEY,
-  getMemberEmail,
+  getMemberIdentity,
   parseClubPopupState,
 } from './club-popup';
 
@@ -48,9 +48,9 @@ function ensureFlushListener(): void {
   });
 }
 
-function memberEmail(): string | null {
+function memberIdentity(): { email: string; token: string } | null {
   try {
-    return getMemberEmail(parseClubPopupState(localStorage.getItem(CLUB_POPUP_STORAGE_KEY)));
+    return getMemberIdentity(parseClubPopupState(localStorage.getItem(CLUB_POPUP_STORAGE_KEY)));
   } catch {
     return null;
   }
@@ -65,8 +65,8 @@ function fingerprint(items: SyncItem[]): string {
 }
 
 function send(items: SyncItem[], force: boolean): void {
-  const email = memberEmail();
-  if (!email) return;
+  const identity = memberIdentity();
+  if (!identity) return;
 
   const fp = fingerprint(items);
   if (!force) {
@@ -83,7 +83,7 @@ function send(items: SyncItem[], force: boolean): void {
   fetch('/api/club/cart', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, items }),
+    body: JSON.stringify({ email: identity.email, token: identity.token, items }),
     keepalive: true,
   })
     .then((res) => {

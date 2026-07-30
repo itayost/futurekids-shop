@@ -41,7 +41,6 @@ export default function ClubPopup() {
   const [firstName, setFirstName] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [alreadyMember, setAlreadyMember] = useState(false);
   const [copied, setCopied] = useState(false);
 
   // Schedule the popup: only on eligible pages, only after the cookie banner
@@ -113,10 +112,14 @@ export default function ClubPopup() {
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        writeState({ status: 'joined', ts: Date.now(), email: email.trim().toLowerCase() });
+        writeState({
+          status: 'joined',
+          ts: Date.now(),
+          email: email.trim().toLowerCase(),
+          token: typeof data.memberToken === 'string' ? data.memberToken : undefined,
+        });
         // Capture a cart built before joining, now that the member is known.
         forceCartSync();
-        setAlreadyMember(Boolean(data.alreadyMember));
         trackLead();
         setStep('success');
       } else {
@@ -177,13 +180,19 @@ export default function ClubPopup() {
                 ספרים חדשים ומבצעים.
               </p>
 
-              {/* Honeypot: off-screen (not display:none - some bots skip those) */}
+              {/* Honeypot: off-screen (not display:none - some bots skip
+                  those). The data-* attributes tell password managers to
+                  leave it alone so a real signup is never silently dropped. */}
               <input
                 type="text"
                 name="website"
                 tabIndex={-1}
                 autoComplete="off"
                 aria-hidden="true"
+                data-lpignore="true"
+                data-1p-ignore="true"
+                data-bwignore="true"
+                data-form-type="other"
                 className="absolute -left-[9999px] top-auto h-px w-px overflow-hidden"
               />
 
@@ -236,9 +245,7 @@ export default function ClubPopup() {
                 <Check className="w-6 h-6 text-white" strokeWidth={3} />
               </div>
               <p className="text-gray-700 font-medium">
-                {alreadyMember
-                  ? 'הכתובת כבר רשומה למועדון - הקוד שלך עדיין תקף:'
-                  : 'שלחנו לך מייל עם הקוד. אפשר גם להשתמש בו כבר עכשיו:'}
+                זה קוד ההנחה שלך - אפשר להשתמש בו כבר עכשיו:
               </p>
               <button
                 onClick={copyCode}

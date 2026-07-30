@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest';
 import {
   DISMISS_TTL_MS,
   getMemberEmail,
+  getMemberIdentity,
   isPopupEligible,
   parseClubPopupState,
 } from './club-popup';
@@ -48,6 +49,16 @@ describe('parseClubPopupState', () => {
   test('drops a non-string email', () => {
     const raw = JSON.stringify({ status: 'joined', ts: NOW, email: 42 });
     expect(parseClubPopupState(raw)).toEqual({ status: 'joined', ts: NOW });
+  });
+
+  test('carries the member token through', () => {
+    const raw = JSON.stringify({ status: 'joined', ts: NOW, email: 'user@example.com', token: 'abc' });
+    expect(parseClubPopupState(raw)).toEqual({
+      status: 'joined',
+      ts: NOW,
+      email: 'user@example.com',
+      token: 'abc',
+    });
   });
 });
 
@@ -102,5 +113,18 @@ describe('getMemberEmail', () => {
     expect(getMemberEmail({ status: 'joined', ts: NOW, email: 'user@example.com' })).toBe(
       'user@example.com'
     );
+  });
+});
+
+describe('getMemberIdentity', () => {
+  test('requires joined status with both email and token', () => {
+    expect(getMemberIdentity(null)).toBeNull();
+    expect(getMemberIdentity({ status: 'dismissed', ts: NOW })).toBeNull();
+    expect(getMemberIdentity({ status: 'joined', ts: NOW, email: 'a@b.co' })).toBeNull();
+    expect(getMemberIdentity({ status: 'joined', ts: NOW, token: 'abc' })).toBeNull();
+    expect(getMemberIdentity({ status: 'joined', ts: NOW, email: 'a@b.co', token: 'abc' })).toEqual({
+      email: 'a@b.co',
+      token: 'abc',
+    });
   });
 });

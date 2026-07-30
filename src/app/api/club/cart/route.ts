@@ -2,13 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { getProductById } from '@/lib/products';
 import { MAX_CART_ITEMS, normalizeCartItems } from '@/lib/cart-snapshot';
+import { verifyMemberToken } from '@/lib/member-token';
+import { clientIp, rateLimitAllows } from '@/lib/rate-limit';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_EMAIL_LENGTH = 254;
+const RATE_LIMIT = 120;
+const RATE_WINDOW_SECONDS = 60 * 60;
 
 // Receives cart snapshots for identified club members. Names and prices are
 // re-resolved from the catalog server-side; the client is trusted only for
-// quantity. Non-members get the same success response as members so the
+// quantity. Writes require the member token issued at subscribe time, so
+// knowing an email is not enough to plant or delete someone's cart; invalid
+// tokens and non-members get the same success no-op as real members, so the
 // endpoint cannot be used to probe which addresses are on the list.
 export async function POST(request: NextRequest) {
   try {
@@ -20,6 +26,21 @@ export async function POST(request: NextRequest) {
     }
     if (!Array.isArray(body.items) || body.items.length > MAX_CART_ITEMS) {
       return NextResponse.json({ success: false }, { status: 400 });
+    }
+
+    const token = typeof body.token === 'string' ? body.token : '';
+    if (!verifyMemberToken(email, token)) {
+      return NextResponse.json({ success: true });
+    }
+
+    const allowed = await rateLimitAllows({
+      scope: 'cart',
+      ip: clientIp(request),
+      limit: RATE_LIMIT,
+      windowSeconds: RATE_WINDOW_SECONDS,
+    });
+    if (!allowed) {
+      return NextResponse.json({ success: false }, { status: 429 });
     }
 
     const member = await sql`

@@ -83,12 +83,26 @@ merged/sorted items, bundle discount applied) and upserts `member_carts`
 (email PK, items jsonb, total, updated_at, reminder_sent_at) - `updated_at`
 and `reminder_sent_at` move ONLY when contents actually changed
 (`IS DISTINCT FROM`), so visiting neither resets the idle clock nor re-arms.
-Non-members receive `{success:true}` no-op (no membership oracle). Cron phase
-2 mails carts idle 24h-7d, max one reminder per 7 days, excluding anyone with
-an orders row created after the cart's last change (the order path owns
-them; all order-email comparisons use LOWER()). Snapshots are deleted on
-purchase (both PENDING->PAID winner blocks via
-`clearMemberCartForOrder`) and on unsubscribe.
+Cart writes require the **member token** issued by the subscribe endpoint
+(`src/lib/member-token.ts` - HMAC over the email with domain separation on
+`UNSUBSCRIBE_SECRET`, stored in the `club_popup` state and sent with every
+sync), so knowing an email is not enough to plant or delete a cart.
+Non-members and invalid tokens receive the same `{success:true}` no-op (no
+membership oracle) - and the subscribe endpoint's response is likewise
+identical for new and existing members. Cron phase 2 mails carts idle
+24h-7d, max one reminder per 7 days, excluding anyone with an orders row
+created after the cart's last change (the order path owns them; all
+order-email comparisons use LOWER()). Snapshots are deleted on purchase
+(both PENDING->PAID winner blocks via `clearMemberCartForOrder`) and on
+unsubscribe.
+
+### Rate limiting
+
+Postgres-backed fixed window (`src/lib/rate-limit.ts`, `rate_limits` table,
+fail-open on DB errors): subscribe 10/hour/IP, cart sync 120/hour/IP.
+Expired windows are pruned by the hourly cron. The honeypot field carries
+password-manager ignore attributes (data-lpignore / data-1p-ignore /
+data-bwignore) so autofill cannot silently drop a real signup.
 
 ## Env vars
 
