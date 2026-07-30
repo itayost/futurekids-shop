@@ -9,7 +9,7 @@ import JsonLd from "./JsonLd";
 import MetaPixel from "@/components/MetaPixel";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import CookieBanner from "@/components/CookieBanner";
-import FlashyTracking from "@/components/FlashyTracking";
+import ClubPopup from "@/components/ClubPopup";
 
 const rubik = Rubik({
   variable: "--font-rubik",
@@ -79,7 +79,6 @@ export default function RootLayout({
         <JsonLd />
         <MetaPixel />
         <GoogleAnalytics />
-        <FlashyTracking />
         <CartProvider>
           <Navbar />
           <main className="flex-grow">
@@ -88,6 +87,7 @@ export default function RootLayout({
           <Footer />
           <Cart />
           <CookieBanner />
+          <ClubPopup />
         </CartProvider>
       </body>
     </html>

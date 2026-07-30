@@ -9,7 +9,6 @@ import { useCart } from '@/components/CartProvider';
 import PickupPointSelector from '@/components/PickupPointSelector';
 import { PickupPoint } from '@/types';
 import { trackInitiateCheckout, getFbCookies } from '@/lib/pixel';
-import { flashyIdentify } from '@/lib/flashy-pixel';
 import { SHIPPING_COSTS } from '@/lib/shipping';
 
 type ShippingOption = 'pickup-point' | 'delivery';
@@ -108,10 +107,6 @@ export default function CheckoutPage() {
             houseNumber: formData.houseNumber,
             apartment: formData.apartment || undefined,
           };
-
-      // Tie the Flashy browser session to the customer for cart tracking
-      // and popup targeting.
-      flashyIdentify(formData.email);
 
       // Read Meta cookies for CAPI attribution
       const { fbc, fbp } = getFbCookies();

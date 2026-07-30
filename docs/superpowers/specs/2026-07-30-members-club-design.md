@@ -1,98 +1,88 @@
-# Members Club (Flashy) - Design
+# Members Club - Design (self-hosted)
 
-Date: 2026-07-30 (revised same day: popup moved from custom code to Flashy)
+Date: 2026-07-30 (v3: fully self-hosted; v2 was Flashy-managed, v1 hybrid - both replaced same day by owner decision: Flashy free tier caps at 250 contacts, $40+/mo after)
 Status: Approved
 
 ## Context / Problem
 
-The shop has no email marketing. The owner opened a Flashy account (Israeli
-omnichannel marketing platform) and wants three things:
+The shop had no email marketing. Wanted: (1) site-entry popup offering
+members-club signup with 10% off, (2) welcome email with a coupon code,
+(3) cart-abandonment reminder 24h later. Plus a public contact address
+hello@kidcode.org.il (contact form target + shown on site).
 
-1. A site-entry popup offering members-club signup with 10% off.
-2. A welcome email carrying the coupon code.
-3. A cart-abandonment reminder 24 hours later.
-
-Additionally, a new public sender/contact address hello@kidcode.org.il replaces
-the personal Gmail as the contact-form target and is displayed on the site.
-
-## Decisions (agreed)
-
-- **Shared coupon code CLUB10** (percent, 10, no expiry/min/max) seeded via
-  `scripts/create-club-coupon.mjs`. Reuses the existing coupon system as-is.
-- **The popup is managed in the Flashy dashboard** (owner decision, revised
-  from an initial custom-coded popup): the site embeds Flashy's pixel
-  (thunder.js), which renders whatever popup is configured in Flashy. The
-  owner controls copy, design, timing and targeting without deploys.
-- **Welcome email is a Flashy automation** (trigger: joined the list via the
-  popup), built in the Flashy email editor with the CLUB10 code.
-- **Abandonment reminder is a Flashy dashboard automation**. The site emits
-  events; the automation does the 24h wait, Purchase exit condition, and the
-  reminder email.
-- Club list: Flashy "Main List", id 38818.
+Decision: no third-party marketing platform. Everything runs in this repo:
+our popup, a `club_members` Postgres table, **Resend** (via Vercel
+Marketplace) for delivery, and a **Vercel Cron** reading abandoned orders.
 
 ## Architecture
 
-### Flashy site pixel - `src/components/FlashyTracking.tsx`
+### Signup popup - `src/components/ClubPopup.tsx` + `src/lib/club-popup.ts`
 
-Loads thunder.js with the numeric account id (`NEXT_PUBLIC_FLASHY_ACCOUNT_ID`,
-13437 - Flashy rejects non-numeric ids). Consent-gated exactly like
-MetaPixel/GoogleAnalytics (opt-out model, `'consent-changed'` listener), fires
-PageView on SPA navigations. This script is what fetches and renders the
-dashboard-managed popups (`api.flashy.app/thunder/popups`).
+Mounted in the root layout. Waits for the cookie banner to be answered
+(`'consent-changed'`), then a 6s timer; localStorage key `club_popup`
+(`dismissed` re-shows after 14 days, `joined` never); excluded paths
+`/checkout`, `/payment`, `/success`, `/admin`; z-[80]; honeypot field;
+success step shows a copyable CLUB10. Fires Meta pixel `Lead`
+(consent-gated). Pure logic unit-tested in `club-popup.test.ts`.
 
-### Client events - `src/lib/flashy-pixel.ts`
+### Data - `club_members` (script `scripts/create-club-members-table.mjs`)
 
-Safe wrapper over `window.flashy` (no-ops when absent or tracking declined):
+`id, email UNIQUE, first_name, created_at, unsubscribed_at`. Doubles as the
+suppression list: unsubscribed non-members (reminder recipients) get a row
+with `unsubscribed_at` set. Plus `orders.reminder_sent_at` for the cron.
 
-- `flashyAddToCart` - fired from `CartProvider.addItem`/`addItems` for every
-  visitor; Flashy ties anonymous activity to the contact once identified.
-- `flashyIdentify` - `flashy('setCustomer', {email})` at checkout submit, so
-  browser activity and popup targeting attach to the right contact.
+### Email - `src/lib/email.ts` (Resend REST, native fetch, no SDK)
 
-### Server events - `src/lib/flashy.ts` (REST, fail-soft)
+Fail-soft (meta-capi.ts conventions): never throws, returns false, logs
+without PII. Sends with `List-Unsubscribe` + one-click headers. Builders
+(pure, tested): `src/lib/welcome-email.ts` (CLUB10 welcome) and
+`src/lib/cart-reminder-email.ts` (item list + total + CLUB10 tip), both
+table-based inline-styled RTL in the brand language.
 
-`sendEvent` never throws and no-ops without `FLASHY_API_KEY`, so Flashy can
-never break checkout or payment:
+### Unsubscribe - `src/lib/unsubscribe.ts` + `GET|POST /api/club/unsubscribe`
 
-| Event | Where |
-|---|---|
-| `InitiateCheckout` | `/api/checkout` after the order INSERT (email known) |
-| `Purchase` | both PENDING->PAID winner blocks (verify + IPN) via `src/lib/flashy-purchase.ts` - exactly once per order, the automation exit condition |
+Stateless HMAC-signed links (`UNSUBSCRIBE_SECRET`, timing-safe verify):
+`?e=<base64url(email)>&t=<hmac>` - no token rows; same format for members
+and one-off reminder recipients. Route upserts `unsubscribed_at` and
+returns a Hebrew RTL confirmation page; POST supports RFC 8058 one-click.
+Re-subscribing through the popup clears the flag (explicit re-consent).
 
-### Privacy
+### Signup - `POST /api/club/subscribe`
 
-`/privacy` documents the mailing section, Flashy as processor, and Flashy's
-cookies (`anonymous_id`, `flashy_attribution` - verified in the browser).
-Joining the club through the popup is the explicit mailing consent; declining
-the cookie banner removes the pixel (and with it the popup).
+Honeypot -> silent 200; validation -> Hebrew 400s; active member ->
+`{alreadyMember: true}` with no resend; else upsert + await welcome email
+(send failure still returns success - the popup shows the code on screen).
+
+### Abandoned-cart reminder - `GET /api/cron/cart-reminders` + `vercel.json`
+
+Hourly Vercel Cron (`CRON_SECRET` Bearer). A checkout attempt = an order in
+`PENDING`/`FAILED`; reminder when it is 24h-7d old. Latest order per email
+(`DISTINCT ON`), excludes emails with a later `PAID` order and suppressed
+emails. Atomic claim (`UPDATE ... WHERE reminder_sent_at IS NULL RETURNING`)
+prevents double-sends across overlapping runs; a post-claim send failure
+loses the reminder (preferred over duplicates). Cap 50/run.
+
+No marketing events are sent anywhere - the cron reads the DB directly.
+Meta pixel/CAPI tracking is unchanged.
 
 ## Env vars
 
-`NEXT_PUBLIC_FLASHY_ACCOUNT_ID` (13437, numeric only), `FLASHY_API_KEY`
-(secret, server events). `FLASHY_CLUB_LIST_ID` / `FLASHY_FROM_EMAIL` /
-`FLASHY_FROM_NAME` remain set in Vercel but are currently unused by code
-(kept for future transactional sends).
+`RESEND_API_KEY` (auto-injected by the Resend Marketplace integration),
+`EMAIL_FROM=hello@kidcode.org.il`, `EMAIL_FROM_NAME`, `UNSUBSCRIBE_SECRET`,
+`CRON_SECRET` (Vercel sends it as Bearer on cron invocations).
 
 ## Out of scope
 
-- Per-member unique coupon codes and per-customer usage limits.
-- SMS (account has no credits).
-- A local subscribers table - Flashy is the single source of truth.
-- Rate limiting infrastructure (recommended: Vercel WAF rule if custom club
-  endpoints ever return).
+Per-member unique coupon codes; SMS; campaign/newsletter sending (if ever
+needed: export `club_members` to any ESP, or Resend Broadcasts); admin UI
+for the members list.
 
-## Manual owner setup (required before launch)
+## Manual owner steps
 
-1. Create the hello@kidcode.org.il mailbox/forwarding at the domain provider.
-2. Flashy: authenticate the kidcode.org.il sending domain (DKIM/SPF DNS
-   records) and approve hello@ as a sender.
-3. Build the signup popup in the Flashy dashboard (offer: 10% off first order,
-   joins list 38818).
-4. Build the welcome automation: trigger = joined the list -> send email with
-   the CLUB10 code.
-5. Build the abandoned-cart automation: event trigger AddToCart (and/or
-   InitiateCheckout) -> wait 24h -> exit on Purchase -> send reminder email.
-   Limit re-entry (e.g. once per 7 days). Consider restricting sends to
-   club-list members (Israeli spam law).
-6. Activate formsubmit for hello@ (first contact-form submission sends a
+1. Finish the Resend Marketplace install (browser step; injects
+   `RESEND_API_KEY`).
+2. Create the hello@kidcode.org.il mailbox/forwarding at the domain provider.
+3. Verify kidcode.org.il in Resend (DKIM/SPF DNS records) so mail sends from
+   hello@; until then Resend only allows its test sender.
+4. Activate formsubmit for hello@ (first contact-form submission sends a
    one-time confirmation link).

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { sendOrderPurchaseEvent } from '@/lib/purchase-event';
-import { sendOrderFlashyPurchase } from '@/lib/flashy-purchase';
 import { incrementCouponUsageForOrder } from '@/lib/coupon-usage';
 
 // IPN (Instant Payment Notification) handler
@@ -73,10 +72,6 @@ export async function POST(request: NextRequest) {
 
         incrementCouponUsageForOrder(order.id).catch((err: unknown) =>
           console.error('Coupon usage bump failed (ipn):', err)
-        );
-
-        sendOrderFlashyPurchase(order.id).catch((err: unknown) =>
-          console.error('Flashy Purchase failed (ipn):', err)
         );
       }
     } else {

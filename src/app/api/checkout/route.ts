@@ -5,7 +5,6 @@ import { computeBundleDiscount } from '@/lib/bundle-discount';
 import { normalizeCode, parseCouponRow, validateCoupon } from '@/lib/coupons';
 import { getProductById } from '@/lib/products';
 import { SHIPPING_COSTS } from '@/lib/shipping';
-import { sendEvent } from '@/lib/flashy';
 
 interface OrderItem {
   productId: string;
@@ -141,17 +140,6 @@ export async function POST(request: NextRequest) {
         VALUES (${order.id}, ${item.productId}, ${item.name}, ${item.quantity}, ${item.price})
       `;
     }
-
-    // Flashy InitiateCheckout (fire-and-forget): enters the contact into the
-    // abandoned-cart automation. sendEvent never throws, so this can never
-    // delay or break checkout.
-    sendEvent('InitiateCheckout', {
-      email: body.email,
-      value: total,
-      currency: 'ILS',
-      content_ids: lineItems.map((it) => it.productId),
-      order_id: order.id as string,
-    }).catch((err: unknown) => console.error('Flashy InitiateCheckout failed:', err));
 
     // Step 2: Generate iCount payment URL
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.kidcode.org.il';
