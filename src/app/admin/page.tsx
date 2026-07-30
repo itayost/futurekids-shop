@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { Lock, Package, User, MapPin, Phone, Mail, Calendar, ShoppingBag, ChevronDown, ChevronUp, Search, Trash2, Truck, Gift, Download, Ticket } from 'lucide-react';
+import { Lock, Package, User, Users, MapPin, Phone, Mail, Calendar, ShoppingBag, ChevronDown, ChevronUp, Search, Trash2, Truck, Gift, Download, Ticket } from 'lucide-react';
 
 interface OrderItem {
   id: string;
@@ -269,6 +269,10 @@ export default function AdminPage() {
             ניהול הזמנות
           </h1>
           <div className="flex items-center gap-4">
+            <Link href="/admin/members" className="inline-flex items-center gap-1 font-bold text-gray-600 hover:text-[#545454]">
+              <Users className="w-5 h-5" />
+              מועדון
+            </Link>
             <Link href="/admin/coupons" className="inline-flex items-center gap-1 font-bold text-gray-600 hover:text-[#545454]">
               <Ticket className="w-5 h-5" />
               קופונים
