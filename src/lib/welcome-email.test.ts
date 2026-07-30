@@ -21,6 +21,12 @@ describe('buildWelcomeEmailHtml', () => {
     expect(html).toContain(UNSUB);
   });
 
+  test('uses the branded hero image with alt text', () => {
+    const html = buildWelcomeEmailHtml({ couponCode: 'CLUB10', unsubscribeUrl: UNSUB });
+    expect(html).toContain('https://www.kidcode.org.il/emails/welcome.jpg');
+    expect(html).toMatch(/<img[^>]+alt="[^"]+"/);
+  });
+
   test('greets by first name when given', () => {
     const html = buildWelcomeEmailHtml({ firstName: 'דנה', couponCode: 'CLUB10', unsubscribeUrl: UNSUB });
     expect(html).toContain('היי דנה!');

@@ -31,6 +31,12 @@ describe('buildCartReminderEmailHtml', () => {
     expect(html).toContain('CLUB10');
   });
 
+  test('uses the branded hero image with alt text', () => {
+    const html = buildCartReminderEmailHtml({ items: ITEMS, total: 135, unsubscribeUrl: UNSUB });
+    expect(html).toContain('https://www.kidcode.org.il/emails/cart-reminder.jpg');
+    expect(html).toMatch(/<img[^>]+alt="[^"]+"/);
+  });
+
   test('escapes HTML in item names and greets by name when given', () => {
     const html = buildCartReminderEmailHtml({
       firstName: 'דנה',

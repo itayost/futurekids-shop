@@ -39,9 +39,8 @@ export function buildWelcomeEmailHtml(params: {
 <td align="center">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background-color:#ffffff;border:4px solid ${INK};border-radius:24px;overflow:hidden;">
 <tr>
-<td style="background-color:#fbcfe8;border-bottom:4px solid ${INK};padding:28px 24px;text-align:center;">
-<p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;color:${INK};letter-spacing:1px;">מועדון KidCode</p>
-<h1 style="margin:8px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:26px;font-weight:900;color:${INK};">ברוכים הבאים למועדון!</h1>
+<td style="border-bottom:4px solid ${INK};">
+<img src="${SITE_URL}/emails/welcome.jpg" alt="ברוכים הבאים למועדון KidCode - כיף שבאת!" width="512" height="250" style="display:block;width:100%;height:auto;">
 </td>
 </tr>
 <tr>

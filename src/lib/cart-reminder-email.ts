@@ -1,4 +1,4 @@
-import { escapeHtml } from '@/lib/welcome-email';
+import { escapeHtml } from './welcome-email';
 
 // Builds the abandoned-cart reminder email listing the actual order items.
 // Same table-based inline-styled RTL visual language as the welcome email.
@@ -46,9 +46,8 @@ export function buildCartReminderEmailHtml(params: {
 <td align="center">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background-color:#ffffff;border:4px solid ${INK};border-radius:24px;overflow:hidden;">
 <tr>
-<td style="background-color:#bae6fd;border-bottom:4px solid ${INK};padding:28px 24px;text-align:center;">
-<p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;color:${INK};letter-spacing:1px;">KidCode</p>
-<h1 style="margin:8px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:26px;font-weight:900;color:${INK};">שכחת משהו בסל?</h1>
+<td style="border-bottom:4px solid ${INK};">
+<img src="${SITE_URL}/emails/cart-reminder.jpg" alt="שכחת משהו בסל?" width="512" height="250" style="display:block;width:100%;height:auto;">
 </td>
 </tr>
 <tr>
