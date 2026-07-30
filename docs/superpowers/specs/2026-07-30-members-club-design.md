@@ -11,8 +11,15 @@ members-club signup with 10% off, (2) welcome email with a coupon code,
 hello@kidcode.org.il (contact form target + shown on site).
 
 Decision: no third-party marketing platform. Everything runs in this repo:
-our popup, a `club_members` Postgres table, **Resend** (via Vercel
-Marketplace) for delivery, and a **Vercel Cron** reading abandoned orders.
+our popup, a `club_members` Postgres table, **Resend** for delivery (a
+direct resend.com account - NOT the Vercel Marketplace integration, which
+installs at the team level; the owner wanted strictly project-scoped setup),
+and a **Vercel Cron** reading abandoned orders. Research notes: sending
+through the Google Workspace mailbox itself was researched and rejected -
+it stakes the business mailbox/domain reputation on marketing complaints,
+App Passwords grant full mailbox access, and Gmail throttles automated
+sending; pure "code-level" sending is impossible from Vercel (port 25
+blocked, no sending IP reputation).
 
 ## Architecture
 
@@ -67,7 +74,7 @@ Meta pixel/CAPI tracking is unchanged.
 
 ## Env vars
 
-`RESEND_API_KEY` (auto-injected by the Resend Marketplace integration),
+`RESEND_API_KEY` (sending-only key from the direct resend.com account),
 `EMAIL_FROM=hello@kidcode.org.il`, `EMAIL_FROM_NAME`, `UNSUBSCRIBE_SECRET`,
 `CRON_SECRET` (Vercel sends it as Bearer on cron invocations).
 
@@ -79,10 +86,10 @@ for the members list.
 
 ## Manual owner steps
 
-1. Finish the Resend Marketplace install (browser step; injects
-   `RESEND_API_KEY`).
-2. Create the hello@kidcode.org.il mailbox/forwarding at the domain provider.
-3. Verify kidcode.org.il in Resend (DKIM/SPF DNS records) so mail sends from
-   hello@; until then Resend only allows its test sender.
-4. Activate formsubmit for hello@ (first contact-form submission sends a
+1. Create a free resend.com account, add the kidcode.org.il domain (DNS
+   DKIM/SPF records), create a sending-only API key, and set it as
+   `RESEND_API_KEY` in `.env.local` + Vercel (project env only).
+2. Confirm the hello@kidcode.org.il Workspace mailbox receives mail (it is
+   the reply-to/contact address; Resend does the sending).
+3. Activate formsubmit for hello@ (first contact-form submission sends a
    one-time confirmation link).
