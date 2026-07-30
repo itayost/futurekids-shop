@@ -2,7 +2,7 @@
 
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Mail } from 'lucide-react';
 import ContactForm from '@/components/ContactForm';
 
 function ContactContent() {
@@ -47,6 +47,13 @@ export default function ContactPage() {
           <p className="text-xl text-gray-700 max-w-2xl mx-auto">
             יש לכם שאלה? רוצים להזמין הרצאה או סדנה? אשמח לשמוע מכם!
           </p>
+          <a
+            href="mailto:hello@kidcode.org.il"
+            className="inline-flex items-center gap-2 mt-6 bg-white border-2 border-[#545454] rounded-xl px-5 py-3 font-bold text-[#545454] hover:text-pink-500 transition-colors hard-shadow"
+          >
+            <Mail className="w-5 h-5 text-pink-500" />
+            <span dir="ltr">hello@kidcode.org.il</span>
+          </a>
         </div>
 
         <Suspense fallback={<div className="text-center py-10">טוען...</div>}>

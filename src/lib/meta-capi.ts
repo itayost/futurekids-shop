@@ -8,7 +8,7 @@ function sha256(value: string): string {
   return crypto.createHash('sha256').update(value.toLowerCase().trim()).digest('hex');
 }
 
-function normalizePhone(phone: string): string {
+export function normalizePhone(phone: string): string {
   const digits = phone.replace(/\D/g, '');
   // Add Israel country code if not present
   if (digits.startsWith('0')) return '972' + digits.slice(1);

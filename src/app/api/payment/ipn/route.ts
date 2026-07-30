@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { sendOrderPurchaseEvent } from '@/lib/purchase-event';
 import { incrementCouponUsageForOrder } from '@/lib/coupon-usage';
+import { clearMemberCartForOrder } from '@/lib/member-cart';
 
 // IPN (Instant Payment Notification) handler
 // iCount calls this endpoint server-to-server when payment is completed
@@ -72,6 +73,10 @@ export async function POST(request: NextRequest) {
 
         incrementCouponUsageForOrder(order.id).catch((err: unknown) =>
           console.error('Coupon usage bump failed (ipn):', err)
+        );
+
+        clearMemberCartForOrder(order.id).catch((err: unknown) =>
+          console.error('Member cart cleanup failed (ipn):', err)
         );
       }
     } else {
