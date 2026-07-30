@@ -57,17 +57,8 @@ export async function POST(request: NextRequest) {
     }
 
     const existing = await sql`
-      SELECT id, unsubscribed_at FROM club_members WHERE email = ${email}
+      SELECT welcome_sent_at FROM club_members WHERE email = ${email}
     `;
-    if (existing.length > 0 && existing[0].unsubscribed_at === null) {
-      // Already an active member: no second welcome email, but the response
-      // shape matches the fresh-signup one (no membership oracle).
-      return NextResponse.json({
-        success: true,
-        memberToken: signMemberToken(email),
-        message: 'ברוכים הבאים למועדון!',
-      });
-    }
 
     await sql`
       INSERT INTO club_members (email, first_name)
@@ -77,20 +68,32 @@ export async function POST(request: NextRequest) {
           first_name = COALESCE(EXCLUDED.first_name, club_members.first_name)
     `;
 
-    // A lost welcome email is non-fatal: the popup shows the coupon on screen.
-    const emailSent = await sendEmail({
-      toEmail: email,
-      toName: firstName || undefined,
-      subject: WELCOME_EMAIL_SUBJECT,
-      html: buildWelcomeEmailHtml({
-        firstName: firstName || undefined,
-        couponCode: CLUB_COUPON_CODE,
+    // The welcome email is (re)sent on every signup - a member joining again
+    // on a new device expects it - but at most once per 24h per address, so
+    // repeated signups cannot bombard an inbox. A lost email is non-fatal:
+    // the popup shows the coupon on screen.
+    const lastWelcome = existing[0]?.welcome_sent_at
+      ? new Date(existing[0].welcome_sent_at as string).getTime()
+      : 0;
+    const welcomeDue = Date.now() - lastWelcome > 24 * 60 * 60 * 1000;
+
+    if (welcomeDue) {
+      const emailSent = await sendEmail({
+        toEmail: email,
+        toName: firstName || undefined,
+        subject: WELCOME_EMAIL_SUBJECT,
+        html: buildWelcomeEmailHtml({
+          firstName: firstName || undefined,
+          couponCode: CLUB_COUPON_CODE,
+          unsubscribeUrl: buildUnsubscribeUrl(email),
+        }),
         unsubscribeUrl: buildUnsubscribeUrl(email),
-      }),
-      unsubscribeUrl: buildUnsubscribeUrl(email),
-    });
-    if (!emailSent) {
-      console.error('Club subscribe: welcome email send failed');
+      });
+      if (emailSent) {
+        await sql`UPDATE club_members SET welcome_sent_at = NOW() WHERE email = ${email}`;
+      } else {
+        console.error('Club subscribe: welcome email send failed');
+      }
     }
 
     return NextResponse.json({

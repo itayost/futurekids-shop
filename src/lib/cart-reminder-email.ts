@@ -47,7 +47,7 @@ export function buildCartReminderEmailHtml(params: {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background-color:#ffffff;border:4px solid ${INK};border-radius:24px;overflow:hidden;">
 <tr>
 <td style="border-bottom:4px solid ${INK};">
-<img src="${SITE_URL}/emails/cart-reminder.jpg" alt="שכחת משהו בסל?" width="512" height="250" style="display:block;width:100%;height:auto;">
+<img src="${SITE_URL}/emails/cart-reminder.jpg" alt="שכחת משהו בסל?" width="512" height="250" border="0" style="display:block;width:100%;max-width:512px;height:auto;">
 </td>
 </tr>
 <tr>

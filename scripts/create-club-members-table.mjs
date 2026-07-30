@@ -14,9 +14,11 @@ await sql`
     email text UNIQUE NOT NULL,
     first_name text,
     created_at timestamptz NOT NULL DEFAULT now(),
-    unsubscribed_at timestamptz
+    unsubscribed_at timestamptz,
+    welcome_sent_at timestamptz
   )
 `;
+await sql`ALTER TABLE club_members ADD COLUMN IF NOT EXISTS welcome_sent_at timestamptz`;
 await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS reminder_sent_at timestamptz`;
 
 console.log('club_members table + orders.reminder_sent_at ready');
