@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { sendOrderPurchaseEvent } from '@/lib/purchase-event';
+import { sendOrderFlashyPurchase } from '@/lib/flashy-purchase';
 import { incrementCouponUsageForOrder } from '@/lib/coupon-usage';
 
 // This route verifies payment and updates order status
@@ -42,6 +43,10 @@ export async function POST(request: NextRequest) {
 
       incrementCouponUsageForOrder(orderId).catch((err: unknown) =>
         console.error('Coupon usage bump failed (verify):', err)
+      );
+
+      sendOrderFlashyPurchase(orderId).catch((err: unknown) =>
+        console.error('Flashy Purchase failed (verify):', err)
       );
     }
 
