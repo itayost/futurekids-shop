@@ -12,6 +12,14 @@ export default function Footer() {
           className="mx-auto mb-2"
         />
         <p className="text-gray-400 text-sm">כל הזכויות שמורות לד&quot;ר סתיו אלבר © 2025</p>
+        <a
+          href="mailto:hello@kidcode.org.il"
+          dir="ltr"
+          className="text-gray-400 text-sm mt-2 inline-block hover:text-pink-400 transition"
+        >
+          hello@kidcode.org.il
+        </a>
+        <br />
         <a href="/privacy" className="text-gray-400 text-xs mt-2 inline-block hover:text-pink-400 transition">
           מדיניות פרטיות
         </a>

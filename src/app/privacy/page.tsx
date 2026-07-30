@@ -91,6 +91,11 @@ export default function PrivacyPage() {
                     <td className="p-3">שמירת העדפת הקוקיז שלך</td>
                     <td className="p-3">הכרחי</td>
                   </tr>
+                  <tr className="border-t border-gray-200">
+                    <td className="p-3 font-mono text-xs">club_popup</td>
+                    <td className="p-3">שמירת הבחירה שלך לגבי חלון ההצטרפות למועדון</td>
+                    <td className="p-3">הכרחי</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -104,8 +109,30 @@ export default function PrivacyPage() {
             <ul className="list-disc list-inside space-y-1 me-4 mt-3">
               <li><strong>Meta (Facebook)</strong> — נתוני מעקב שיווקי מוצפנים, לצורך אופטימיזציה של קמפיינים פרסומיים</li>
               <li><strong>iCount</strong> — עיבוד תשלומים והפקת חשבוניות</li>
+              <li><strong>Flashy</strong> — פלטפורמת דיוור ישראלית, לניהול מועדון הלקוחות ושליחת מיילים (ראו סעיף &quot;דיוור ומועדון לקוחות&quot;)</li>
               <li><strong>שירות משלוחים</strong> — שם וכתובת למשלוח בלבד</li>
             </ul>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-[#545454] mb-3">דיוור ומועדון לקוחות</h2>
+            <p className="mb-3">
+              בהצטרפות למועדון הלקוחות של KidCode (באמצעות טופס ההרשמה באתר) אנו אוספים
+              כתובת דוא&quot;ל ושם פרטי (אופציונלי). המידע נשמר אצל ספק הדיוור Flashy
+              ומשמש לשליחת מייל הצטרפות עם קוד הנחה, עדכונים על ספרים חדשים ומבצעים.
+            </p>
+            <p className="mb-3">
+              בנוסף, אם התחלת תהליך רכישה באתר והשארת כתובת דוא&quot;ל, ייתכן שנשלח לך
+              תזכורת חד פעמית על הפריטים שנותרו בסל הקניות.
+            </p>
+            <p>
+              ניתן להסיר את ההרשמה מהדיוור בכל עת באמצעות קישור ההסרה שמופיע בכל מייל,
+              או בפנייה לכתובת{' '}
+              <a href="mailto:hello@kidcode.org.il" className="text-pink-500 underline font-bold" dir="ltr">
+                hello@kidcode.org.il
+              </a>
+              .
+            </p>
           </section>
 
           <section>
@@ -137,7 +164,12 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-bold text-[#545454] mb-3">יצירת קשר</h2>
             <p>
-              לשאלות, בקשות או תלונות בנושא פרטיות, ניתן לפנות אלינו דרך עמוד יצירת הקשר באתר.
+              לשאלות, בקשות או תלונות בנושא פרטיות, ניתן לפנות אלינו דרך עמוד יצירת הקשר באתר
+              או בכתובת{' '}
+              <a href="mailto:hello@kidcode.org.il" className="text-pink-500 underline font-bold" dir="ltr">
+                hello@kidcode.org.il
+              </a>
+              .
             </p>
           </section>
 

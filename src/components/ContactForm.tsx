@@ -3,7 +3,7 @@ import { Send } from 'lucide-react';
 export default function ContactForm() {
   return (
     <form
-      action="https://formsubmit.co/stav.elbar@gmail.com"
+      action="https://formsubmit.co/hello@kidcode.org.il"
       method="POST"
       className="bg-white border-4 border-[#545454] rounded-3xl p-8 hard-shadow"
     >
