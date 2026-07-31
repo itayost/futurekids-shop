@@ -96,6 +96,15 @@ order-email comparisons use LOWER()). Snapshots are deleted on purchase
 (both PENDING->PAID winner blocks via `clearMemberCartForOrder`) and on
 unsubscribe.
 
+### Shabbat quiet hours
+
+No email is sent from Friday 16:00 to Saturday 21:30 Israel time
+(`src/lib/quiet-hours.ts`, Intl with Asia/Jerusalem so DST is handled).
+The cron early-exits during the window; because every sender is
+state-based ("still owed"), the first post-Shabbat run delivers what
+accumulated. Welcomes signed up during quiet hours are marked owed
+(`welcome_sent_at NULL`) and delivered by the cron's phase 0.
+
 ### Rate limiting
 
 Postgres-backed fixed window (`src/lib/rate-limit.ts`, `rate_limits` table,

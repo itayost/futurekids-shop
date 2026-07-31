@@ -5,6 +5,7 @@ import { buildWelcomeEmailHtml, WELCOME_EMAIL_SUBJECT } from '@/lib/welcome-emai
 import { buildUnsubscribeUrl } from '@/lib/unsubscribe';
 import { signMemberToken } from '@/lib/member-token';
 import { clientIp, rateLimitAllows } from '@/lib/rate-limit';
+import { isQuietHours } from '@/lib/quiet-hours';
 import { CLUB_COUPON_CODE } from '@/lib/club-popup';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -78,21 +79,28 @@ export async function POST(request: NextRequest) {
     const welcomeDue = Date.now() - lastWelcome > 24 * 60 * 60 * 1000;
 
     if (welcomeDue) {
-      const emailSent = await sendEmail({
-        toEmail: email,
-        toName: firstName || undefined,
-        subject: WELCOME_EMAIL_SUBJECT,
-        html: buildWelcomeEmailHtml({
-          firstName: firstName || undefined,
-          couponCode: CLUB_COUPON_CODE,
-          unsubscribeUrl: buildUnsubscribeUrl(email),
-        }),
-        unsubscribeUrl: buildUnsubscribeUrl(email),
-      });
-      if (emailSent) {
-        await sql`UPDATE club_members SET welcome_sent_at = NOW() WHERE email = ${email}`;
+      if (isQuietHours(new Date())) {
+        // Shabbat quiet hours: no emails go out. Mark the welcome as owed
+        // (welcome_sent_at NULL) so the hourly cron delivers it once quiet
+        // hours end; the popup shows the coupon on screen meanwhile.
+        await sql`UPDATE club_members SET welcome_sent_at = NULL WHERE email = ${email}`;
       } else {
-        console.error('Club subscribe: welcome email send failed');
+        const emailSent = await sendEmail({
+          toEmail: email,
+          toName: firstName || undefined,
+          subject: WELCOME_EMAIL_SUBJECT,
+          html: buildWelcomeEmailHtml({
+            firstName: firstName || undefined,
+            couponCode: CLUB_COUPON_CODE,
+            unsubscribeUrl: buildUnsubscribeUrl(email),
+          }),
+          unsubscribeUrl: buildUnsubscribeUrl(email),
+        });
+        if (emailSent) {
+          await sql`UPDATE club_members SET welcome_sent_at = NOW() WHERE email = ${email}`;
+        } else {
+          console.error('Club subscribe: welcome email send failed');
+        }
       }
     }
 
