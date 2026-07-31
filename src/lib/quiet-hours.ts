@@ -7,14 +7,18 @@
 const QUIET_START_MINUTES = 16 * 60;
 const QUIET_END_MINUTES = 21 * 60 + 30;
 
+// Constructing an Intl.DateTimeFormat is expensive; build it once and reuse
+// (instances are immutable, so sharing is safe).
+const JERUSALEM_TIME = new Intl.DateTimeFormat('en-US', {
+  timeZone: 'Asia/Jerusalem',
+  weekday: 'short',
+  hour: 'numeric',
+  minute: 'numeric',
+  hourCycle: 'h23',
+});
+
 function jerusalemParts(date: Date): { weekday: string; minutes: number } {
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'Asia/Jerusalem',
-    weekday: 'short',
-    hour: 'numeric',
-    minute: 'numeric',
-    hourCycle: 'h23',
-  }).formatToParts(date);
+  const parts = JERUSALEM_TIME.formatToParts(date);
   const get = (type: string) => parts.find((p) => p.type === type)?.value || '';
   return {
     weekday: get('weekday'),
