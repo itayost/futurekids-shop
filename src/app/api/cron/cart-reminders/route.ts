@@ -8,6 +8,9 @@ import {
 } from '@/lib/cart-reminder-email';
 import { buildUnsubscribeUrl } from '@/lib/unsubscribe';
 import { parseMemberCartRow } from '@/lib/cart-snapshot';
+import { isQuietHours } from '@/lib/quiet-hours';
+import { buildWelcomeEmailHtml, WELCOME_EMAIL_SUBJECT } from '@/lib/welcome-email';
+import { CLUB_COUPON_CODE } from '@/lib/club-popup';
 
 const MAX_SENDS_PER_RUN = 50;
 
@@ -25,7 +28,45 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  // Shabbat quiet hours (Friday 16:00 - Saturday 21:30 Israel time): send
+  // nothing. Everything here is state-based ("still owed"), so the first run
+  // after quiet hours delivers whatever accumulated.
+  if (isQuietHours(new Date())) {
+    return NextResponse.json({ quietHours: true });
+  }
+
   try {
+    // Phase 0: welcome emails deferred by quiet hours (welcome_sent_at NULL).
+    let welcomeSent = 0;
+    const owedWelcomes = await sql`
+      SELECT email, first_name FROM club_members
+      WHERE welcome_sent_at IS NULL AND unsubscribed_at IS NULL
+      LIMIT ${MAX_SENDS_PER_RUN}
+    `;
+    for (const member of owedWelcomes) {
+      const claimed = await sql`
+        UPDATE club_members SET welcome_sent_at = NOW()
+        WHERE email = ${member.email} AND welcome_sent_at IS NULL
+        RETURNING email
+      `;
+      if (claimed.length === 0) continue;
+
+      const email = member.email as string;
+      const firstName = (member.first_name as string) || undefined;
+      const ok = await sendEmail({
+        toEmail: email,
+        toName: firstName,
+        subject: WELCOME_EMAIL_SUBJECT,
+        html: buildWelcomeEmailHtml({
+          firstName,
+          couponCode: CLUB_COUPON_CODE,
+          unsubscribeUrl: buildUnsubscribeUrl(email),
+        }),
+        unsubscribeUrl: buildUnsubscribeUrl(email),
+      });
+      if (ok) welcomeSent++;
+    }
+
     // Latest abandoned order per email; skip emails that purchased afterwards
     // and emails on the suppression list. orders.email is stored as typed by
     // the customer, while club_members.email is always lowercase, so every
@@ -163,6 +204,7 @@ export async function GET(request: NextRequest) {
     await sql`DELETE FROM rate_limits WHERE window_start < NOW() - interval '1 day'`;
 
     return NextResponse.json({
+      welcomeSent,
       sent,
       skipped,
       candidates: candidates.length,
