@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
-import { sendEmail } from '@/lib/email';
-import { buildWelcomeEmailHtml, WELCOME_EMAIL_SUBJECT } from '@/lib/welcome-email';
-import { buildUnsubscribeUrl } from '@/lib/unsubscribe';
+import { sendWelcomeEmail } from '@/lib/send-welcome-email';
 import { signMemberToken } from '@/lib/member-token';
 import { clientIp, rateLimitAllows } from '@/lib/rate-limit';
 import { isQuietHours } from '@/lib/quiet-hours';
-import { CLUB_COUPON_CODE } from '@/lib/club-popup';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_EMAIL_LENGTH = 254;
@@ -85,21 +82,27 @@ export async function POST(request: NextRequest) {
         // hours end; the popup shows the coupon on screen meanwhile.
         await sql`UPDATE club_members SET welcome_sent_at = NULL WHERE email = ${email}`;
       } else {
-        const emailSent = await sendEmail({
-          toEmail: email,
-          toName: firstName || undefined,
-          subject: WELCOME_EMAIL_SUBJECT,
-          html: buildWelcomeEmailHtml({
+        // Atomic claim (mirrors the cron's phase 0): the 24h cooldown is
+        // re-checked in the same statement, so neither a concurrent signup
+        // nor an overlapping cron run can double-send the welcome.
+        const claimed = await sql`
+          UPDATE club_members SET welcome_sent_at = NOW()
+          WHERE email = ${email}
+            AND (welcome_sent_at IS NULL OR welcome_sent_at < NOW() - interval '24 hours')
+          RETURNING email
+        `;
+        if (claimed.length > 0) {
+          const emailSent = await sendWelcomeEmail({
+            email,
             firstName: firstName || undefined,
-            couponCode: CLUB_COUPON_CODE,
-            unsubscribeUrl: buildUnsubscribeUrl(email),
-          }),
-          unsubscribeUrl: buildUnsubscribeUrl(email),
-        });
-        if (emailSent) {
-          await sql`UPDATE club_members SET welcome_sent_at = NOW() WHERE email = ${email}`;
-        } else {
-          console.error('Club subscribe: welcome email send failed');
+          });
+          if (!emailSent) {
+            // Hand the welcome back to the cron (phase 0 delivers every
+            // welcome_sent_at NULL row), so a transient failure delays the
+            // email by up to an hour instead of losing it.
+            console.error('Club subscribe: welcome email send failed, deferred to cron');
+            await sql`UPDATE club_members SET welcome_sent_at = NULL WHERE email = ${email}`;
+          }
         }
       }
     }
