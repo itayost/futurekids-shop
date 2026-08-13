@@ -1,1 +1,6 @@
 graphify-out/graph.json merge=graphify
+
+# PDFs are binary. Git's heuristic misclassifies some of them as text
+# (no NUL bytes early in the file), which produces huge textual diffs
+# and exposes them to end-of-line munging.
+*.pdf binary
