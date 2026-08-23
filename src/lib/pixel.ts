@@ -57,6 +57,10 @@ export function trackLead() {
   fbq('track', 'Lead');
 }
 
+export function trackContact() {
+  fbq('track', 'Contact');
+}
+
 export function getFbCookies(): { fbc: string | null; fbp: string | null } {
   if (typeof document === 'undefined') return { fbc: null, fbp: null };
 
