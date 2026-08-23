@@ -24,11 +24,10 @@ function WhatsAppGlyph() {
 }
 
 export default function WhatsAppFab() {
-  // Two things share the bottom-right corner. The UserWay accessibility button
-  // is always parked there (44px button inside a 64px ring, ~67px tall, and it
-  // paints at the maximum z-index), so the fixed offset below clears it. The
-  // cookie banner only occupies the bottom until it is answered, and it is
-  // narrow enough to miss the corner from lg up.
+  // The button owns the bottom-right corner: the UserWay accessibility widget
+  // that used to sit there has been moved to the left. The cookie banner is the
+  // one remaining claimant, and only until it is answered -- it spans the full
+  // width below lg, but is narrow enough to miss the corner from lg up.
   const [bannerVisible, setBannerVisible] = useState(false);
 
   useEffect(() => {
@@ -46,16 +45,19 @@ export default function WhatsAppFab() {
       onClick={() => trackContact()}
       aria-label="שליחת הודעה בוואטסאפ"
       className={`group fixed right-5 z-40 flex items-center gap-3 animate-slide-up motion-reduce:animate-none transition-[bottom] duration-300 ${
-        bannerVisible ? 'bottom-56 lg:bottom-24' : 'bottom-24'
+        bannerVisible ? 'bottom-56 lg:bottom-5' : 'bottom-5'
       }`}
     >
+      {/* The page is RTL, so the first flex child is the rightmost one. The
+          circle goes first to pin it to the corner, which leaves the label
+          growing away from the edge instead of shoving the circle off it. */}
+      <span className="btn-retro flex h-14 w-14 items-center justify-center rounded-full border-[3px] border-[#545454] bg-[#25D366] group-hover:bg-[#1ebe5b] group-focus-visible:ring-4 group-focus-visible:ring-[#545454]/30">
+        <WhatsAppGlyph />
+      </span>
+
       {/* Label pill, revealed on hover or keyboard focus. Desktop only. */}
       <span className="hidden lg:flex items-center max-w-0 opacity-0 overflow-hidden whitespace-nowrap rounded-xl border-[3px] border-[#545454] bg-white px-0 py-2 font-bold text-[#545454] shadow-[4px_4px_0px_0px_#545454] transition-all duration-200 group-hover:max-w-[16rem] group-hover:px-4 group-hover:opacity-100 group-focus-visible:max-w-[16rem] group-focus-visible:px-4 group-focus-visible:opacity-100 motion-reduce:transition-none">
         דברו איתי בוואטסאפ
-      </span>
-
-      <span className="btn-retro flex h-14 w-14 items-center justify-center rounded-full border-[3px] border-[#545454] bg-[#25D366] group-hover:bg-[#1ebe5b] group-focus-visible:ring-4 group-focus-visible:ring-[#545454]/30">
-        <WhatsAppGlyph />
       </span>
     </a>
   );
