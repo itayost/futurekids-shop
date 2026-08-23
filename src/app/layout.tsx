@@ -10,6 +10,8 @@ import MetaPixel from "@/components/MetaPixel";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import CookieBanner from "@/components/CookieBanner";
 import ClubPopup from "@/components/ClubPopup";
+import WhatsAppFab from "@/components/WhatsAppFab";
+import AccessibilityWidget from "@/components/AccessibilityWidget";
 
 const rubik = Rubik({
   variable: "--font-rubik",
@@ -79,6 +81,7 @@ export default function RootLayout({
         <JsonLd />
         <MetaPixel />
         <GoogleAnalytics />
+        <AccessibilityWidget />
         <CartProvider>
           <Navbar />
           <main className="flex-grow">
@@ -88,6 +91,7 @@ export default function RootLayout({
           <Cart />
           <CookieBanner />
           <ClubPopup />
+          <WhatsAppFab />
         </CartProvider>
       </body>
     </html>
