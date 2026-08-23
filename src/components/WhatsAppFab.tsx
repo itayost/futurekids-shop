@@ -24,10 +24,14 @@ function WhatsAppGlyph() {
 }
 
 export default function WhatsAppFab() {
-  // The button owns the bottom-right corner: the UserWay accessibility widget
-  // that used to sit there has been moved to the left. The cookie banner is the
-  // one remaining claimant, and only until it is answered -- it spans the full
-  // width below lg, but is narrow enough to miss the corner from lg up.
+  // The button owns the bottom-right corner, mirroring the UserWay
+  // accessibility widget that now sits bottom-left. The 11px offset is UserWay's
+  // own: it renders its button that far off the bottom, so matching the number
+  // gives the two the same gap from the edge. Deliberately not matched on
+  // centres -- this circle is 56px against UserWay's 44px, so centring would
+  // mean 5px and sit visibly lower. The cookie banner is the one other claimant
+  // on the bottom, and only until it is answered -- it spans the full width
+  // below lg, but is narrow enough to miss the corner from lg up.
   const [bannerVisible, setBannerVisible] = useState(false);
 
   useEffect(() => {
@@ -45,7 +49,7 @@ export default function WhatsAppFab() {
       onClick={() => trackContact()}
       aria-label="שליחת הודעה בוואטסאפ"
       className={`group fixed right-5 z-40 flex items-center gap-3 animate-slide-up motion-reduce:animate-none transition-[bottom] duration-300 ${
-        bannerVisible ? 'bottom-56 lg:bottom-5' : 'bottom-5'
+        bannerVisible ? 'bottom-56 lg:bottom-[11px]' : 'bottom-[11px]'
       }`}
     >
       {/* The page is RTL, so the first flex child is the rightmost one. The
