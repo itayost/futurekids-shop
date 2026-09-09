@@ -20,7 +20,7 @@ const SHIPPING_OPTIONS = {
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, subtotal, bundleDiscount, hasBundle, total } = useCart();
+  const { items, subtotal, bundleDiscount, bundleName, hasBundle, total } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [shippingMethod, setShippingMethod] = useState<ShippingOption>('pickup-point');
@@ -420,11 +420,11 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Bundle Discount */}
-                {hasBundle && (
+                {hasBundle && bundleName && (
                   <div className="flex justify-between items-center text-emerald-600">
                     <span className="flex items-center gap-1">
                       <Gift size={16} />
-                      הנחת מארז:
+                      הנחת {bundleName}:
                     </span>
                     <span className="font-bold">-₪{bundleDiscount}</span>
                   </div>
