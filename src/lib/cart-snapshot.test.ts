@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { normalizeCartItems, parseMemberCartRow } from './cart-snapshot';
+import { normalizeCartItems, parseMemberCartRow, recomputeSnapshotTotal } from './cart-snapshot';
 
 const CATALOG: Record<string, { id: string; name: string; price: number }> = {
   'ai-book': { id: 'ai-book', name: 'בינה מלאכותית לילדים', price: 75 },
@@ -100,5 +100,40 @@ describe('parseMemberCartRow', () => {
     expect(parseMemberCartRow({ items: 'nope', total: 0 })).toBeNull();
     expect(parseMemberCartRow({ items: [{ name: 'x' }], total: 0 })).toBeNull();
     expect(parseMemberCartRow({ items: validItems, total: 'NaN' })).toBeNull();
+  });
+});
+
+describe('recomputeSnapshotTotal', () => {
+  // A stored snapshot keeps the total that the discount rules produced on the
+  // day it was saved. Reminder emails quote that number, so it has to be
+  // recomputed against today's rules or the email advertises a price checkout
+  // will not honour.
+  const expertBundle = [
+    { productId: 'ai-book', name: 'a', quantity: 1, price: 75 },
+    { productId: 'encryption-book', name: 'b', quantity: 1, price: 75 },
+    { productId: 'algorithms-book', name: 'c', quantity: 1, price: 75 },
+    { productId: 'ai-workbook', name: 'd', quantity: 2, price: 30 },
+    { productId: 'encryption-workbook', name: 'e', quantity: 2, price: 30 },
+    { productId: 'algorithms-workbook', name: 'f', quantity: 2, price: 30 },
+  ];
+
+  test('re-prices a snapshot stored under the old discount ladder', () => {
+    // Saved as 405 - 115 = 290 back when the expert bundle gave 115 off.
+    expect(recomputeSnapshotTotal({ items: expertBundle, total: 290 })).toBe(320);
+  });
+
+  test('uses the prices stored in the snapshot, so the email still adds up', () => {
+    const oldPrices = expertBundle.map((it) => ({ ...it, price: it.price - 5 }));
+    // 3*70 + 6*25 = 360, minus the 85 expert bundle.
+    expect(recomputeSnapshotTotal({ items: oldPrices, total: 999 })).toBe(275);
+  });
+
+  test('leaves a snapshot with no bundle untouched', () => {
+    const single = [{ productId: 'ai-book', name: 'a', quantity: 2, price: 75 }];
+    expect(recomputeSnapshotTotal({ items: single, total: 150 })).toBe(150);
+  });
+
+  test('never returns a negative total', () => {
+    expect(recomputeSnapshotTotal({ items: [], total: 0 })).toBe(0);
   });
 });
