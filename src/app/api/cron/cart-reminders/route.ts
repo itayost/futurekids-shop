@@ -7,7 +7,7 @@ import {
   type ReminderItem,
 } from '@/lib/cart-reminder-email';
 import { buildUnsubscribeUrl } from '@/lib/unsubscribe';
-import { parseMemberCartRow } from '@/lib/cart-snapshot';
+import { parseMemberCartRow, recomputeSnapshotTotal } from '@/lib/cart-snapshot';
 import { isQuietHours } from '@/lib/quiet-hours';
 import { sendWelcomeEmail } from '@/lib/send-welcome-email';
 
@@ -199,7 +199,9 @@ export async function GET(request: NextRequest) {
         html: buildCartReminderEmailHtml({
           firstName,
           items: snapshot.items,
-          total: snapshot.total,
+          // Stored totals predate the current bundle rules; re-price so the
+          // email never quotes less than checkout will charge.
+          total: recomputeSnapshotTotal(snapshot),
           unsubscribeUrl: buildUnsubscribeUrl(email),
         }),
         unsubscribeUrl: buildUnsubscribeUrl(email),

@@ -31,6 +31,11 @@ describe('computeCouponDiscount', () => {
     expect(computeCouponDiscount({ discount_type: 'fixed', discount_value: 20 }, 315, 0)).toBe(20));
   it('clamps so product total never goes negative', () =>
     expect(computeCouponDiscount({ discount_type: 'fixed', discount_value: 500 }, 315, 45)).toBe(270));
+  it('percent applies to the price after the bundle discount, not the subtotal', () =>
+    // 630 - 85 = 545, 10% = 54.5 -> 55 (not 63, which would be 10% of the subtotal)
+    expect(computeCouponDiscount({ discount_type: 'percent', discount_value: 10 }, 630, 85)).toBe(55));
+  it('percent is zero once the bundle discount covers the whole subtotal', () =>
+    expect(computeCouponDiscount({ discount_type: 'percent', discount_value: 10 }, 315, 315)).toBe(0));
 });
 
 describe('validateCoupon', () => {
@@ -49,5 +54,10 @@ describe('validateCoupon', () => {
     expect(r.valid).toBe(true);
     expect(r.discount).toBe(32);
     expect(r.code).toBe('SAVE10');
+  });
+  it('discounts the post-bundle price when a bundle is in the cart', () => {
+    const r = validateCoupon(base, 630, 85, now);
+    expect(r.valid).toBe(true);
+    expect(r.discount).toBe(55);
   });
 });

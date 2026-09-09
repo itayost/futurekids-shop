@@ -38,17 +38,21 @@ export function parseCouponRow(row: Record<string, unknown>): Coupon {
   };
 }
 
+// A percent coupon discounts what the customer would actually pay for the
+// products, i.e. the subtotal after the bundle discount - never the full
+// list price. Discounts stack on the remaining price, they do not compound
+// off the original one.
 export function computeCouponDiscount(
   coupon: Pick<Coupon, 'discount_type' | 'discount_value'>,
   subtotal: number,
   bundleDiscount: number
 ): number {
+  const priceAfterBundle = Math.max(0, subtotal - bundleDiscount);
   const raw =
     coupon.discount_type === 'percent'
-      ? Math.round((subtotal * coupon.discount_value) / 100)
+      ? Math.round((priceAfterBundle * coupon.discount_value) / 100)
       : coupon.discount_value;
-  const maxAllowed = Math.max(0, subtotal - bundleDiscount);
-  return Math.max(0, Math.min(raw, maxAllowed));
+  return Math.max(0, Math.min(raw, priceAfterBundle));
 }
 
 export function validateCoupon(

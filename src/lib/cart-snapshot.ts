@@ -79,3 +79,17 @@ export function parseMemberCartRow(row: Record<string, unknown>): CartSnapshot |
 
   return { items, total };
 }
+
+// A stored snapshot carries the total that the pricing rules produced on the
+// day it was written, and abandoned-cart reminders quote that number. Whenever
+// the bundle ladder changes, every older row is stale - and quoting a price
+// lower than checkout will charge is the damaging direction. Re-derive it from
+// the snapshot's own item prices so the email stays internally consistent with
+// the line items it prints, while picking up today's bundle rules.
+export function recomputeSnapshotTotal(snapshot: CartSnapshot): number {
+  const subtotal = snapshot.items.reduce((sum, it) => sum + it.price * it.quantity, 0);
+  const { bundleDiscount } = computeBundleDiscount(
+    snapshot.items.map((it) => ({ productId: it.productId, quantity: it.quantity }))
+  );
+  return Math.max(0, subtotal - bundleDiscount);
+}
