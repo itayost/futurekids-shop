@@ -36,6 +36,12 @@ describe('computeCouponDiscount', () => {
     expect(computeCouponDiscount({ discount_type: 'percent', discount_value: 10 }, 630, 85)).toBe(55));
   it('percent is zero once the bundle discount covers the whole subtotal', () =>
     expect(computeCouponDiscount({ discount_type: 'percent', discount_value: 10 }, 315, 315)).toBe(0));
+  it('rounds a tiny percent up to a shekel rather than down to nothing', () =>
+    // 1% of 30 is 0.3. Rounding that to 0 would make validateCoupon report a
+    // perfectly good coupon as inapplicable.
+    expect(computeCouponDiscount({ discount_type: 'percent', discount_value: 1 }, 30, 0)).toBe(1));
+  it('does not invent a discount for a 0% coupon', () =>
+    expect(computeCouponDiscount({ discount_type: 'percent', discount_value: 0 }, 315, 0)).toBe(0));
 });
 
 describe('validateCoupon', () => {
@@ -49,6 +55,20 @@ describe('validateCoupon', () => {
     expect(validateCoupon({ ...base, max_uses: 5, used_count: 5 }, 315, 0, now).valid).toBe(false));
   it('rejects below minimum', () =>
     expect(validateCoupon({ ...base, min_subtotal: 400 }, 315, 0, now).valid).toBe(false));
+  // The minimum has to mean the same thing the discount applies to, otherwise a
+  // coupon advertised as "over 300" is granted on a cart the customer pays 230 for.
+  it('measures min_subtotal against the price after the bundle discount', () => {
+    const r = validateCoupon({ ...base, min_subtotal: 300 }, 315, 85, now);
+    expect(r.valid).toBe(false);
+    expect(r.message).toBe('הקופון תקף בהזמנה מעל ₪300');
+  });
+  it('accepts when the post-bundle price clears the minimum', () =>
+    expect(validateCoupon({ ...base, min_subtotal: 200 }, 315, 85, now).valid).toBe(true));
+  it('reports a valid coupon as applicable even when the discount rounds to a shekel', () => {
+    const r = validateCoupon({ ...base, discount_value: 1 }, 30, 0, now);
+    expect(r.valid).toBe(true);
+    expect(r.discount).toBe(1);
+  });
   it('accepts a valid coupon and returns discount', () => {
     const r = validateCoupon(base, 315, 0, now);
     expect(r.valid).toBe(true);
