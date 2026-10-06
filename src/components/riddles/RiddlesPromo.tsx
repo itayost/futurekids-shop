@@ -29,7 +29,10 @@ export function RiddlesPromo() {
         </div>
         <div className="text-center md:text-start">
           <h2 id="riddles-promo" className={`${styles.titleWarm} text-3xl font-black leading-tight text-(--r-ink-strong) md:text-5xl`}>
-            חדש: חידה! לכל המשפחה
+            <span className="me-3 inline-block -rotate-6 rounded-full border-2 border-(--r-ink) bg-(--r-sun) px-3 py-1 align-middle text-lg font-black leading-none text-(--r-ink) [text-shadow:none] md:text-xl">
+              חדש
+            </span>
+            חידה! לכל המשפחה
           </h2>
           <p className="mx-auto mt-3 max-w-[52ch] text-lg font-bold text-(--r-ink-strong) md:mx-0">
             מאות חידות של משחקי מילים, הצפנה, מספרים ותבניות. מגיל 7, וגם למבוגרים.
