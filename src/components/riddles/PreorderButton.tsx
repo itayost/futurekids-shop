@@ -17,7 +17,7 @@ export function PreorderButton({ className = '' }: PreorderButtonProps) {
       className={`${styles.press} inline-flex w-full cursor-pointer items-center justify-center gap-3 rounded-[14px] border-[3px] border-(--r-ink) bg-(--r-red) px-6 py-4 text-lg font-black text-white hover:bg-(--r-red-deep) md:py-5 md:text-xl ${className}`}
     >
       <ShoppingCart className="size-6 shrink-0" strokeWidth={2.5} aria-hidden="true" />
-      {shipsBy ? 'להזמנה מוקדמת' : 'הוספה לסל הקניות'}
+      {shipsBy ? 'לרכישה מוקדמת' : 'הוספה לסל הקניות'}
     </AddToCartButton>
   );
 }

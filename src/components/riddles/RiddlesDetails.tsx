@@ -7,10 +7,11 @@ import styles from './riddles.module.css';
 
 // The book colour-codes each riddle family; the page headers in the gallery
 // carry the same colours, so this row doubles as their legend.
+// Black rather than the ink grey so the purple pill keeps large-text contrast.
 const CATEGORIES = [
-  { label: 'משחקי מילים', color: 'bg-(--r-purple) text-white' },
-  { label: 'הצפנה', color: 'bg-(--r-orange) text-(--r-ink-strong)' },
-  { label: 'מספרים ותבניות', color: 'bg-(--r-green) text-(--r-ink-strong)' },
+  { label: 'משחקי מילים', color: 'bg-(--r-purple)' },
+  { label: 'הצפנה', color: 'bg-(--r-orange)' },
+  { label: 'מספרים ותבניות', color: 'bg-(--r-green)' },
 ];
 
 const FACTS = [
@@ -25,7 +26,7 @@ export function RiddleCategories() {
       {CATEGORIES.map((c) => (
         <li
           key={c.label}
-          className={`${styles.hand} ${c.color} rounded-lg border-2 border-(--r-ink) px-3 pb-0.5 pt-1 text-[26px] leading-none md:text-[28px]`}
+          className={`${styles.hand} ${c.color} rounded-lg text-black border-2 border-(--r-ink) px-3 pb-0.5 pt-1 text-[26px] leading-none md:text-[28px]`}
         >
           {c.label}
         </li>
@@ -51,28 +52,14 @@ export function RiddlesAbout() {
           זמן איכות לכל המשפחה, בנסיעות, בטיולים, בשבתות וחגים וגם סתם ככה בשגרה.
         </p>
       </div>
-      <div className="grid gap-5">
-        <dl className="grid gap-3.5 rounded-[18px] border-4 border-(--r-ink) bg-(--r-paper) p-6 shadow-[6px_6px_0_0_var(--r-ink)]">
-          {FACTS.map((f) => (
-            <div key={f.label} className="flex items-baseline gap-3.5 text-lg">
-              <dt className="min-w-[70px] text-[30px] font-black tabular-nums text-(--r-navy)">{f.value}</dt>
-              <dd>{f.label}</dd>
-            </div>
-          ))}
-        </dl>
-        <div className="flex items-center gap-4 rounded-[18px] border-4 border-(--r-ink) bg-(--r-navy) px-6 py-5 text-white shadow-[6px_6px_0_0_var(--r-ink)]">
-          <Image
-            src="/Stav.png"
-            alt='ד"ר סתיו אלבר'
-            width={72}
-            height={72}
-            className="size-[72px] shrink-0 rounded-full border-[3px] border-white object-cover"
-          />
-          <p className="leading-normal">
-            <b>ד&quot;ר סתיו אלבר</b>, מחברת סדרת KidCode, ו<b>שמרית שולמן</b>, המאיירת. ספר ראשון בסדרה חדשה.
-          </p>
-        </div>
-      </div>
+      <dl className="grid gap-3.5 rounded-[18px] border-4 border-(--r-ink) bg-(--r-paper) p-6 shadow-[6px_6px_0_0_var(--r-ink)]">
+        {FACTS.map((f) => (
+          <div key={f.label} className="flex items-baseline gap-3.5 text-lg">
+            <dt className="min-w-[70px] text-[30px] font-black tabular-nums text-(--r-navy)">{f.value}</dt>
+            <dd>{f.label}</dd>
+          </div>
+        ))}
+      </dl>
     </section>
   );
 }
@@ -83,8 +70,8 @@ export function PreorderTerms() {
   const terms = [
     {
       Icon: Truck,
-      title: 'מתי הספר מגיע?',
-      text: `הספר יוצא לאור ונשלח במהלך ${shipsBy}. מי שמזמין ברכישה מוקדמת מקבל אותו ראשון.`,
+      title: 'מתי הספר יגיע?',
+      text: `הספר זמין כעת לרכישה מוקדמת, ויהיה מוכן בחודש ${shipsBy}. הרוכשים ברכישה מוקדמת יקבלו את הספרים ראשונים מיד כשיהיו מוכנים.`,
     },
     {
       Icon: PackageCheck,
@@ -131,7 +118,7 @@ export function RiddlesClose() {
       />
       <div className="min-w-0">
         <h2 id="riddles-close" className={`${styles.title} mb-4 text-3xl font-black text-white md:text-[40px]`}>
-          {shipsBy ? 'שמרו לעצמכם עותק ראשון' : 'הספר כאן'}
+          {shipsBy ? 'הבטיחו לעצמכם עותק ראשון' : 'הספר כאן'}
         </h2>
         <PriceTicket className="mb-5 text-start md:max-w-[460px]" />
         <PreorderButton />

@@ -9,7 +9,7 @@ import styles from './riddles.module.css';
 export function RiddlesHero() {
   return (
     <header className={`${styles.hero} relative overflow-hidden border-b-4 border-(--r-ink)`}>
-      {shipsBy && <PreorderTape text={`רכישה מוקדמת · הספר מגיע במהלך ${shipsBy}`} />}
+      {shipsBy && <PreorderTape text={`רכישה מוקדמת · הספר יגיע במהלך ${shipsBy}`} />}
 
       {/* Mobile: title beside a small cover, price and CTA full width below, so
           the buy box lands in the first screen. Desktop: the cover spans both. */}
@@ -63,7 +63,7 @@ export function RiddlesHero() {
           {shipsBy && (
             <p className="absolute -right-3 bottom-5 -rotate-8 whitespace-nowrap rounded-lg border-[3px] border-(--r-ink) bg-(--r-red) px-2.5 py-1.5 text-center text-white shadow-[4px_4px_0_0_var(--r-ink)] md:-right-12 md:bottom-24 md:px-5 md:py-2.5">
               <span className="block text-sm font-black leading-tight md:text-[26px]">רכישה מוקדמת</span>
-              <span className="block text-xs font-bold md:text-base">מגיע ב{shipMonth}</span>
+              <span className="block text-xs font-bold md:text-base">יגיע ב{shipMonth}</span>
             </p>
           )}
         </div>
