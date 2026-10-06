@@ -5,7 +5,6 @@
   --r-ink-strong: #3a3a3a;
   --r-orange: #de8f47;
   --r-orange-soft: #ffedd5;
-  --r-cream: #fdf3e1;
   --r-navy: #31508f;
   --r-purple: #84679a;
   --r-green: #6fae90;
@@ -25,9 +24,9 @@
   font-weight: 700;
 }
 
-/* Hero: the site's cream; the cover carries the book's colours */
+/* Hero: the same soft orange as the promo band and the closing panel */
 .hero {
-  background: var(--r-cream);
+  background: var(--r-orange-soft);
 }
 
 /* Packing tape across the top of the hero. The track holds two identical
