@@ -19,7 +19,8 @@ const TITLE = shipsBy ? 'חידה! לכל המשפחה | רכישה מוקדמת
 const DESCRIPTION = shipsBy
   ? `ספר חידות לכל המשפחה מאת ד"ר סתיו אלבר ושמרית שולמן. רכישה מוקדמת ב-₪${book.price} במקום ₪${listPrice}, הספר מגיע במהלך ${shipsBy}.`
   : `ספר חידות לכל המשפחה מאת ד"ר סתיו אלבר ושמרית שולמן: משחקי מילים, הצפנה, מספרים ותבניות.`;
-const OG_IMAGE = shipsBy ? '/riddles/cover-preorder-square.jpg' : '/riddles/cover-square.jpg';
+// 1200x630 share card: the cover on the site's cream, logo in the corner.
+const OG_IMAGE = { url: '/riddles/og.jpg', width: 1200, height: 630, alt: 'כריכת הספר חידה! לכל המשפחה' };
 
 export const metadata: Metadata = {
   title: `${TITLE} | KidCode`,
@@ -32,13 +33,13 @@ export const metadata: Metadata = {
     siteName: 'KidCode',
     locale: 'he_IL',
     type: 'website',
-    images: [{ url: OG_IMAGE, width: 1080, height: 1080, alt: 'כריכת הספר חידה! לכל המשפחה' }],
+    images: [OG_IMAGE],
   },
   twitter: {
     card: 'summary_large_image',
     title: TITLE,
     description: DESCRIPTION,
-    images: [OG_IMAGE],
+    images: [OG_IMAGE.url],
   },
 };
 
