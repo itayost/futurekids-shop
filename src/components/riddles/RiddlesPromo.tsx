@@ -10,7 +10,7 @@ export function RiddlesPromo() {
   return (
     <section className={`${styles.root} container mx-auto px-4 pt-16 md:px-6 md:pt-20`} aria-labelledby="riddles-promo">
       <div
-        className={`${styles.promo} relative mx-auto grid max-w-[960px] items-center gap-6 overflow-hidden rounded-3xl border-4 border-(--r-ink) px-5 py-7 shadow-[8px_8px_0_0_var(--r-ink)] md:grid-cols-[auto_1fr] md:gap-12 md:px-12 md:py-10`}
+        className={`${styles.promo} relative mx-auto grid max-w-[960px] items-center gap-6 overflow-hidden rounded-3xl border-4 border-(--r-ink) px-5 py-7 shadow-[8px_8px_0_0_var(--r-ink)] md:grid-cols-[auto_1fr] md:gap-x-12 md:gap-y-5 md:px-12 md:pb-6 md:pt-10`}
       >
         <span className="absolute left-4 top-4 -rotate-6 rounded-full border-2 border-(--r-ink) bg-(--r-sun) px-3 py-1 text-lg font-black text-(--r-ink) md:left-6 md:top-6 md:px-4 md:text-xl">
           חדש
@@ -61,14 +61,14 @@ export function RiddlesPromo() {
               {shipsBy ? 'לרכישה מוקדמת' : 'הוספה לסל'}
             </AddToCartButton>
           </p>
-          <Link
-            href="/riddles"
-            className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-(--r-navy) hover:underline"
-          >
-            <Info className="size-4" aria-hidden="true" />
-            לפרטים נוספים
-          </Link>
         </div>
+        <Link
+          href="/riddles"
+          className="inline-flex items-center gap-1 justify-self-center text-sm font-bold text-(--r-navy) hover:underline md:col-span-2"
+        >
+          <Info className="size-4" aria-hidden="true" />
+          לפרטים נוספים
+        </Link>
       </div>
     </section>
   );
