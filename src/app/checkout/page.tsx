@@ -10,6 +10,8 @@ import PickupPointSelector from '@/components/PickupPointSelector';
 import { PickupPoint } from '@/types';
 import { trackInitiateCheckout, getFbCookies } from '@/lib/pixel';
 import { SHIPPING_COSTS } from '@/lib/shipping';
+import { getProductById } from '@/lib/products';
+import { preorderShippingNote } from '@/lib/preorder';
 
 type ShippingOption = 'pickup-point' | 'delivery';
 
@@ -41,6 +43,8 @@ export default function CheckoutPage() {
   const [couponMsg, setCouponMsg] = useState<string | null>(null);
 
   const shippingCost = SHIPPING_OPTIONS[shippingMethod].price;
+  const hasCouponExcludedItem = items.some((item) => getProductById(item.productId)?.excludeFromCoupons);
+  const shippingNote = preorderShippingNote(items.map((item) => item.productId));
   const finalTotal = total + shippingCost - couponDiscount;
 
   // Track InitiateCheckout on page load
@@ -67,7 +71,10 @@ export default function CheckoutPage() {
     const res = await fetch('/api/coupons/validate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: couponInput, subtotal, bundleDiscount }),
+      body: JSON.stringify({
+        code: couponInput,
+        items: items.map((item) => ({ productId: item.productId, quantity: item.quantity })),
+      }),
     });
     const data = await res.json();
     if (data.valid) {
@@ -392,25 +399,35 @@ export default function CheckoutPage() {
               <h2 className="text-xl font-black mb-6">סיכום הזמנה</h2>
 
               <div className="space-y-4 mb-6">
-                {items.map((item) => (
-                  <div key={item.productId} className="flex gap-4">
-                    <div className="w-16 h-20 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                      <Image
-                        src={item.image}
-                        alt={item.name}
-                        width={50}
-                        height={70}
-                        className="object-contain"
-                      />
+                {items.map((item) => {
+                  const preorder = getProductById(item.productId)?.preorder;
+                  return (
+                    <div key={item.productId} className="flex gap-4">
+                      <div className="w-16 h-20 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                        <Image
+                          src={item.image}
+                          alt={item.name}
+                          width={50}
+                          height={70}
+                          className="object-contain"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-bold text-sm">{item.name}</h3>
+                        {preorder && (
+                          <p className="text-xs font-bold text-gray-500">רכישה מוקדמת · צפוי ב{preorder.shipsBy}</p>
+                        )}
+                        <p className="text-gray-500 text-sm">כמות: {item.quantity}</p>
+                        <p className="font-black text-pink-500">₪{item.price * item.quantity}</p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-bold text-sm">{item.name}</h3>
-                      <p className="text-gray-500 text-sm">כמות: {item.quantity}</p>
-                      <p className="font-black text-pink-500">₪{item.price * item.quantity}</p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
+
+              {shippingNote && (
+                <p className="text-xs text-gray-500 -mt-2 mb-4">{shippingNote}</p>
+              )}
 
               <div className="border-t-2 border-[#545454] pt-4 space-y-2">
                 {/* Subtotal */}
@@ -447,6 +464,9 @@ export default function CheckoutPage() {
                     החל
                   </button>
                 </div>
+                {hasCouponExcludedItem && (
+                  <p className="text-xs text-gray-500">ספרים שכבר נמכרים במחיר מבצע אינם כלולים בהנחת קופון</p>
+                )}
                 {couponMsg && (
                   <p className={`text-sm ${couponApplied ? 'text-emerald-600' : 'text-red-600'}`}>{couponMsg}</p>
                 )}

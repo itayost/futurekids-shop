@@ -8,6 +8,7 @@ import { Product } from '@/types';
 import { useCart } from './CartProvider';
 import { CompanionProductModal } from './modals/CompanionProductModal';
 import { productRelationshipService } from '@/domain/product-relationships';
+import { productHref } from '@/lib/products';
 
 interface BookWorkbookPairCardProps {
   book: Product;
@@ -141,7 +142,7 @@ export default function BookWorkbookPairCard({ book, workbook }: BookWorkbookPai
 
           {/* Details Link */}
           <Link
-            href={`/products/${book.slug}`}
+            href={productHref(book)}
             className={`mt-3 flex items-center justify-center gap-1 text-sm ${colors.text} font-bold hover:underline`}
           >
             <Info className="w-4 h-4" />

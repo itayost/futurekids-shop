@@ -1,0 +1,159 @@
+/* The riddles book's own palette, sampled from its cover, inside the site's
+   ink outlines and hard shadows. */
+.root {
+  --r-ink: #545454;
+  --r-ink-strong: #3a3a3a;
+  --r-orange: #de8f47;
+  --r-navy: #31508f;
+  --r-purple: #84679a;
+  --r-green: #6fae90;
+  --r-red: #b83c3a;
+  --r-red-deep: #9c2f2d;
+  --r-sun: #facc15;
+  --r-paper: #ffffff;
+}
+
+.root ::selection {
+  background: var(--r-sun);
+  color: var(--r-ink);
+}
+
+.hand {
+  font-family: var(--font-hand), var(--font-rubik), sans-serif;
+  font-weight: 700;
+}
+
+/* Hero: the cover's orange-over-navy split, carried across the page */
+.hero {
+  background: linear-gradient(to bottom, var(--r-orange) 0 62%, var(--r-navy) 62% 100%);
+}
+
+@media (max-width: 767px) {
+  .hero {
+    /* Navy covers the note, the CTA and the lower half of the ticket */
+    background: linear-gradient(to top, var(--r-navy) 0 270px, var(--r-orange) 270px 100%);
+  }
+}
+
+/* Packing tape across the top of the hero. The track holds two identical
+   halves; sliding it by one half loops seamlessly. In RTL the overflow
+   runs to the left, so the slide is positive. */
+.tape {
+  transform: rotate(-1.2deg) scaleX(1.04);
+}
+
+.tapeTrack {
+  display: flex;
+  width: max-content;
+  animation: tape-slide 38s linear infinite;
+}
+
+.tape:hover .tapeTrack {
+  animation-play-state: paused;
+}
+
+@keyframes tape-slide {
+  from { transform: translateX(0); }
+  to { transform: translateX(50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tapeTrack {
+    animation: none;
+  }
+}
+
+/* The title's stamped outline */
+.title {
+  text-shadow: 5px 5px 0 var(--r-ink);
+}
+
+@media (max-width: 767px) {
+  .title {
+    text-shadow: 4px 4px 0 var(--r-ink);
+  }
+}
+
+/* Pressable buttons: the hard shadow collapses as the button goes down */
+.press {
+  box-shadow: 5px 5px 0 0 var(--r-ink);
+  transition: transform 120ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 120ms cubic-bezier(0.16, 1, 0.3, 1), background-color 150ms;
+}
+
+.press:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 0 var(--r-ink);
+}
+
+.press:active {
+  transform: translate(4px, 4px);
+  box-shadow: 1px 1px 0 0 var(--r-ink);
+}
+
+.press:focus-visible {
+  outline: 4px solid var(--r-sun);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .press,
+  .press:hover,
+  .press:active {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* Gallery pages sit slightly askew, like pages laid on a table */
+.page:nth-child(odd) {
+  transform: rotate(-1.5deg);
+}
+
+.page:nth-child(even) {
+  transform: rotate(1.2deg) translateY(14px);
+}
+
+.pageButton {
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pageButton:hover {
+  transform: translate(-3px, -3px) rotate(-0.5deg);
+  box-shadow: 9px 9px 0 0 var(--r-ink);
+}
+
+.pageButton:focus-visible {
+  outline: 4px solid var(--r-navy);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pageButton,
+  .pageButton:hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+.lightbox {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  max-width: min(92vw, 760px);
+  width: 100%;
+  margin: auto;
+}
+
+.lightbox::backdrop {
+  background: rgb(36 60 110 / 0.88);
+}
+
+/* Homepage promo: the cover's orange with a navy base band */
+.promo {
+  background: linear-gradient(to top, var(--r-navy) 0 14px, var(--r-ink) 14px 18px, var(--r-orange) 18px 100%);
+}
+
+.promo:focus-visible {
+  outline: 4px solid var(--r-navy);
+  outline-offset: 4px;
+}

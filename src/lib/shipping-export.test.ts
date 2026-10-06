@@ -5,6 +5,7 @@ import {
   formatPhone,
   parseStreetAndHouse,
 } from './shipping-export';
+import type { PreorderLookup } from './preorder';
 import type { ExportOrder, ExportOrderItem } from './shipping-export';
 
 function item(productId: string, productName: string, quantity: number): ExportOrderItem {
@@ -55,10 +56,25 @@ describe('contentsSummary', () => {
     expect(contentsSummary(items)).toBe('ספר חדש ס');
   });
 
+  test('the riddles book gets its packing shorthand, not the pre-order line name', () => {
+    const items = [
+      item('riddles-book-1', 'חידה! לכל המשפחה (רכישה מוקדמת - צפוי בנובמבר 2026)', 2),
+      item('ai-book', 'בינה מלאכותית לילדים', 1),
+    ];
+    expect(contentsSummary(items)).toBe('חידה! 2ס, בינה ס');
+  });
+
   test('empty items', () => {
     expect(contentsSummary([])).toBe('');
   });
 });
+
+// A fixed catalog, so these tests survive the book leaving pre-order.
+const preorderCatalog: PreorderLookup = (id) =>
+  id === 'riddles-book-1'
+    ? { name: 'חידה! לכל המשפחה', preorder: { shipsBy: 'נובמבר 2026' } }
+    : { name: id };
+const RIDDLES_LINE = 'חידה! לכל המשפחה (רכישה מוקדמת - צפוי בנובמבר 2026)';
 
 describe('formatPhone', () => {
   test('hyphenates a 10-digit mobile so Excel keeps the leading 0', () => {
@@ -112,6 +128,27 @@ describe('buildChitaCsv', () => {
       item('algorithms-workbook', 'חוברת פעילויות - אלגוריתמים', 1),
     ],
   };
+
+  test('a pre-order-only order is left out until the book is released', () => {
+    const preorderOnly: ExportOrder = { ...order, id: '2', items: [item('riddles-book-1', RIDDLES_LINE, 1)] };
+    const csv = buildChitaCsv([preorderOnly, order], 'delivery', new Map(), preorderCatalog);
+    const rows = csv.split('\r\n').filter(Boolean);
+    expect(rows).toHaveLength(2);
+    expect(rows[1]).toContain('אלגו ס+ח');
+  });
+
+  test('a mixed order is held back whole, to ship as one parcel on release', () => {
+    const mixed: ExportOrder = { ...order, id: '3', items: [...order.items, item('riddles-book-1', RIDDLES_LINE, 1)] };
+    const rows = buildChitaCsv([mixed], 'delivery', new Map(), preorderCatalog).split('\r\n').filter(Boolean);
+    expect(rows).toHaveLength(1);
+  });
+
+  test('once released, a mixed order exports with every item in one row', () => {
+    const mixed: ExportOrder = { ...order, items: [...order.items, item('riddles-book-1', RIDDLES_LINE, 1)] };
+    const released: PreorderLookup = (id) => ({ name: id });
+    const row = buildChitaCsv([mixed], 'delivery', new Map(), released).split('\r\n')[1];
+    expect(row).toContain('אלגו ס+ח, חידה! ס');
+  });
 
   test('row carries formatted phone and detailed notes', () => {
     const csv = buildChitaCsv([order], 'delivery', new Map());
