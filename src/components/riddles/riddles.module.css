@@ -65,14 +65,14 @@
   }
 }
 
-/* Stamped titles: ink letters, cover-orange shadow */
+/* Stamped titles: ink letters, a light cover-orange shadow */
 .titleWarm {
-  text-shadow: 5px 5px 0 var(--r-orange);
+  text-shadow: 3px 3px 0 rgb(222 143 71 / 0.45);
 }
 
 @media (max-width: 767px) {
   .titleWarm {
-    text-shadow: 3px 3px 0 var(--r-orange);
+    text-shadow: 2px 2px 0 rgb(222 143 71 / 0.45);
   }
 }
 

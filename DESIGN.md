@@ -206,7 +206,7 @@ A cream page, warm-gray ink, and flat marker fills, with each book series bringi
 
 **The Short-Hand Rule.** Karantina sets a few words at a time, never a sentence, never a price, never a button label, and only inside the riddles scope.
 
-**The Stamped Title Rule.** Riddles display titles are Ink Strong letters on a light ground with a solid Cover Orange text shadow (5px 5px 0, 3px on mobile), the same offset language as the boxes.
+**The Stamped Title Rule.** Riddles display titles are Ink Strong letters on a light ground with a light Cover Orange text shadow (3px 3px 0 at 45% opacity, 2px on mobile), the same offset language as the boxes.
 
 ## Layout
 
