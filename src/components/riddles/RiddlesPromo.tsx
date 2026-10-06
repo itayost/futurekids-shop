@@ -46,11 +46,11 @@ export function RiddlesPromo() {
             </span>
             {shipsBy && (
               <span className="rounded-xl border-[3px] border-(--r-ink) bg-(--r-sun) px-3 py-2 font-black">
-                מגיע במהלך {shipsBy}
+                יגיע במהלך {shipsBy}
               </span>
             )}
             <span className="inline-flex items-center gap-2 rounded-xl border-[3px] border-(--r-ink) bg-(--r-red) px-4 py-2 font-black text-white shadow-[4px_4px_0_0_var(--r-ink)] transition-transform group-hover:-translate-x-1 motion-reduce:transition-none">
-              {shipsBy ? 'להזמנה מוקדמת' : 'לפרטים'}
+              {shipsBy ? 'לרכישה מוקדמת' : 'לפרטים'}
               <ArrowLeft className="size-5" strokeWidth={2.5} aria-hidden="true" />
             </span>
           </p>

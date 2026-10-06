@@ -5,6 +5,7 @@ import { riddlesBook } from '@/lib/products';
 export const book = riddlesBook;
 export const listPrice = riddlesBook.compareAtPrice ?? riddlesBook.price;
 export const savings = listPrice - riddlesBook.price;
+export const savingsPercent = Math.round((savings / listPrice) * 100);
 
 // "נובמבר 2026" -> { month: 'נובמבר', year: '2026' }. Null once the book is
 // released and its catalog entry drops `preorder`.

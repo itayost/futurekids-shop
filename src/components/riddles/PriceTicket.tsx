@@ -1,4 +1,4 @@
-import { book, listPrice, savings, shipMonth, shipYear } from './content';
+import { book, listPrice, savings, savingsPercent, shipMonth, shipYear } from './content';
 import styles from './riddles.module.css';
 
 interface PriceTicketProps {
@@ -31,7 +31,7 @@ export function PriceTicket({ label, meta, className = '' }: PriceTicketProps) {
           )}
           {savings > 0 && (
             <span className="rounded-md border-2 border-(--r-ink) bg-(--r-red) px-2 py-1 text-sm font-black text-white">
-              חוסכים ₪{savings}
+              חוסכים {savingsPercent}%
             </span>
           )}
         </p>
@@ -39,7 +39,7 @@ export function PriceTicket({ label, meta, className = '' }: PriceTicketProps) {
       </div>
       {shipMonth && (
         <div className="grid place-content-center border-s-4 border-dashed border-(--r-ink) bg-(--r-sun) px-4 text-center md:px-5">
-          <span className="text-xs font-bold">מגיע במהלך</span>
+          <span className="text-xs font-bold">יגיע במהלך</span>
           <span className={`${styles.hand} text-[40px] leading-[0.9] md:text-[46px]`}>{shipMonth}</span>
           <span className="text-sm font-black tabular-nums">{shipYear}</span>
         </div>
