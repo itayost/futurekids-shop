@@ -17,6 +17,17 @@ export interface Product {
   audience?: string;
   type?: 'book' | 'workbook';
   examplePages?: ExamplePage[];
+  // A product outside the original KidCode trilogy. Series products never
+  // join the trilogy bundles and have no companion workbook.
+  series?: 'riddles';
+  // Pre-sale price display: the list price struck through next to `price`.
+  compareAtPrice?: number;
+  // Already discounted (e.g. pre-sale), so coupons never apply to it.
+  excludeFromCoupons?: boolean;
+  // Not in stock yet; shipsBy is a Hebrew label such as 'נובמבר 2026'.
+  preorder?: { shipsBy: string };
+  // A dedicated page that replaces the generic /products/[slug] page.
+  landingPath?: string;
 }
 
 export interface CartItem {

@@ -5,9 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { X, Minus, Plus, ShoppingBag, Sparkles, Star, Gift } from 'lucide-react';
 import { useCart } from './CartProvider';
-import { products, bundles, books, workbooks } from '@/lib/products';
+import { products, bundles, books, workbooks, getProductById } from '@/lib/products';
 import { Product } from '@/types';
 import { getCompanionProduct } from '@/application/hooks/useCompanionOffer';
+import { preorderShippingNote } from '@/lib/preorder';
 
 export default function Cart() {
   const { items, isOpen, setIsOpen, removeItem, updateQuantity, subtotal, bundleDiscount, bundleName, hasBundle, total, itemCount, addItem } = useCart();
@@ -57,6 +58,7 @@ export default function Cart() {
   };
 
   const suggestions = getSmartSuggestions();
+  const shippingNote = preorderShippingNote(cartProductIds);
 
   // Reset closing state when cart opens
   useEffect(() => {
@@ -180,52 +182,63 @@ export default function Cart() {
             </div>
           ) : (
             <div className="space-y-4">
-              {items.map((item) => (
-                <div
-                  key={item.productId}
-                  className="flex gap-4 bg-gray-50 border-2 border-[#545454] rounded-xl p-4"
-                >
-                  <div className="w-20 h-24 bg-white rounded-lg flex items-center justify-center overflow-hidden">
-                    <Image
-                      src={item.image}
-                      alt={item.name}
-                      width={60}
-                      height={80}
-                      className="object-contain"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-sm mb-1">{item.name}</h3>
-                    <p className="text-pink-500 font-black">₪{item.price}</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <button
-                        onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                        className="w-10 h-10 bg-white border-2 border-[#545454] rounded-lg flex items-center justify-center hover:bg-gray-100 active:scale-95 transition-transform"
-                      >
-                        <Minus size={18} />
-                      </button>
-                      <span
-                        key={item.quantity}
-                        className="font-bold w-8 text-center animate-pop"
-                      >
-                        {item.quantity}
-                      </span>
-                      <button
-                        onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                        className="w-10 h-10 bg-white border-2 border-[#545454] rounded-lg flex items-center justify-center hover:bg-gray-100 active:scale-95 transition-transform"
-                      >
-                        <Plus size={18} />
-                      </button>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => removeItem(item.productId)}
-                    className="text-gray-400 hover:text-red-500 transition"
+              {items.map((item) => {
+                const product = getProductById(item.productId);
+                return (
+                  <div
+                    key={item.productId}
+                    className="flex gap-4 bg-gray-50 border-2 border-[#545454] rounded-xl p-4"
                   >
-                    <X size={20} />
-                  </button>
-                </div>
-              ))}
+                    <div className="w-20 h-24 bg-white rounded-lg flex items-center justify-center overflow-hidden">
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        width={60}
+                        height={80}
+                        className="object-contain"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-sm mb-1">{item.name}</h3>
+                      {product?.preorder && (
+                        <p className="text-xs font-bold text-gray-500 mb-1">רכישה מוקדמת · צפוי ב{product.preorder.shipsBy}</p>
+                      )}
+                      <p className="flex items-baseline gap-2">
+                        <span className="text-pink-500 font-black">₪{item.price}</span>
+                        {product?.compareAtPrice ? (
+                          <span className="text-gray-400 text-xs line-through">₪{product.compareAtPrice}</span>
+                        ) : null}
+                      </p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <button
+                          onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                          className="w-10 h-10 bg-white border-2 border-[#545454] rounded-lg flex items-center justify-center hover:bg-gray-100 active:scale-95 transition-transform"
+                        >
+                          <Minus size={18} />
+                        </button>
+                        <span
+                          key={item.quantity}
+                          className="font-bold w-8 text-center animate-pop"
+                        >
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                          className="w-10 h-10 bg-white border-2 border-[#545454] rounded-lg flex items-center justify-center hover:bg-gray-100 active:scale-95 transition-transform"
+                        >
+                          <Plus size={18} />
+                        </button>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => removeItem(item.productId)}
+                      className="text-gray-400 hover:text-red-500 transition"
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           )}
 
@@ -269,6 +282,10 @@ export default function Cart() {
         {/* Footer */}
         {items.length > 0 && (
           <div className="p-6 border-t-4 border-[#545454] bg-gray-50">
+            {shippingNote && (
+              <p className="text-xs text-gray-500 mb-3">{shippingNote}</p>
+            )}
+
             {/* Subtotal */}
             <div className="flex items-center justify-between mb-2">
               <span className="text-gray-600">סכום ביניים:</span>

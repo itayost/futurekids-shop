@@ -1,4 +1,6 @@
 import type { PickupPoint } from '@/types';
+import { classifyOrderShipping, type PreorderLookup } from './preorder';
+import { getProductById } from './products';
 
 export interface ExportOrderItem {
   productId: string;
@@ -46,7 +48,15 @@ const TITLE_SHORT: Record<string, string> = {
   ai: 'בינה',
   encryption: 'הצפנה',
   algorithms: 'אלגו',
+  // Its id has no -book suffix to strip, and its stored line name carries the
+  // long pre-order note, so it needs an entry of its own.
+  'riddles-book-1': 'חידה!',
 };
+
+function titleLabel(item: ExportOrderItem): string {
+  const key = (item.productId || '').replace(/-(book|workbook)$/i, '');
+  return TITLE_SHORT[key] || item.productName || item.productId || '?';
+}
 
 // Per-title Hebrew shorthand of order contents, e.g. "אלגו ס+ח" or
 // "בינה 2ס+2ח, הצפנה ס". ס = ספר, ח = חוברת; count prefix omitted when 1.
@@ -56,8 +66,7 @@ export function contentsSummary(items: ExportOrderItem[]): string {
   for (const item of items || []) {
     const isWorkbook =
       /workbook/i.test(item.productId) || (item.productName || '').includes('חוברת');
-    const key = (item.productId || '').replace(/-(book|workbook)$/i, '');
-    const label = TITLE_SHORT[key] || item.productName || item.productId || '?';
+    const label = titleLabel(item);
     const entry = byTitle.get(label) || { books: 0, workbooks: 0 };
     byTitle.set(label, {
       books: entry.books + (isWorkbook ? 0 : item.quantity),
@@ -112,11 +121,17 @@ function buildRow(fields: string[]): string {
 export function buildChitaCsv(
   orders: ExportOrder[],
   type: 'delivery' | 'pickup-point',
-  pointsByCode: Map<string, PickupPoint>
+  pointsByCode: Map<string, PickupPoint>,
+  getProduct: PreorderLookup = getProductById
 ): string {
   const rows: string[] = [HEADER];
 
   for (const order of orders) {
+    // An order holding a pre-order book ships whole, as one parcel, once the
+    // book is released and its catalog entry drops `preorder`.
+    const shipping = classifyOrderShipping((order.items || []).map((item) => item.productId), getProduct);
+    if (shipping !== 'regular') continue;
+
     const name = `${order.first_name} ${order.last_name}`.trim();
     let cityName = '';
     let streetName = '';

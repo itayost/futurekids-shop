@@ -1,0 +1,638 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-06T12:41:38+00:00",
+  "title": "Design System: KidCode",
+  "extensions": {
+    "colorMeta": {
+      "ink": {
+        "role": "neutral",
+        "displayName": "Warm Ink",
+        "canonical": "#545454",
+        "oklch": "oklch(44.6% 0.000 89.9)",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(25% 0.000 89.9)",
+          "oklch(38% 0.000 89.9)",
+          "oklch(50% 0.000 89.9)",
+          "oklch(62% 0.000 89.9)",
+          "oklch(74% 0.000 89.9)",
+          "oklch(86% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "ink-strong": {
+        "role": "neutral",
+        "displayName": "Ink Strong",
+        "canonical": "#3a3a3a",
+        "oklch": "oklch(34.8% 0.000 89.9)",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(25% 0.000 89.9)",
+          "oklch(38% 0.000 89.9)",
+          "oklch(50% 0.000 89.9)",
+          "oklch(62% 0.000 89.9)",
+          "oklch(74% 0.000 89.9)",
+          "oklch(86% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "cream-paper": {
+        "role": "neutral",
+        "displayName": "Cream Paper",
+        "canonical": "#fefce8",
+        "oklch": "oklch(98.7% 0.026 102.2)",
+        "tonalRamp": [
+          "oklch(15% 0.026 102.2)",
+          "oklch(25% 0.026 102.2)",
+          "oklch(38% 0.026 102.2)",
+          "oklch(50% 0.026 102.2)",
+          "oklch(62% 0.026 102.2)",
+          "oklch(74% 0.026 102.2)",
+          "oklch(86% 0.026 102.2)",
+          "oklch(95% 0.026 102.2)"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(25% 0.000 89.9)",
+          "oklch(38% 0.000 89.9)",
+          "oklch(50% 0.000 89.9)",
+          "oklch(62% 0.000 89.9)",
+          "oklch(74% 0.000 89.9)",
+          "oklch(86% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "field-fill": {
+        "role": "neutral",
+        "displayName": "Field Fill",
+        "canonical": "#f9fafb",
+        "oklch": "oklch(98.5% 0.002 247.8)",
+        "tonalRamp": [
+          "oklch(15% 0.002 247.8)",
+          "oklch(25% 0.002 247.8)",
+          "oklch(38% 0.002 247.8)",
+          "oklch(50% 0.002 247.8)",
+          "oklch(62% 0.002 247.8)",
+          "oklch(74% 0.002 247.8)",
+          "oklch(86% 0.002 247.8)",
+          "oklch(95% 0.002 247.8)"
+        ]
+      },
+      "muted-text": {
+        "role": "neutral",
+        "displayName": "Muted Text",
+        "canonical": "#6b7280",
+        "oklch": "oklch(55.1% 0.023 264.4)",
+        "tonalRamp": [
+          "oklch(15% 0.023 264.4)",
+          "oklch(25% 0.023 264.4)",
+          "oklch(38% 0.023 264.4)",
+          "oklch(50% 0.023 264.4)",
+          "oklch(62% 0.023 264.4)",
+          "oklch(74% 0.023 264.4)",
+          "oklch(86% 0.023 264.4)",
+          "oklch(95% 0.023 264.4)"
+        ]
+      },
+      "strike-gray": {
+        "role": "neutral",
+        "displayName": "Strike Gray",
+        "canonical": "#767676",
+        "oklch": "oklch(56.6% 0.000 89.9)",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(25% 0.000 89.9)",
+          "oklch(38% 0.000 89.9)",
+          "oklch(50% 0.000 89.9)",
+          "oklch(62% 0.000 89.9)",
+          "oklch(74% 0.000 89.9)",
+          "oklch(86% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "marker-pink": {
+        "role": "primary",
+        "displayName": "Marker Pink",
+        "canonical": "#ec4899",
+        "oklch": "oklch(65.6% 0.212 354.3)",
+        "tonalRamp": [
+          "oklch(15% 0.083 354.3)",
+          "oklch(25% 0.118 354.3)",
+          "oklch(38% 0.164 354.3)",
+          "oklch(50% 0.206 354.3)",
+          "oklch(62% 0.212 354.3)",
+          "oklch(74% 0.192 354.3)",
+          "oklch(86% 0.150 354.3)",
+          "oklch(95% 0.118 354.3)"
+        ]
+      },
+      "marker-pink-deep": {
+        "role": "primary",
+        "displayName": "Marker Pink Deep",
+        "canonical": "#db2777",
+        "oklch": "oklch(59.2% 0.218 0.6)",
+        "tonalRamp": [
+          "oklch(15% 0.084 0.6)",
+          "oklch(25% 0.121 0.6)",
+          "oklch(38% 0.168 0.6)",
+          "oklch(50% 0.212 0.6)",
+          "oklch(62% 0.218 0.6)",
+          "oklch(74% 0.197 0.6)",
+          "oklch(86% 0.154 0.6)",
+          "oklch(95% 0.121 0.6)"
+        ]
+      },
+      "marker-pink-soft": {
+        "role": "primary",
+        "displayName": "Marker Pink Soft",
+        "canonical": "#f472b6",
+        "oklch": "oklch(72.5% 0.175 349.8)",
+        "tonalRamp": [
+          "oklch(15% 0.074 349.8)",
+          "oklch(25% 0.103 349.8)",
+          "oklch(38% 0.141 349.8)",
+          "oklch(50% 0.175 349.8)",
+          "oklch(62% 0.175 349.8)",
+          "oklch(74% 0.164 349.8)",
+          "oklch(86% 0.129 349.8)",
+          "oklch(95% 0.103 349.8)"
+        ]
+      },
+      "pink-wash": {
+        "role": "primary",
+        "displayName": "Pink Wash",
+        "canonical": "#fce7f3",
+        "oklch": "oklch(94.8% 0.028 342.3)",
+        "tonalRamp": [
+          "oklch(15% 0.028 342.3)",
+          "oklch(25% 0.028 342.3)",
+          "oklch(38% 0.028 342.3)",
+          "oklch(50% 0.028 342.3)",
+          "oklch(62% 0.028 342.3)",
+          "oklch(74% 0.028 342.3)",
+          "oklch(86% 0.028 342.3)",
+          "oklch(95% 0.028 342.3)"
+        ]
+      },
+      "subject-sky": {
+        "role": "secondary",
+        "displayName": "Subject Sky",
+        "canonical": "#0ea5e9",
+        "oklch": "oklch(68.5% 0.148 237.3)",
+        "tonalRamp": [
+          "oklch(15% 0.067 237.3)",
+          "oklch(25% 0.092 237.3)",
+          "oklch(38% 0.124 237.3)",
+          "oklch(50% 0.148 237.3)",
+          "oklch(62% 0.148 237.3)",
+          "oklch(74% 0.143 237.3)",
+          "oklch(86% 0.114 237.3)",
+          "oklch(95% 0.092 237.3)"
+        ]
+      },
+      "subject-sky-text": {
+        "role": "secondary",
+        "displayName": "Subject Sky Text",
+        "canonical": "#0284c7",
+        "oklch": "oklch(58.8% 0.139 242.0)",
+        "tonalRamp": [
+          "oklch(15% 0.065 242.0)",
+          "oklch(25% 0.088 242.0)",
+          "oklch(38% 0.118 242.0)",
+          "oklch(50% 0.139 242.0)",
+          "oklch(62% 0.139 242.0)",
+          "oklch(74% 0.136 242.0)",
+          "oklch(86% 0.109 242.0)",
+          "oklch(95% 0.088 242.0)"
+        ]
+      },
+      "sky-wash": {
+        "role": "secondary",
+        "displayName": "Sky Wash",
+        "canonical": "#e0f2fe",
+        "oklch": "oklch(95.1% 0.025 236.8)",
+        "tonalRamp": [
+          "oklch(15% 0.025 236.8)",
+          "oklch(25% 0.025 236.8)",
+          "oklch(38% 0.025 236.8)",
+          "oklch(50% 0.025 236.8)",
+          "oklch(62% 0.025 236.8)",
+          "oklch(74% 0.025 236.8)",
+          "oklch(86% 0.025 236.8)",
+          "oklch(95% 0.025 236.8)"
+        ]
+      },
+      "subject-green": {
+        "role": "secondary",
+        "displayName": "Subject Green",
+        "canonical": "#10b981",
+        "oklch": "oklch(69.6% 0.149 162.5)",
+        "tonalRamp": [
+          "oklch(15% 0.067 162.5)",
+          "oklch(25% 0.092 162.5)",
+          "oklch(38% 0.124 162.5)",
+          "oklch(50% 0.149 162.5)",
+          "oklch(62% 0.149 162.5)",
+          "oklch(74% 0.144 162.5)",
+          "oklch(86% 0.114 162.5)",
+          "oklch(95% 0.092 162.5)"
+        ]
+      },
+      "subject-green-text": {
+        "role": "secondary",
+        "displayName": "Subject Green Text",
+        "canonical": "#059669",
+        "oklch": "oklch(59.6% 0.127 163.2)",
+        "tonalRamp": [
+          "oklch(15% 0.062 163.2)",
+          "oklch(25% 0.083 163.2)",
+          "oklch(38% 0.111 163.2)",
+          "oklch(50% 0.127 163.2)",
+          "oklch(62% 0.127 163.2)",
+          "oklch(74% 0.127 163.2)",
+          "oklch(86% 0.102 163.2)",
+          "oklch(95% 0.083 163.2)"
+        ]
+      },
+      "green-wash": {
+        "role": "secondary",
+        "displayName": "Green Wash",
+        "canonical": "#d1fae5",
+        "oklch": "oklch(95.0% 0.051 163.1)",
+        "tonalRamp": [
+          "oklch(15% 0.043 163.1)",
+          "oklch(25% 0.051 163.1)",
+          "oklch(38% 0.051 163.1)",
+          "oklch(50% 0.051 163.1)",
+          "oklch(62% 0.051 163.1)",
+          "oklch(74% 0.051 163.1)",
+          "oklch(86% 0.051 163.1)",
+          "oklch(95% 0.051 163.1)"
+        ]
+      },
+      "sun": {
+        "role": "tertiary",
+        "displayName": "Sun",
+        "canonical": "#facc15",
+        "oklch": "oklch(86.1% 0.173 91.9)",
+        "tonalRamp": [
+          "oklch(15% 0.073 91.9)",
+          "oklch(25% 0.102 91.9)",
+          "oklch(38% 0.140 91.9)",
+          "oklch(50% 0.173 91.9)",
+          "oklch(62% 0.173 91.9)",
+          "oklch(74% 0.163 91.9)",
+          "oklch(86% 0.128 91.9)",
+          "oklch(95% 0.102 91.9)"
+        ]
+      },
+      "riddles-orange": {
+        "role": "riddles",
+        "displayName": "Cover Orange",
+        "canonical": "#de8f47",
+        "oklch": "oklch(71.8% 0.130 60.6)",
+        "tonalRamp": [
+          "oklch(15% 0.062 60.6)",
+          "oklch(25% 0.084 60.6)",
+          "oklch(38% 0.112 60.6)",
+          "oklch(50% 0.130 60.6)",
+          "oklch(62% 0.130 60.6)",
+          "oklch(74% 0.129 60.6)",
+          "oklch(86% 0.103 60.6)",
+          "oklch(95% 0.084 60.6)"
+        ]
+      },
+      "riddles-navy": {
+        "role": "riddles",
+        "displayName": "Cover Navy",
+        "canonical": "#31508f",
+        "oklch": "oklch(44.1% 0.110 262.9)",
+        "tonalRamp": [
+          "oklch(15% 0.058 262.9)",
+          "oklch(25% 0.076 262.9)",
+          "oklch(38% 0.100 262.9)",
+          "oklch(50% 0.110 262.9)",
+          "oklch(62% 0.110 262.9)",
+          "oklch(74% 0.110 262.9)",
+          "oklch(86% 0.092 262.9)",
+          "oklch(95% 0.076 262.9)"
+        ]
+      },
+      "riddles-purple": {
+        "role": "riddles",
+        "displayName": "Word-Game Purple",
+        "canonical": "#84679a",
+        "oklch": "oklch(56.2% 0.084 309.9)",
+        "tonalRamp": [
+          "oklch(15% 0.051 309.9)",
+          "oklch(25% 0.065 309.9)",
+          "oklch(38% 0.083 309.9)",
+          "oklch(50% 0.084 309.9)",
+          "oklch(62% 0.084 309.9)",
+          "oklch(74% 0.084 309.9)",
+          "oklch(86% 0.077 309.9)",
+          "oklch(95% 0.065 309.9)"
+        ]
+      },
+      "riddles-green": {
+        "role": "riddles",
+        "displayName": "Pattern Green",
+        "canonical": "#6fae90",
+        "oklch": "oklch(69.9% 0.079 162.8)",
+        "tonalRamp": [
+          "oklch(15% 0.050 162.8)",
+          "oklch(25% 0.063 162.8)",
+          "oklch(38% 0.079 162.8)",
+          "oklch(50% 0.079 162.8)",
+          "oklch(62% 0.079 162.8)",
+          "oklch(74% 0.079 162.8)",
+          "oklch(86% 0.075 162.8)",
+          "oklch(95% 0.063 162.8)"
+        ]
+      },
+      "riddles-red": {
+        "role": "riddles",
+        "displayName": "Brick Red",
+        "canonical": "#b83c3a",
+        "oklch": "oklch(53.5% 0.160 25.2)",
+        "tonalRamp": [
+          "oklch(15% 0.070 25.2)",
+          "oklch(25% 0.097 25.2)",
+          "oklch(38% 0.132 25.2)",
+          "oklch(50% 0.160 25.2)",
+          "oklch(62% 0.160 25.2)",
+          "oklch(74% 0.153 25.2)",
+          "oklch(86% 0.121 25.2)",
+          "oklch(95% 0.097 25.2)"
+        ]
+      },
+      "riddles-red-deep": {
+        "role": "riddles",
+        "displayName": "Brick Red Deep",
+        "canonical": "#9c2f2d",
+        "oklch": "oklch(47.0% 0.145 25.6)",
+        "tonalRamp": [
+          "oklch(15% 0.066 25.6)",
+          "oklch(25% 0.090 25.6)",
+          "oklch(38% 0.122 25.6)",
+          "oklch(50% 0.145 25.6)",
+          "oklch(62% 0.145 25.6)",
+          "oklch(74% 0.141 25.6)",
+          "oklch(86% 0.112 25.6)",
+          "oklch(95% 0.090 25.6)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Main-site page heroes."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section headings."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Card titles, prices, button labels."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Descriptive copy, about 62ch."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Meta lines, badges, field labels, small links."
+      },
+      "riddles-display": {
+        "displayName": "Riddles Display",
+        "purpose": "The series title only, white with the ink stamp shadow."
+      },
+      "riddles-hand": {
+        "displayName": "Riddles Hand (Karantina)",
+        "purpose": "A few hand-lettered words: subtitle, category chips, captions, ticket-stub month. Riddles scope only."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card",
+        "value": "6px 6px 0 0 #545454",
+        "purpose": "Standard outlined cards, panels, tickets, gallery pages."
+      },
+      {
+        "name": "card-lg",
+        "value": "8px 8px 0 0 #545454",
+        "purpose": "Hero media frames and the riddles homepage promo."
+      },
+      {
+        "name": "retro-button",
+        "value": "4px 4px 0 0 #545454",
+        "purpose": "Every site button at rest; hover 5px with -1px lift, active 2px with 2px sink."
+      },
+      {
+        "name": "riddles-press",
+        "value": "5px 5px 0 0 #545454",
+        "purpose": "Riddles pre-order button at rest; hover 7px with -2px lift, active 1px with 4px sink."
+      },
+      {
+        "name": "input-focus",
+        "value": "4px 4px 0 0 #545454",
+        "purpose": "Input focus state in place of a glow."
+      },
+      {
+        "name": "feature",
+        "value": "10px 10px 0 0 #545454",
+        "purpose": "Riddles closing panel; desktop hero cover uses 14px."
+      },
+      {
+        "name": "stamped-title",
+        "value": "text-shadow: 5px 5px 0 #545454",
+        "purpose": "White display type on series colour fields; 4px on mobile."
+      },
+      {
+        "name": "book-object",
+        "value": "drop-shadow(4px 6px 8px rgba(0,0,0,0.25))",
+        "purpose": "Cut-out photographs of physical books only; never UI."
+      }
+    ],
+    "motion": [
+      {
+        "name": "retro-press",
+        "value": "all 0.1s",
+        "purpose": "Site retro button state changes."
+      },
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Riddles press (120ms) and gallery page hover (200ms)."
+      },
+      {
+        "name": "hero-fade-up",
+        "value": "0.6s ease-out, 0.1s stagger",
+        "purpose": "Homepage hero entry sequence."
+      },
+      {
+        "name": "loop-strip",
+        "value": "linear infinite, 35s to 38s",
+        "purpose": "Press-logo marquee and riddles pre-order tape; paused on hover (tape) and removed under reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Site-wide primary action: Marker Pink, Ink outline, retro press shadow.",
+      "html": "<button class=\"ds-btn-primary\">להוספה לסל</button>",
+      "css": ".ds-btn-primary{font-family:Rubik,system-ui,sans-serif;background:#ec4899;color:#fff;font-weight:900;font-size:1.25rem;padding:16px 40px;border:2px solid #545454;border-radius:12px;box-shadow:4px 4px 0 0 #545454;transition:all .1s;cursor:pointer}.ds-btn-primary:hover{background:#db2777;transform:translate(-1px,-1px);box-shadow:5px 5px 0 0 #545454}.ds-btn-primary:active{transform:translate(2px,2px);box-shadow:2px 2px 0 0 #545454}.ds-btn-primary:focus-visible{outline:3px solid #545454;outline-offset:3px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "White retro button with a pink label, paired beside the primary.",
+      "html": "<button class=\"ds-btn-secondary\">לפרטים</button>",
+      "css": ".ds-btn-secondary{font-family:Rubik,system-ui,sans-serif;background:#fff;color:#ec4899;font-weight:900;font-size:1.25rem;padding:16px 40px;border:2px solid #545454;border-radius:12px;box-shadow:4px 4px 0 0 #545454;transition:all .1s;cursor:pointer}.ds-btn-secondary:hover{background:#fdf2f8;transform:translate(-1px,-1px);box-shadow:5px 5px 0 0 #545454}.ds-btn-secondary:active{transform:translate(2px,2px);box-shadow:2px 2px 0 0 #545454}.ds-btn-secondary:focus-visible{outline:3px solid #545454;outline-offset:3px}"
+    },
+    {
+      "name": "Input Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "3px Ink outline; focus adds a hard shadow instead of a glow.",
+      "html": "<input class=\"ds-input\" dir=\"rtl\" placeholder=\"שם מלא\">",
+      "css": ".ds-input{font-family:Rubik,system-ui,sans-serif;font-size:16px;color:#545454;background:#f9fafb;padding:12px;border:3px solid #545454;border-radius:8px;transition:all .2s;appearance:none}.ds-input:focus{outline:none;box-shadow:4px 4px 0 0 #545454}"
+    },
+    {
+      "name": "Navigation Bar",
+      "kind": "nav",
+      "refersTo": "button-ink",
+      "description": "White sticky bar, 4px Ink rule, bold links turning pink, Ink cart button with pink count and the red series badge.",
+      "html": "<nav class=\"ds-nav\" dir=\"rtl\"><a class=\"ds-nav-link\" href=\"#\">הספרים</a><a class=\"ds-nav-link\" href=\"#\">חידה! <span class=\"ds-badge-new\">חדש</span></a><button class=\"ds-nav-cart\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"8\" cy=\"21\" r=\"1\"/><circle cx=\"19\" cy=\"21\" r=\"1\"/><path d=\"M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12\"/></svg>סל<span class=\"ds-nav-count\">2</span></button></nav>",
+      "css": ".ds-nav{font-family:Rubik,system-ui,sans-serif;display:flex;align-items:center;gap:16px;background:#fff;border-bottom:4px solid #545454;padding:16px 24px;color:#545454;font-weight:700}.ds-nav-link{color:#545454;text-decoration:none;display:inline-flex;align-items:center;gap:6px}.ds-nav-link:hover{color:#ec4899}.ds-nav-link:focus-visible{outline:3px solid #545454;outline-offset:3px;border-radius:4px}.ds-badge-new{background:#b83c3a;color:#fff;font-size:11px;font-weight:900;line-height:1;padding:4px 6px;border-radius:6px;border:2px solid #545454}.ds-nav-cart{position:relative;display:flex;align-items:center;gap:8px;background:#545454;color:#fff;font:inherit;padding:8px 20px;border:0;border-radius:8px;cursor:pointer;margin-inline-start:auto}.ds-nav-cart:hover{background:#4b5563}.ds-nav-count{position:absolute;top:-8px;right:-8px;background:#ec4899;color:#fff;font-size:12px;width:20px;height:20px;border-radius:9999px;display:flex;align-items:center;justify-content:center}"
+    },
+    {
+      "name": "Product Card",
+      "kind": "card",
+      "refersTo": "card-product",
+      "description": "Outlined paper card with a subject-wash media panel and a hard shadow.",
+      "html": "<a class=\"ds-card\" href=\"#\" dir=\"rtl\"><div class=\"ds-card-media\"></div><h3 class=\"ds-card-title\">סודות ההצפנה</h3><p class=\"ds-card-text\">ספר שמלמד ילדים להצפין ולפענח.</p><div class=\"ds-card-foot\"><span class=\"ds-card-price\">₪89</span><span class=\"ds-card-more\">לפרטים</span></div></a>",
+      "css": ".ds-card{display:block;width:280px;font-family:Rubik,system-ui,sans-serif;color:#545454;text-decoration:none;background:#fff;border:4px solid #545454;border-radius:16px;padding:24px;box-shadow:6px 6px 0 0 #545454;transition:all .2s}.ds-card:hover{background:#fdf2f8}.ds-card:focus-visible{outline:3px solid #545454;outline-offset:4px}.ds-card-media{background:#fce7f3;border-radius:12px;height:160px;margin-bottom:16px}.ds-card-title{font-weight:900;font-size:1.25rem;margin:0 0 8px}.ds-card-text{color:#4b5563;font-size:.875rem;margin:0 0 16px}.ds-card-foot{display:flex;justify-content:space-between;align-items:center}.ds-card-price{font-weight:900;font-size:1.5rem}.ds-card-more{color:#db2777;font-weight:700;font-size:.875rem}.ds-card:hover .ds-card-more{text-decoration:underline}"
+    },
+    {
+      "name": "Riddles Pre-order Button",
+      "kind": "button",
+      "refersTo": "riddles-button-preorder",
+      "description": "Riddles-scope action: Brick Red with the deeper press shadow and a Sun focus ring.",
+      "html": "<button class=\"ds-r-press\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"8\" cy=\"21\" r=\"1\"/><circle cx=\"19\" cy=\"21\" r=\"1\"/><path d=\"M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12\"/></svg>להזמנה מוקדמת</button>",
+      "css": ".ds-r-press{font-family:Rubik,system-ui,sans-serif;display:inline-flex;align-items:center;gap:12px;background:#b83c3a;color:#fff;font-weight:900;font-size:1.25rem;padding:20px 24px;border:3px solid #545454;border-radius:14px;box-shadow:5px 5px 0 0 #545454;transition:transform 120ms cubic-bezier(0.16, 1, 0.3, 1),box-shadow 120ms cubic-bezier(0.16, 1, 0.3, 1),background-color 150ms;cursor:pointer}.ds-r-press:hover{background:#9c2f2d;transform:translate(-2px,-2px);box-shadow:7px 7px 0 0 #545454}.ds-r-press:active{transform:translate(4px,4px);box-shadow:1px 1px 0 0 #545454}.ds-r-press:focus-visible{outline:4px solid #facc15;outline-offset:3px}"
+    },
+    {
+      "name": "Riddles Price Ticket",
+      "kind": "custom",
+      "refersTo": "riddles-price-ticket",
+      "description": "Pre-order price as a ticket: price on the main part, arrival month on a perforated Sun stub.",
+      "html": "<div class=\"ds-r-ticket\" dir=\"rtl\"><div class=\"ds-r-ticket-main\"><p class=\"ds-r-ticket-label\">מחיר רכישה מוקדמת</p><p class=\"ds-r-ticket-row\"><span class=\"ds-r-ticket-price\"><span style=\"font-size:.5em\">₪</span>102</span><s class=\"ds-r-ticket-list\">₪120</s><span class=\"ds-r-ticket-save\">חוסכים ₪18</span></p></div><div class=\"ds-r-ticket-stub\"><span class=\"ds-r-stub-small\">מגיע במהלך</span><span class=\"ds-r-stub-month\">נובמבר</span><span class=\"ds-r-stub-year\">2026</span></div></div>",
+      "css": ".ds-r-ticket{font-family:Rubik,system-ui,sans-serif;color:#545454;display:grid;grid-template-columns:1fr auto;overflow:hidden;max-width:460px;background:#fff;border:4px solid #545454;border-radius:18px;box-shadow:6px 6px 0 0 #545454}.ds-r-ticket-main{padding:16px 24px}.ds-r-ticket-label{margin:0;font-size:.875rem;font-weight:700;color:#31508f}.ds-r-ticket-row{margin:4px 0 0;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px}.ds-r-ticket-price{font-size:56px;font-weight:900;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}.ds-r-ticket-list{font-size:22px;font-weight:700;color:#767676;text-decoration-color:#b83c3a;text-decoration-thickness:3px}.ds-r-ticket-save{background:#b83c3a;color:#fff;font-size:.875rem;font-weight:900;padding:4px 8px;border:2px solid #545454;border-radius:6px}.ds-r-ticket-stub{display:grid;place-content:center;text-align:center;padding:0 20px;background:#facc15;border-inline-start:4px dashed #545454}.ds-r-stub-small{font-size:.75rem;font-weight:700}.ds-r-stub-month{font-family:Karantina,Rubik,sans-serif;font-weight:700;font-size:46px;line-height:.9}.ds-r-stub-year{font-size:.875rem;font-weight:900}"
+    },
+    {
+      "name": "Riddles Category Chip",
+      "kind": "chip",
+      "refersTo": "riddles-category-chip",
+      "description": "Hand-lettered family chips in the book's colour code; legend for the gallery.",
+      "html": "<ul class=\"ds-r-chips\" dir=\"rtl\"><li class=\"ds-r-chip\" style=\"background:#84679a;color:#fff\">משחקי מילים</li><li class=\"ds-r-chip\" style=\"background:#de8f47;color:#3a3a3a\">הצפנה</li><li class=\"ds-r-chip\" style=\"background:#6fae90;color:#3a3a3a\">מספרים ותבניות</li></ul>",
+      "css": ".ds-r-chips{display:flex;flex-wrap:wrap;gap:12px;list-style:none;padding:0;margin:0}.ds-r-chip{font-family:Karantina,Rubik,sans-serif;font-weight:700;font-size:28px;line-height:1;padding:4px 12px 2px;border:2px solid #545454;border-radius:8px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Activity Workbook",
+    "overview": "KidCode looks like the books it sells: a children's activity workbook laid open on a table. Every surface is a cut-out shape traced in a thick warm-gray ink line, lifted off a cream page by a solid offset shadow, and coloured with the flat, bright fills of a marker set. Buttons are chunky and physically pressable; the shadow is the button's depth, and it collapses when the button goes down. Nothing is glassy, blurred or gradient-lit. The system is right-to-left and Hebrew-first throughout.\n\nThe trilogy (AI, ciphers, algorithms) each owns one marker colour (sky, pink, green), and marker pink doubles as the site's action colour. Density is relaxed: big black-weight Rubik headings, generous section spacing, and content held in outlined cards rather than ruled lists.\n\nThe riddles series (\"חידה! לכל המשפחה\") is a named sub-theme, not a second world. It swaps the marker fills for its own cover palette (orange over navy, with purple and green family colours and a brick-red action) and adds one hand-lettered display face, Karantina, while keeping the ink outline, the hard shadow and the press behaviour exactly as the rest of the site has them.",
+    "keyCharacteristics": [
+      "Warm-gray ink (#545454) for outlines, shadows and body text; never pure black.",
+      "Solid, zero-blur offset shadows down and to the right as the only UI depth.",
+      "Rounded, outlined, flat-filled shapes; no square corners on interactive surfaces.",
+      "Rubik at black weight for every heading; one marker colour per book subject.",
+      "Pressable buttons that rise on hover and sink on press.",
+      "Sub-palettes per book series are scoped to their surfaces and inherit the ink frame."
+    ],
+    "rules": [
+      {
+        "name": "The Ink-Not-Black Rule",
+        "body": "Outlines, shadows and default text are Ink (#545454). Pure black is not part of the palette.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Subject, One Marker Rule",
+        "body": "Each trilogy book owns one hue and uses it in three tones only: the wash for its media panel, the -600 tone for its text link, the full tone for its button.",
+        "section": "colors"
+      },
+      {
+        "name": "The Series Scope Rule",
+        "body": "A series palette lives inside its series surfaces (the riddles tokens are declared on the riddles root wrapper). It never recolours trilogy, cart or checkout surfaces; the single exception is the navbar badge that points to the series.",
+        "section": "colors"
+      },
+      {
+        "name": "The Black-Weight Rule",
+        "body": "Headings and prices are Rubik 900; body is 400; labels and links are 700. Intermediate weights are rare.",
+        "section": "typography"
+      },
+      {
+        "name": "The Short-Hand Rule",
+        "body": "Karantina sets a few words at a time, never a sentence, never a price, never a button label, and only inside the riddles scope.",
+        "section": "typography"
+      },
+      {
+        "name": "The Stamped Title Rule",
+        "body": "White display type on a series colour field carries a solid ink text shadow (5px 5px 0, 4px on mobile), the same offset language as the boxes.",
+        "section": "typography"
+      },
+      {
+        "name": "The Zero-Blur Rule",
+        "body": "UI shadows are solid ink offsets. A blurred or coloured shadow on a card, button or input is off-system.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Shadow-Is-Depth Rule",
+        "body": "On a pressable element the shadow is its physical height: hover raises it, press removes it.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** outline every card, button, chip, input and media frame in Ink: 4px for containers, 2px to 3px for controls.",
+      "**Do** use the solid Ink offset shadows from the Elevation vocabulary, scaled to the object's importance.",
+      "**Do** make every button pressable: lift on hover, sink on press, with a visible focus state.",
+      "**Do** keep each trilogy book in its own marker colour, in wash, text and full tones.",
+      "**Do** declare a new series palette as scoped tokens on the series' root wrapper, and keep the Ink frame around it.",
+      "**Do** set white-on-pink and white-on-orange labels at large sizes and black weight; on orange, add the ink stamp shadow.",
+      "**Do** honour prefers-reduced-motion on every looping or transforming animation."
+    ],
+    "donts": [
+      "**Don't** use pure black for outlines, shadows or text.",
+      "**Don't** use blurred, glowing or coloured shadows on UI surfaces; soft drop-shadows belong only to photographed book cut-outs.",
+      "**Don't** use square corners or borderless floating panels for content.",
+      "**Don't** let a series palette recolour trilogy, cart or checkout surfaces.",
+      "**Don't** set Karantina for sentences, prices, buttons, or anywhere outside the riddles scope.",
+      "**Don't** use gradients as atmosphere; the only gradient in the system is the hard-stopped orange-over-navy split of the riddles cover."
+    ]
+  }
+}

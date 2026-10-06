@@ -131,11 +131,40 @@ export const products: Product[] = [
     audience: 'לכל ילד וילדה (גילאי 8-13) שאוהבים חידות, יצירה ואתגרים, ורוצים לקחת את הידע שלהם צעד אחד קדימה דרך הידיים והראש.',
     examplePages: examplePagesByTopic.algorithms,
   },
+  // New series: חידה! לכל המשפחה
+  {
+    id: 'riddles-book-1',
+    slug: 'riddles',
+    name: 'חידה! לכל המשפחה',
+    description: 'מוכנים לגלות עד כמה המוח שלכם גמיש, חד ומלא דמיון?\n\nחידה! הוא לא עוד ספר חידות – הוא מגרש משחקים ממכר לכל המשפחה, שמחבר בין הומור שנון, איורים שובי לב וחשיבה מבריקה מחוץ לקופסה. כאן, השפה העברית, עולם הריגול ועקרונות הלוגיקה הופכים להרפתקה שפשוט אי אפשר להניח מהיד.',
+    price: 102,
+    compareAtPrice: 120,
+    image: '/riddles/cover.jpg',
+    color: 'blue',
+    type: 'book',
+    series: 'riddles',
+    excludeFromCoupons: true,
+    preorder: { shipsBy: 'נובמבר 2026' },
+    landingPath: '/riddles',
+    features: [
+      'משחקי מילים: הגדרות תרתי משמע שנונות, מילים שמסתתרות זו בתוך זו, צמדים מפתיעים ומפעל מילים עשיר.',
+      'הצפנה: פתקי ריגול חשאיים, צפנים סודיים ורמזים שמתחבאים ממש מול העיניים.',
+      'מספרים ותבניות: סדרות מספרים מפתיעות, משחקי חשבון וחידות היגיון מאתגרות במיוחד.',
+    ],
+    audience: 'מתאים לכל מי שאוהב לחשוב. לגילאי 7 ומעלה, וגם למבוגרים.',
+  },
 ];
 
-// Only books for bundle detection
-export const books = products.filter(p => p.type === 'book');
-export const workbooks = products.filter(p => p.type === 'workbook');
+// The original trilogy only: these feed the bundles, companion pairs and the
+// homepage book grid. Series products (see Product.series) stay out.
+export const books = products.filter(p => p.type === 'book' && !p.series);
+export const workbooks = products.filter(p => p.type === 'workbook' && !p.series);
+export const riddlesBook = products.find(p => p.id === 'riddles-book-1')!;
+
+// Where a product's page lives: its dedicated landing page when it has one.
+export function productHref(product: Pick<Product, 'slug' | 'landingPath'>): string {
+  return product.landingPath ?? `/products/${product.slug}`;
+}
 
 // Bundle definitions
 export const bundles = [
@@ -187,8 +216,10 @@ export function getProductBySlug(slug: string): Product | undefined {
   return products.find((p) => p.slug === slug);
 }
 
+const productsById = new Map(products.map((p) => [p.id, p]));
+
 export function getProductById(id: string): Product | undefined {
-  return products.find((p) => p.id === id);
+  return productsById.get(id);
 }
 
 export function getAllProducts(): Product[] {

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Star, ChevronDown, Cpu, Lock, GitBranch, User, BookOpen, Gift, Users } from 'lucide-react';
 import BookWorkbookPairCard from '@/components/BookWorkbookPairCard';
 import LogoMarquee from '@/components/LogoMarquee';
+import { RiddlesPromo } from '@/components/riddles/RiddlesPromo';
 import { books, workbooks, bundles } from '@/lib/products';
 import { useCart } from '@/components/CartProvider';
 
@@ -150,6 +151,9 @@ export default function Home() {
 
       {/* Featured In - Press Logo Marquee */}
       <LogoMarquee />
+
+      {/* New series: the riddles book */}
+      <RiddlesPromo />
 
       {/* Products Section */}
       <section id="books" className="container mx-auto px-6 py-20">

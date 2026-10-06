@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import { classifyOrderShipping, type OrderShipping } from '@/lib/preorder';
 import { Lock, Package, User, Users, MapPin, Phone, Mail, Calendar, ShoppingBag, ChevronDown, ChevronUp, Search, Trash2, Truck, Gift, Download, Ticket } from 'lucide-react';
 
 interface OrderItem {
@@ -32,6 +33,13 @@ interface Order {
   bundle_name: string | null;
   items: OrderItem[];
 }
+
+// Orders holding a pre-order book wait for its release and ship whole; flag
+// them so nobody packs the in-stock part early.
+const SHIPPING_BADGES: Record<Exclude<OrderShipping, 'regular'>, { label: string; color: string }> = {
+  'preorder-only': { label: 'רכישה מוקדמת', color: 'bg-orange-100 text-orange-800 border-orange-300' },
+  mixed: { label: 'רכישה מוקדמת + מלאי, נשלח יחד', color: 'bg-rose-100 text-rose-800 border-rose-300' },
+};
 
 const STATUSES = [
   { value: 'PENDING', label: 'ממתין', color: 'bg-yellow-100 text-yellow-800 border-yellow-300' },
@@ -364,182 +372,192 @@ export default function AdminPage() {
               </p>
             </div>
 
-            {filteredOrders.map((order) => (
-              <div
-                key={order.id}
-                className="bg-white border-4 border-[#545454] rounded-2xl hard-shadow overflow-hidden"
-              >
-                <div className="p-6">
-                  <div className="flex justify-between items-start gap-4">
-                    {/* Left side - expand/collapse + status */}
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                      >
-                        {expandedOrder === order.id ? (
-                          <ChevronUp className="w-5 h-5" />
-                        ) : (
-                          <ChevronDown className="w-5 h-5" />
-                        )}
-                      </button>
+            {filteredOrders.map((order) => {
+              const shipping = classifyOrderShipping(order.items.map((item) => item.productId));
+              const shippingBadge = shipping === 'regular' ? null : SHIPPING_BADGES[shipping];
+              return (
+                <div
+                  key={order.id}
+                  className="bg-white border-4 border-[#545454] rounded-2xl hard-shadow overflow-hidden"
+                >
+                  <div className="p-6">
+                    <div className="flex justify-between items-start gap-4">
+                      {/* Left side - expand/collapse + status */}
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
+                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        >
+                          {expandedOrder === order.id ? (
+                            <ChevronUp className="w-5 h-5" />
+                          ) : (
+                            <ChevronDown className="w-5 h-5" />
+                          )}
+                        </button>
 
-                      {/* Status Dropdown */}
-                      <select
-                        value={order.status}
-                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                        disabled={updatingStatus === order.id}
-                        className={`px-3 py-1.5 rounded-full text-sm font-bold border-2 cursor-pointer ${getStatusInfo(order.status).color} ${updatingStatus === order.id ? 'opacity-50' : ''}`}
-                      >
-                        {STATUSES.map(s => (
-                          <option key={s.value} value={s.value}>{s.label}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Right side - total */}
-                    <div className="text-left">
-                      <p className="text-2xl font-black">₪{order.total}</p>
-                      <p className="text-sm text-gray-500">{order.items.length} פריטים</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 flex flex-wrap gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <User className="w-4 h-4 text-gray-400" />
-                      <span className="font-bold">{order.first_name} {order.last_name}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-gray-400" />
-                      <span>{formatDate(order.created_at)}</span>
-                    </div>
-                    {getShippingLabel(order) && (
-                      <div className="flex items-center gap-2">
-                        <Truck className="w-4 h-4 text-gray-400" />
-                        <span className="text-purple-600 font-medium">{getShippingLabel(order)}</span>
-                      </div>
-                    )}
-                    {order.bundle_name && (
-                      <div className="flex items-center gap-2">
-                        <Gift className="w-4 h-4 text-pink-500" />
-                        <span className="text-pink-600 font-medium">{order.bundle_name}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {expandedOrder === order.id && (
-                  <div className="border-t-4 border-[#545454] p-6 bg-gray-50">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                      <div className="space-y-3">
-                        <h3 className="font-black text-lg mb-3">פרטי לקוח</h3>
-                        <div className="flex items-center gap-2">
-                          <Mail className="w-4 h-4 text-gray-400" />
-                          <a href={`mailto:${order.email}`} className="text-blue-600 hover:underline">{order.email}</a>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Phone className="w-4 h-4 text-gray-400" />
-                          <a href={`tel:${order.phone}`} className="text-blue-600 hover:underline">{order.phone}</a>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-4 h-4 text-gray-400" />
-                          <span>{order.address}, {order.city}</span>
-                        </div>
-                        {getShippingLabel(order) && (
-                          <div className="flex items-center gap-2 pt-2 border-t border-gray-200">
-                            <Truck className="w-4 h-4 text-purple-500" />
-                            <span className="font-bold text-purple-600">{getShippingLabel(order)}</span>
-                            {order.shipping_cost && (
-                              <span className="text-gray-500">(₪{order.shipping_cost})</span>
-                            )}
-                          </div>
-                        )}
-                      </div>
-
-                      <div>
-                        <h3 className="font-black text-lg mb-3">פריטים בהזמנה</h3>
-                        <div className="space-y-2">
-                          {order.items.map((item) => (
-                            <div
-                              key={item.id}
-                              className="flex justify-between items-center bg-white p-3 rounded-lg border-2 border-[#545454]"
-                            >
-                              <div>
-                                <p className="font-bold">{item.productName}</p>
-                                <p className="text-sm text-gray-500">כמות: {item.quantity}</p>
-                              </div>
-                              <p className="font-black text-pink-500">₪{item.price * item.quantity}</p>
-                            </div>
+                        {/* Status Dropdown */}
+                        <select
+                          value={order.status}
+                          onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                          disabled={updatingStatus === order.id}
+                          className={`px-3 py-1.5 rounded-full text-sm font-bold border-2 cursor-pointer ${getStatusInfo(order.status).color} ${updatingStatus === order.id ? 'opacity-50' : ''}`}
+                        >
+                          {STATUSES.map(s => (
+                            <option key={s.value} value={s.value}>{s.label}</option>
                           ))}
-                        </div>
+                        </select>
 
-                        {/* Bundle & Shipping Summary */}
-                        {(order.bundle_discount || order.shipping_cost) && (
-                          <div className="mt-4 pt-3 border-t border-gray-200 space-y-2">
-                            {order.bundle_name && order.bundle_discount && order.bundle_discount > 0 && (
-                              <div className="flex justify-between items-center text-sm">
-                                <div className="flex items-center gap-2">
-                                  <Gift className="w-4 h-4 text-pink-500" />
-                                  <span className="text-pink-600 font-medium">{order.bundle_name}</span>
-                                </div>
-                                <span className="text-green-600 font-bold">-₪{order.bundle_discount}</span>
-                              </div>
-                            )}
-                            {order.shipping_cost && order.shipping_cost > 0 && (
-                              <div className="flex justify-between items-center text-sm">
-                                <div className="flex items-center gap-2">
-                                  <Truck className="w-4 h-4 text-purple-500" />
-                                  <span className="text-purple-600 font-medium">{getShippingLabel(order)}</span>
-                                </div>
-                                <span className="font-bold">₪{order.shipping_cost}</span>
-                              </div>
-                            )}
-                          </div>
+                        {shippingBadge && (
+                          <span className={`px-3 py-1.5 rounded-full text-sm font-bold border-2 ${shippingBadge.color}`}>
+                            {shippingBadge.label}
+                          </span>
                         )}
+                      </div>
+
+                      {/* Right side - total */}
+                      <div className="text-left">
+                        <p className="text-2xl font-black">₪{order.total}</p>
+                        <p className="text-sm text-gray-500">{order.items.length} פריטים</p>
                       </div>
                     </div>
 
-                    <div className="flex justify-between items-center pt-4 border-t-2 border-gray-300">
-                      <div className="flex items-center gap-4">
-                        <span className="text-sm text-gray-500">
-                          מזהה: {order.id.slice(0, 8)}...
-                        </span>
-
-                        {/* Delete Button */}
-                        {deleteConfirm === order.id ? (
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => handleDelete(order.id)}
-                              className="px-3 py-1.5 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors"
-                            >
-                              אישור מחיקה
-                            </button>
-                            <button
-                              onClick={() => setDeleteConfirm(null)}
-                              className="px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-300 transition-colors"
-                            >
-                              ביטול
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => setDeleteConfirm(order.id)}
-                            className="flex items-center gap-1 text-red-500 hover:text-red-700 text-sm font-bold transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                            מחק
-                          </button>
-                        )}
+                    <div className="mt-4 flex flex-wrap gap-4 text-sm">
+                      <div className="flex items-center gap-2">
+                        <User className="w-4 h-4 text-gray-400" />
+                        <span className="font-bold">{order.first_name} {order.last_name}</span>
                       </div>
-
-                      <span className="text-xl font-black">
-                        סה&quot;כ: ₪{order.total}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-gray-400" />
+                        <span>{formatDate(order.created_at)}</span>
+                      </div>
+                      {getShippingLabel(order) && (
+                        <div className="flex items-center gap-2">
+                          <Truck className="w-4 h-4 text-gray-400" />
+                          <span className="text-purple-600 font-medium">{getShippingLabel(order)}</span>
+                        </div>
+                      )}
+                      {order.bundle_name && (
+                        <div className="flex items-center gap-2">
+                          <Gift className="w-4 h-4 text-pink-500" />
+                          <span className="text-pink-600 font-medium">{order.bundle_name}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
-                )}
-              </div>
-            ))}
+
+                  {expandedOrder === order.id && (
+                    <div className="border-t-4 border-[#545454] p-6 bg-gray-50">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div className="space-y-3">
+                          <h3 className="font-black text-lg mb-3">פרטי לקוח</h3>
+                          <div className="flex items-center gap-2">
+                            <Mail className="w-4 h-4 text-gray-400" />
+                            <a href={`mailto:${order.email}`} className="text-blue-600 hover:underline">{order.email}</a>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Phone className="w-4 h-4 text-gray-400" />
+                            <a href={`tel:${order.phone}`} className="text-blue-600 hover:underline">{order.phone}</a>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <MapPin className="w-4 h-4 text-gray-400" />
+                            <span>{order.address}, {order.city}</span>
+                          </div>
+                          {getShippingLabel(order) && (
+                            <div className="flex items-center gap-2 pt-2 border-t border-gray-200">
+                              <Truck className="w-4 h-4 text-purple-500" />
+                              <span className="font-bold text-purple-600">{getShippingLabel(order)}</span>
+                              {order.shipping_cost && (
+                                <span className="text-gray-500">(₪{order.shipping_cost})</span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        <div>
+                          <h3 className="font-black text-lg mb-3">פריטים בהזמנה</h3>
+                          <div className="space-y-2">
+                            {order.items.map((item) => (
+                              <div
+                                key={item.id}
+                                className="flex justify-between items-center bg-white p-3 rounded-lg border-2 border-[#545454]"
+                              >
+                                <div>
+                                  <p className="font-bold">{item.productName}</p>
+                                  <p className="text-sm text-gray-500">כמות: {item.quantity}</p>
+                                </div>
+                                <p className="font-black text-pink-500">₪{item.price * item.quantity}</p>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Bundle & Shipping Summary */}
+                          {(order.bundle_discount || order.shipping_cost) && (
+                            <div className="mt-4 pt-3 border-t border-gray-200 space-y-2">
+                              {order.bundle_name && order.bundle_discount && order.bundle_discount > 0 && (
+                                <div className="flex justify-between items-center text-sm">
+                                  <div className="flex items-center gap-2">
+                                    <Gift className="w-4 h-4 text-pink-500" />
+                                    <span className="text-pink-600 font-medium">{order.bundle_name}</span>
+                                  </div>
+                                  <span className="text-green-600 font-bold">-₪{order.bundle_discount}</span>
+                                </div>
+                              )}
+                              {order.shipping_cost && order.shipping_cost > 0 && (
+                                <div className="flex justify-between items-center text-sm">
+                                  <div className="flex items-center gap-2">
+                                    <Truck className="w-4 h-4 text-purple-500" />
+                                    <span className="text-purple-600 font-medium">{getShippingLabel(order)}</span>
+                                  </div>
+                                  <span className="font-bold">₪{order.shipping_cost}</span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between items-center pt-4 border-t-2 border-gray-300">
+                        <div className="flex items-center gap-4">
+                          <span className="text-sm text-gray-500">
+                            מזהה: {order.id.slice(0, 8)}...
+                          </span>
+
+                          {/* Delete Button */}
+                          {deleteConfirm === order.id ? (
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => handleDelete(order.id)}
+                                className="px-3 py-1.5 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors"
+                              >
+                                אישור מחיקה
+                              </button>
+                              <button
+                                onClick={() => setDeleteConfirm(null)}
+                                className="px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-300 transition-colors"
+                              >
+                                ביטול
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => setDeleteConfirm(order.id)}
+                              className="flex items-center gap-1 text-red-500 hover:text-red-700 text-sm font-bold transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                              מחק
+                            </button>
+                          )}
+                        </div>
+
+                        <span className="text-xl font-black">
+                          סה&quot;כ: ₪{order.total}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

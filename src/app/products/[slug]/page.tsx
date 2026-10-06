@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { BookOpen, ChevronLeft, Users } from 'lucide-react';
 import { getProductBySlug, products } from '@/lib/products';
 import { ProductPageCTA } from '@/components/ProductPageCTA';
@@ -46,6 +46,10 @@ export default async function ProductPage({ params }: Props) {
 
   if (!product) {
     notFound();
+  }
+
+  if (product.landingPath) {
+    permanentRedirect(product.landingPath);
   }
 
   const colors = colorClasses[product.color];
@@ -131,9 +135,10 @@ export default async function ProductPage({ params }: Props) {
   );
 }
 
-// Generate static params for all products
+// Generate static params for all products; ones with their own landing page
+// only redirect there, so they are not prerendered here.
 export function generateStaticParams() {
-  return products.map((product) => ({
+  return products.filter((product) => !product.landingPath).map((product) => ({
     slug: product.slug,
   }));
 }

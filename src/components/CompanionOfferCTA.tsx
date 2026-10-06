@@ -5,7 +5,7 @@ import { Product } from '@/types';
 import { CompanionOffer } from '@/domain/product-relationships';
 import { useCart } from './CartProvider';
 import { CompanionProductModal } from './modals/CompanionProductModal';
-import { books, workbooks, bundles } from '@/lib/products';
+import { books, workbooks, bundles, productHref } from '@/lib/products';
 import { Package, ShoppingCart, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
@@ -101,7 +101,7 @@ export function CompanionOfferCTA({ offer, colorClasses }: CompanionOfferCTAProp
             <div className="text-xl font-black">₪{baseProduct.price}</div>
           </button>
           <Link
-            href={`/products/${companionProduct.slug}`}
+            href={productHref(companionProduct)}
             className="btn-retro bg-white hover:bg-gray-50 text-gray-800 py-4 rounded-xl font-bold border-2 border-[#545454] text-center transition-transform hover:scale-[1.02] flex flex-col items-center justify-center"
           >
             <div className="text-sm">רק {companionProduct.type === 'book' ? 'הספר' : 'החוברת'}</div>

@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { createPaymentUrl } from '@/lib/icount';
 import { computeBundleDiscount } from '@/lib/bundle-discount';
-import { normalizeCode, parseCouponRow, validateCoupon } from '@/lib/coupons';
+import { normalizeCode, parseCouponRow, validateCouponForCart } from '@/lib/coupons';
 import { getProductById } from '@/lib/products';
 import { SHIPPING_COSTS } from '@/lib/shipping';
+import type { Product } from '@/types';
 
 interface OrderItem {
   productId: string;
@@ -32,6 +33,14 @@ interface CheckoutRequest {
   pickupPointName?: string;
   fbc?: string | null;
   fbp?: string | null;
+}
+
+// The name stored on order_items and printed on the iCount invoice. Pre-order
+// lines say so, so packing and the customer's receipt both show when it ships.
+function orderLineName(product: Product): string {
+  return product.preorder
+    ? `${product.name} (רכישה מוקדמת - צפוי ב${product.preorder.shipsBy})`
+    : product.name;
 }
 
 export async function POST(request: NextRequest) {
@@ -74,7 +83,13 @@ export async function POST(request: NextRequest) {
 
     // Server-authoritative line items: resolve price + name from the catalog by
     // productId; the client is trusted only for quantity. Never trust client prices.
-    const lineItems: { productId: string; name: string; price: number; quantity: number }[] = [];
+    const lineItems: {
+      productId: string;
+      name: string;
+      price: number;
+      quantity: number;
+      excludeFromCoupons?: boolean;
+    }[] = [];
     for (const it of body.items) {
       const product = getProductById(it.productId);
       if (!product) {
@@ -84,7 +99,13 @@ export async function POST(request: NextRequest) {
       if (!Number.isInteger(quantity) || quantity <= 0) {
         return NextResponse.json({ error: 'Invalid quantity in order' }, { status: 400 });
       }
-      lineItems.push({ productId: product.id, name: product.name, price: product.price, quantity });
+      lineItems.push({
+        productId: product.id,
+        name: orderLineName(product),
+        price: product.price,
+        quantity,
+        excludeFromCoupons: product.excludeFromCoupons,
+      });
     }
 
     // Server-authoritative amounts — never trust client-sent totals.
@@ -101,7 +122,7 @@ export async function POST(request: NextRequest) {
     if (rawCode) {
       const couponRows = await sql`SELECT * FROM coupons WHERE code = ${rawCode} LIMIT 1`;
       const coupon = couponRows[0] ? parseCouponRow(couponRows[0] as Record<string, unknown>) : null;
-      const check = validateCoupon(coupon, subtotal, bundleDiscount, new Date());
+      const check = validateCouponForCart(coupon, lineItems, new Date());
       if (check.valid) {
         couponCode = check.code;
         couponDiscount = check.discount;

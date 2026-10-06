@@ -158,3 +158,13 @@ describe('computeBundleDiscount is optimal for the customer', () => {
     expect(worse).toEqual([]);
   });
 });
+
+describe('computeBundleDiscount ignores series products', () => {
+  it('the riddles book changes neither the discount nor the bundle name', () => {
+    for (const [b, w] of [[0, 0], [1, 0], [1, 1], [2, 2]]) {
+      const without = computeBundleDiscount(cart(b, w));
+      const withRiddles = computeBundleDiscount([...cart(b, w), { productId: 'riddles-book-1', quantity: 3 }]);
+      expect(withRiddles).toEqual(without);
+    }
+  });
+});

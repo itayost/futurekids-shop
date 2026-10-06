@@ -25,9 +25,9 @@ export default function Navbar() {
     }, 200); // Match fade-out animation duration
   };
 
-  const navLinks = [
+  const navLinks: { href: string; label: string; isNew?: boolean }[] = [
     { href: '/', label: 'הספרים' },
-    { href: '/games', label: 'משחקים אינטראקטיביים' },
+    { href: '/riddles', label: 'חידה!', isNew: true },
     { href: '/lessons', label: 'מערכי שיעור' },
     { href: '/content', label: 'בתקשורת' },
     { href: '/contact', label: 'צור קשר' },
@@ -51,8 +51,9 @@ export default function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-4 space-x-reverse font-bold text-base items-center">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href} className="hover:text-pink-500">
+              <Link key={link.href} href={link.href} className="hover:text-pink-500 inline-flex items-center gap-1.5">
                 {link.label}
+                {link.isNew && <NewBadge />}
               </Link>
             ))}
             <button
@@ -128,9 +129,10 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={handleCloseMenu}
-                className="text-white text-2xl font-black py-4 px-8 hover:text-pink-500 transition w-full text-center"
+                className="text-white text-2xl font-black py-4 px-8 hover:text-pink-500 transition w-full text-center inline-flex items-center justify-center gap-2"
               >
                 {link.label}
+                {link.isNew && <NewBadge />}
               </Link>
             ))}
             <button
@@ -152,5 +154,13 @@ export default function Navbar() {
         </div>
       )}
     </>
+  );
+}
+
+function NewBadge() {
+  return (
+    <span className="bg-[#B83C3A] text-white text-[11px] font-black leading-none px-1.5 py-1 rounded-md border-2 border-[#545454]">
+      חדש
+    </span>
   );
 }
