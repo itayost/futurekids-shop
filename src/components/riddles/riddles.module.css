@@ -161,9 +161,9 @@
   background: rgb(36 60 110 / 0.88);
 }
 
-/* Homepage promo: a soft orange like the other book cards, with the cover's navy base band */
+/* Homepage promo: a soft orange like the other book cards */
 .promo {
-  background: linear-gradient(to top, var(--r-navy) 0 14px, var(--r-ink) 14px 18px, var(--r-orange-soft) 18px 100%);
+  background: var(--r-orange-soft);
 }
 
 .promo:focus-visible {

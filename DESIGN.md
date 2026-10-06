@@ -164,7 +164,7 @@ A cream page, warm-gray ink, and flat marker fills, with each book series bringi
 
 ### Riddles series (sub-theme, scoped to the riddles page and its homepage promo)
 - **Cover Orange** (riddles-orange): the cover's upper field. Closing panel, and the stamped shadow behind the hero and promo titles. The hero's upper field is Cream (#fdf3e1) and the homepage promo is Soft Orange (#ffedd5, Tailwind orange-100), matching the pastel grounds of the other book cards.
-- **Cover Navy** (riddles-navy): the cover's lower field. Hero lower band, promo base band, the author panel, numerals and icons in fact lists, the series-number disc.
+- **Cover Navy** (riddles-navy): the cover's lower field. Hero lower band, the author panel, numerals and icons in fact lists, the series-number disc.
 - **Word-Game Purple** (riddles-purple) and **Pattern Green** (riddles-green): the book's colour code for its word-game and numbers-and-patterns families; they appear only inside the book's own page images.
 - **Brick Red** (riddles-red, hover riddles-red-deep): the series' action colour. Pre-order button, pre-order sticker, savings tag, strikethrough line, and the site-wide navbar "חדש" badge that points to the series.
 
