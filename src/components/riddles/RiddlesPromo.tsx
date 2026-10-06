@@ -10,7 +10,7 @@ export function RiddlesPromo() {
     <section className={`${styles.root} container mx-auto px-4 pt-16 md:px-6 md:pt-20`} aria-labelledby="riddles-promo">
       <Link
         href="/riddles"
-        className={`${styles.promo} group relative grid items-center gap-6 overflow-hidden rounded-3xl border-4 border-(--r-ink) px-5 py-7 shadow-[8px_8px_0_0_var(--r-ink)] md:grid-cols-[auto_1fr] md:gap-12 md:px-12 md:py-10`}
+        className={`${styles.promo} group relative mx-auto grid max-w-[960px] items-center gap-6 overflow-hidden rounded-3xl border-4 border-(--r-ink) px-5 py-7 shadow-[8px_8px_0_0_var(--r-ink)] md:grid-cols-[auto_1fr] md:gap-12 md:px-12 md:py-10`}
       >
         <div className="relative justify-self-center">
           <Image
