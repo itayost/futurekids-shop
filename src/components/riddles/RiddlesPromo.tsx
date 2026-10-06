@@ -64,7 +64,7 @@ export function RiddlesPromo() {
         </div>
         <Link
           href="/riddles"
-          className="inline-flex items-center gap-1 justify-self-center text-sm font-bold text-(--r-navy) hover:underline md:col-span-2"
+          className="inline-flex items-center gap-1 justify-self-center text-sm font-bold text-orange-700 hover:underline md:col-span-2"
         >
           <Info className="size-4" aria-hidden="true" />
           לפרטים נוספים
