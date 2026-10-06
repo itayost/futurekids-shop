@@ -147,8 +147,3 @@
 .promo {
   background: var(--r-orange-soft);
 }
-
-.promo:focus-visible {
-  outline: 4px solid var(--r-navy);
-  outline-offset: 4px;
-}
