@@ -28,7 +28,7 @@ export function RiddlesPromo() {
           )}
         </div>
         <div className="text-center md:text-start">
-          <h2 id="riddles-promo" className={`${styles.title} text-3xl font-black leading-tight text-white md:text-5xl`}>
+          <h2 id="riddles-promo" className={`${styles.titleWarm} text-3xl font-black leading-tight text-(--r-ink-strong) md:text-5xl`}>
             חדש: חידה! לכל המשפחה
           </h2>
           <p className="mx-auto mt-3 max-w-[52ch] text-lg font-bold text-(--r-ink-strong) md:mx-0">

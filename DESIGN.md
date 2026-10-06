@@ -125,12 +125,6 @@ components:
     textColor: "{colors.ink}"
     rounded: "{rounded.riddles-card}"
     padding: "16px 24px"
-  riddles-category-chip:
-    backgroundColor: "{colors.riddles-purple}"
-    textColor: "{colors.paper}"
-    typography: "{typography.riddles-hand}"
-    rounded: "{rounded.lg}"
-    padding: "4px 12px 2px"
 ---
 
 # Design System: KidCode
@@ -169,9 +163,9 @@ A cream page, warm-gray ink, and flat marker fills, with each book series bringi
 - **Sun** (sun): the highlighter yellow. Small, loud callouts: the riddles pre-order tape and ticket stub, focus outlines inside the riddles scope, text selection, and occasional site badges.
 
 ### Riddles series (sub-theme, scoped to the riddles page and its homepage promo)
-- **Cover Orange** (riddles-orange): the cover's upper field. Hero top band, promo band, closing panel, and the cipher family chip.
+- **Cover Orange** (riddles-orange): the cover's upper field. Closing panel, and the stamped shadow behind the hero and promo titles. The hero's upper field is Cream (#fdf3e1) and the homepage promo is Soft Orange (#ffedd5, Tailwind orange-100), matching the pastel grounds of the other book cards.
 - **Cover Navy** (riddles-navy): the cover's lower field. Hero lower band, promo base band, the author panel, numerals and icons in fact lists, the series-number disc.
-- **Word-Game Purple** (riddles-purple) and **Pattern Green** (riddles-green): the book's colour code for its word-game and numbers-and-patterns families; used only on the matching category chips.
+- **Word-Game Purple** (riddles-purple) and **Pattern Green** (riddles-green): the book's colour code for its word-game and numbers-and-patterns families; they appear only inside the book's own page images.
 - **Brick Red** (riddles-red, hover riddles-red-deep): the series' action colour. Pre-order button, pre-order sticker, savings tag, strikethrough line, and the site-wide navbar "חדש" badge that points to the series.
 
 ### Neutral
@@ -205,7 +199,7 @@ A cream page, warm-gray ink, and flat marker fills, with each book series bringi
 - **Body** (400, 16px to 19px, line-height 1.625): descriptive copy, held to about 62ch on the riddles page.
 - **Label** (700, 12px to 14px): meta lines, badges, field labels, small links.
 - **Riddles Display** (900, 60px to 128px, line-height 0.9, -0.03em): the series title only, white with the ink stamp.
-- **Riddles Hand** (Karantina 700, 26px to 64px, line-height 1): the subtitle, category chips, gallery captions and the arrival month on the ticket stub.
+- **Riddles Hand** (Karantina 700, 26px to 64px, line-height 1): the subtitle, gallery captions and the arrival month on the ticket stub.
 
 ### Named Rules
 **The Black-Weight Rule.** Headings and prices are Rubik 900; body is 400; labels and links are 700. Intermediate weights are rare.
@@ -252,8 +246,8 @@ Chunky, outlined, and pressable.
 
 ### Chips and Badges
 - **Count badge:** small Marker Pink circle with white bold numerals, bounces when the count changes.
-- **"חדש" badge:** Brick Red, white 11px black-weight label, 6px corners, 2px Ink outline, beside a nav link.
-- **Riddles category chip:** Karantina label on the family colour (purple, orange, green), 8px corners, 2px Ink outline. Doubles as the legend for the gallery's page headers.
+- **"ספר חדש" badge:** Brick Red, white 11px black-weight label, 6px corners, 2px Ink outline, beside a nav link.
+- **Riddles categories:** a plain bold text line separated by middots, no fill or outline. Coloured pills read as buttons that do nothing.
 
 ### Cards / Containers
 - **Corner Style:** 16px (product cards), 24px (feature bands).

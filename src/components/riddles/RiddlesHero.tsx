@@ -16,10 +16,10 @@ export function RiddlesHero() {
       <div className="container mx-auto grid grid-cols-[1fr_auto] content-center gap-x-4 gap-y-6 px-4 pb-10 pt-7 [grid-template-areas:'title_cover''buy_buy'] md:grid-cols-[1.1fr_0.9fr] md:gap-x-12 md:gap-y-7 md:px-6 md:pb-16 md:pt-12 md:[grid-template-areas:'title_cover''buy_cover']">
         <div className="min-w-0 self-center [grid-area:title] md:self-end">
           <h1>
-            <span className={`${styles.title} block text-[60px] font-black leading-[0.9] tracking-[-0.03em] text-white md:text-[128px]`}>
+            <span className={`${styles.titleWarm} block text-[60px] font-black leading-[0.9] tracking-[-0.03em] text-(--r-ink-strong) md:text-[128px]`}>
               חידה!
             </span>
-            <span className={`${styles.hand} ${styles.title} mt-1.5 block text-[36px] leading-none text-white md:text-[64px]`}>
+            <span className={`${styles.hand} ${styles.titleWarm} mt-1.5 block text-[36px] leading-none text-(--r-ink-strong) md:text-[64px]`}>
               לכל המשפחה
             </span>
           </h1>
