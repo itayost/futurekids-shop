@@ -1,16 +1,16 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { Info, ShoppingCart } from 'lucide-react';
+import AddToCartButton from '@/components/AddToCartButton';
 import { book, listPrice, savings, shipsBy } from './content';
 import styles from './riddles.module.css';
 
-// Homepage band introducing the new series and sending visitors to /riddles.
+// Homepage band introducing the new series: buy from here, or read more on /riddles.
 export function RiddlesPromo() {
   return (
     <section className={`${styles.root} container mx-auto px-4 pt-16 md:px-6 md:pt-20`} aria-labelledby="riddles-promo">
-      <Link
-        href="/riddles"
-        className={`${styles.promo} group relative mx-auto grid max-w-[960px] items-center gap-6 overflow-hidden rounded-3xl border-4 border-(--r-ink) px-5 py-7 shadow-[8px_8px_0_0_var(--r-ink)] md:grid-cols-[auto_1fr] md:gap-12 md:px-12 md:py-10`}
+      <div
+        className={`${styles.promo} relative mx-auto grid max-w-[960px] items-center gap-6 overflow-hidden rounded-3xl border-4 border-(--r-ink) px-5 py-7 shadow-[8px_8px_0_0_var(--r-ink)] md:grid-cols-[auto_1fr] md:gap-x-12 md:gap-y-5 md:px-12 md:pb-6 md:pt-10`}
       >
         <span className="absolute left-4 top-4 -rotate-6 rounded-full border-2 border-(--r-ink) bg-(--r-sun) px-3 py-1 text-lg font-black text-(--r-ink) md:left-6 md:top-6 md:px-4 md:text-xl">
           חדש
@@ -52,13 +52,24 @@ export function RiddlesPromo() {
                 יגיע במהלך {shipsBy}
               </span>
             )}
-            <span className="inline-flex items-center gap-2 rounded-xl border-[3px] border-(--r-ink) bg-(--r-red) px-4 py-2 font-black text-white shadow-[4px_4px_0_0_var(--r-ink)] transition-transform group-hover:-translate-x-1 motion-reduce:transition-none">
-              {shipsBy ? 'לרכישה מוקדמת' : 'לפרטים'}
-              <ArrowLeft className="size-5" strokeWidth={2.5} aria-hidden="true" />
-            </span>
+            <AddToCartButton
+              product={book}
+              skipCompanionCheck
+              className={`${styles.press} inline-flex cursor-pointer items-center gap-2 rounded-xl border-[3px] border-(--r-ink) bg-(--r-red) px-4 py-2 font-black text-white hover:bg-(--r-red-deep)`}
+            >
+              <ShoppingCart className="size-5" strokeWidth={2.5} aria-hidden="true" />
+              {shipsBy ? 'לרכישה מוקדמת' : 'הוספה לסל'}
+            </AddToCartButton>
           </p>
         </div>
-      </Link>
+        <Link
+          href="/riddles"
+          className="inline-flex items-center gap-1 justify-self-center text-sm font-bold text-orange-700 hover:underline md:col-span-2"
+        >
+          <Info className="size-4" aria-hidden="true" />
+          לפרטים נוספים
+        </Link>
+      </div>
     </section>
   );
 }
