@@ -29,10 +29,10 @@ export function RiddlesPromo() {
         </div>
         <div className="text-center md:text-start">
           <h2 id="riddles-promo" className={`${styles.title} text-3xl font-black leading-tight text-white md:text-5xl`}>
-            סדרה חדשה: חידה! לכל המשפחה
+            חדש: חידה! לכל המשפחה
           </h2>
           <p className="mx-auto mt-3 max-w-[52ch] text-lg font-bold text-(--r-ink-strong) md:mx-0">
-            מאות חידות במשחקי מילים, הצפנה, מספרים ותבניות. מגיל 7, וגם למבוגרים.
+            מאות חידות של משחקי מילים, הצפנה, מספרים ותבניות. מגיל 7, וגם למבוגרים.
           </p>
           <p className="mt-5 flex flex-wrap items-center justify-center gap-3 md:justify-start">
             <span className="rounded-xl border-[3px] border-(--r-ink) bg-(--r-paper) px-3 py-1.5 font-black tabular-nums">
