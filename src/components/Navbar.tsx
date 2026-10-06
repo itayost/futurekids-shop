@@ -159,8 +159,8 @@ export default function Navbar() {
 
 function NewBadge() {
   return (
-    <span className="bg-[#B83C3A] text-white text-[11px] font-black leading-none px-1.5 py-1 rounded-md border-2 border-[#545454]">
-      חדש
+    <span className="whitespace-nowrap bg-[#B83C3A] text-white text-[11px] font-black leading-none px-1.5 py-1 rounded-md border-2 border-[#545454]">
+      ספר חדש
     </span>
   );
 }

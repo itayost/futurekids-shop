@@ -125,12 +125,6 @@ components:
     textColor: "{colors.ink}"
     rounded: "{rounded.riddles-card}"
     padding: "16px 24px"
-  riddles-category-chip:
-    backgroundColor: "{colors.riddles-purple}"
-    textColor: "{colors.paper}"
-    typography: "{typography.riddles-hand}"
-    rounded: "{rounded.lg}"
-    padding: "4px 12px 2px"
 ---
 
 # Design System: KidCode
@@ -166,12 +160,12 @@ A cream page, warm-gray ink, and flat marker fills, with each book series bringi
 - **Subject Green** (subject-green, subject-green-text, green-wash): the green trilogy book, used the same way; also success states.
 
 ### Tertiary
-- **Sun** (sun): the highlighter yellow. Small, loud callouts: the riddles pre-order tape and ticket stub, focus outlines inside the riddles scope, text selection, and occasional site badges.
+- **Sun** (sun): the highlighter yellow. Small, loud callouts: the riddles pre-order tape and ticket stub, focus outlines inside the riddles lightbox, text selection, and occasional site badges.
 
 ### Riddles series (sub-theme, scoped to the riddles page and its homepage promo)
-- **Cover Orange** (riddles-orange): the cover's upper field. Hero top band, promo band, closing panel, and the cipher family chip.
-- **Cover Navy** (riddles-navy): the cover's lower field. Hero lower band, promo base band, the author panel, numerals and icons in fact lists, the series-number disc.
-- **Word-Game Purple** (riddles-purple) and **Pattern Green** (riddles-green): the book's colour code for its word-game and numbers-and-patterns families; used only on the matching category chips.
+- **Cover Orange** (riddles-orange): the cover's upper field. The stamped shadow behind the hero, promo and closing titles. The hero is all Cream (#fdf3e1), leaving the cover to carry the book's colours; the homepage promo and the closing panel are Soft Orange (#ffedd5, Tailwind orange-100), matching the pastel grounds of the other book cards.
+- **Cover Navy** (riddles-navy): the cover's lower field. The author panel, numerals and icons in fact lists, the series-number disc.
+- **Word-Game Purple** (riddles-purple) and **Pattern Green** (riddles-green): the book's colour code for its word-game and numbers-and-patterns families; they appear only inside the book's own page images.
 - **Brick Red** (riddles-red, hover riddles-red-deep): the series' action colour. Pre-order button, pre-order sticker, savings tag, strikethrough line, and the site-wide navbar "חדש" badge that points to the series.
 
 ### Neutral
@@ -205,14 +199,14 @@ A cream page, warm-gray ink, and flat marker fills, with each book series bringi
 - **Body** (400, 16px to 19px, line-height 1.625): descriptive copy, held to about 62ch on the riddles page.
 - **Label** (700, 12px to 14px): meta lines, badges, field labels, small links.
 - **Riddles Display** (900, 60px to 128px, line-height 0.9, -0.03em): the series title only, white with the ink stamp.
-- **Riddles Hand** (Karantina 700, 26px to 64px, line-height 1): the subtitle, category chips, gallery captions and the arrival month on the ticket stub.
+- **Riddles Hand** (Karantina 700, 26px to 64px, line-height 1): the subtitle, gallery captions and the arrival month on the ticket stub.
 
 ### Named Rules
 **The Black-Weight Rule.** Headings and prices are Rubik 900; body is 400; labels and links are 700. Intermediate weights are rare.
 
 **The Short-Hand Rule.** Karantina sets a few words at a time, never a sentence, never a price, never a button label, and only inside the riddles scope.
 
-**The Stamped Title Rule.** White display type on a series colour field carries a solid ink text shadow (5px 5px 0, 4px on mobile), the same offset language as the boxes.
+**The Stamped Title Rule.** Riddles display titles are Ink Strong letters on a light ground with a light Cover Orange text shadow (3px 3px 0 at 45% opacity, 2px on mobile), the same offset language as the boxes.
 
 ## Layout
 
@@ -252,8 +246,8 @@ Chunky, outlined, and pressable.
 
 ### Chips and Badges
 - **Count badge:** small Marker Pink circle with white bold numerals, bounces when the count changes.
-- **"חדש" badge:** Brick Red, white 11px black-weight label, 6px corners, 2px Ink outline, beside a nav link.
-- **Riddles category chip:** Karantina label on the family colour (purple, orange, green), 8px corners, 2px Ink outline. Doubles as the legend for the gallery's page headers.
+- **"ספר חדש" badge:** Brick Red, white 11px black-weight label, 6px corners, 2px Ink outline, beside a nav link.
+- **Riddles categories:** a plain bold text line separated by middots, no fill or outline. Coloured pills read as buttons that do nothing.
 
 ### Cards / Containers
 - **Corner Style:** 16px (product cards), 24px (feature bands).

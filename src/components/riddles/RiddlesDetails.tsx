@@ -5,14 +5,8 @@ import { PreorderButton } from './PreorderButton';
 import { book, shipsBy } from './content';
 import styles from './riddles.module.css';
 
-// The book colour-codes each riddle family; the page headers in the gallery
-// carry the same colours, so this row doubles as their legend.
-// Black rather than the ink grey so the purple pill keeps large-text contrast.
-const CATEGORIES = [
-  { label: 'משחקי מילים', color: 'bg-(--r-purple)' },
-  { label: 'הצפנה', color: 'bg-(--r-orange)' },
-  { label: 'מספרים ותבניות', color: 'bg-(--r-green)' },
-];
+// Plain text on purpose: coloured pills read as buttons that do nothing.
+const CATEGORIES = ['משחקי מילים', 'הצפנה', 'מספרים ותבניות'];
 
 const FACTS = [
   { value: '104', label: 'עמודים צבעוניים בכריכה קשה' },
@@ -22,13 +16,14 @@ const FACTS = [
 
 export function RiddleCategories() {
   return (
-    <ul className="mt-5 flex flex-wrap justify-center gap-2.5 md:gap-3" aria-label="שלושת סוגי החידות בספר">
-      {CATEGORIES.map((c) => (
-        <li
-          key={c.label}
-          className={`${styles.hand} ${c.color} rounded-lg text-black border-2 border-(--r-ink) px-3 pb-0.5 pt-1 text-[26px] leading-none md:text-[28px]`}
-        >
-          {c.label}
+    <ul
+      className="mt-3 flex flex-wrap justify-center gap-x-2 text-lg font-bold text-(--r-ink-strong) md:text-[19px]"
+      aria-label="שלושת סוגי החידות בספר"
+    >
+      {CATEGORIES.map((label, i) => (
+        <li key={label} className="flex items-center gap-2">
+          {i > 0 && <span aria-hidden="true">·</span>}
+          {label}
         </li>
       ))}
     </ul>
@@ -105,7 +100,7 @@ export function PreorderTerms() {
 export function RiddlesClose() {
   return (
     <section
-      className="mx-auto mt-16 grid max-w-[880px] items-center gap-6 rounded-3xl border-4 border-(--r-ink) bg-(--r-orange) px-5 py-6 text-center shadow-[10px_10px_0_0_var(--r-ink)] md:mt-20 md:grid-cols-[180px_1fr] md:gap-8 md:p-8 md:text-start"
+      className="mx-auto mt-16 grid max-w-[880px] items-center gap-6 rounded-3xl border-4 border-(--r-ink) bg-(--r-orange-soft) px-5 py-6 text-center shadow-[10px_10px_0_0_var(--r-ink)] md:mt-20 md:grid-cols-[180px_1fr] md:gap-8 md:p-8 md:text-start"
       aria-labelledby="riddles-close"
     >
       <Image
@@ -117,7 +112,7 @@ export function RiddlesClose() {
         className="mx-auto h-auto w-[150px] -rotate-3 rounded-md border-4 border-(--r-ink) shadow-[6px_6px_0_0_var(--r-ink)] md:w-[180px]"
       />
       <div className="min-w-0">
-        <h2 id="riddles-close" className={`${styles.title} mb-4 text-3xl font-black text-white md:text-[40px]`}>
+        <h2 id="riddles-close" className={`${styles.titleWarm} mb-4 text-3xl font-black text-(--r-ink-strong) md:text-[40px]`}>
           {shipsBy ? 'הבטיחו לעצמכם עותק ראשון' : 'הספר כאן'}
         </h2>
         <PriceTicket className="mb-5 text-start md:max-w-[460px]" />

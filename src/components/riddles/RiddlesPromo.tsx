@@ -10,8 +10,11 @@ export function RiddlesPromo() {
     <section className={`${styles.root} container mx-auto px-4 pt-16 md:px-6 md:pt-20`} aria-labelledby="riddles-promo">
       <Link
         href="/riddles"
-        className={`${styles.promo} group relative grid items-center gap-6 overflow-hidden rounded-3xl border-4 border-(--r-ink) px-5 py-7 shadow-[8px_8px_0_0_var(--r-ink)] md:grid-cols-[auto_1fr] md:gap-12 md:px-12 md:py-10`}
+        className={`${styles.promo} group relative mx-auto grid max-w-[960px] items-center gap-6 overflow-hidden rounded-3xl border-4 border-(--r-ink) px-5 py-7 shadow-[8px_8px_0_0_var(--r-ink)] md:grid-cols-[auto_1fr] md:gap-12 md:px-12 md:py-10`}
       >
+        <span className="absolute left-4 top-4 -rotate-6 rounded-full border-2 border-(--r-ink) bg-(--r-sun) px-3 py-1 text-lg font-black text-(--r-ink) md:left-6 md:top-6 md:px-4 md:text-xl">
+          חדש
+        </span>
         <div className="relative justify-self-center">
           <Image
             src={book.image}
@@ -28,8 +31,8 @@ export function RiddlesPromo() {
           )}
         </div>
         <div className="text-center md:text-start">
-          <h2 id="riddles-promo" className={`${styles.title} text-3xl font-black leading-tight text-white md:text-5xl`}>
-            חדש: חידה! לכל המשפחה
+          <h2 id="riddles-promo" className={`${styles.titleWarm} text-3xl font-black leading-tight text-(--r-ink-strong) md:text-5xl`}>
+            חידה! לכל המשפחה
           </h2>
           <p className="mx-auto mt-3 max-w-[52ch] text-lg font-bold text-(--r-ink-strong) md:mx-0">
             מאות חידות של משחקי מילים, הצפנה, מספרים ותבניות. מגיל 7, וגם למבוגרים.

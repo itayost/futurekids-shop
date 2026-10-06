@@ -4,6 +4,8 @@
   --r-ink: #545454;
   --r-ink-strong: #3a3a3a;
   --r-orange: #de8f47;
+  --r-orange-soft: #ffedd5;
+  --r-cream: #fdf3e1;
   --r-navy: #31508f;
   --r-purple: #84679a;
   --r-green: #6fae90;
@@ -23,16 +25,9 @@
   font-weight: 700;
 }
 
-/* Hero: the cover's orange-over-navy split, carried across the page */
+/* Hero: the site's cream; the cover carries the book's colours */
 .hero {
-  background: linear-gradient(to bottom, var(--r-orange) 0 62%, var(--r-navy) 62% 100%);
-}
-
-@media (max-width: 767px) {
-  .hero {
-    /* Navy covers the note, the CTA and the lower half of the ticket */
-    background: linear-gradient(to top, var(--r-navy) 0 270px, var(--r-orange) 270px 100%);
-  }
+  background: var(--r-cream);
 }
 
 /* Packing tape across the top of the hero. The track holds two identical
@@ -63,14 +58,14 @@
   }
 }
 
-/* The title's stamped outline */
-.title {
-  text-shadow: 5px 5px 0 var(--r-ink);
+/* Stamped titles: ink letters, a light cover-orange shadow */
+.titleWarm {
+  text-shadow: 3px 3px 0 rgb(222 143 71 / 0.45);
 }
 
 @media (max-width: 767px) {
-  .title {
-    text-shadow: 4px 4px 0 var(--r-ink);
+  .titleWarm {
+    text-shadow: 2px 2px 0 rgb(222 143 71 / 0.45);
   }
 }
 
@@ -91,7 +86,7 @@
 }
 
 .press:focus-visible {
-  outline: 4px solid var(--r-sun);
+  outline: 4px solid var(--r-navy);
   outline-offset: 3px;
 }
 
@@ -148,9 +143,9 @@
   background: rgb(36 60 110 / 0.88);
 }
 
-/* Homepage promo: the cover's orange with a navy base band */
+/* Homepage promo: a soft orange like the other book cards */
 .promo {
-  background: linear-gradient(to top, var(--r-navy) 0 14px, var(--r-ink) 14px 18px, var(--r-orange) 18px 100%);
+  background: var(--r-orange-soft);
 }
 
 .promo:focus-visible {
