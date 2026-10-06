@@ -25,16 +25,9 @@
   font-weight: 700;
 }
 
-/* Hero: the site's cream over the cover's navy */
+/* Hero: the site's cream; the cover carries the book's colours */
 .hero {
-  background: linear-gradient(to bottom, var(--r-cream) 0 62%, var(--r-navy) 62% 100%);
-}
-
-@media (max-width: 767px) {
-  .hero {
-    /* Navy covers the note, the CTA and the lower half of the ticket */
-    background: linear-gradient(to top, var(--r-navy) 0 270px, var(--r-cream) 270px 100%);
-  }
+  background: var(--r-cream);
 }
 
 /* Packing tape across the top of the hero. The track holds two identical
@@ -93,7 +86,7 @@
 }
 
 .press:focus-visible {
-  outline: 4px solid var(--r-sun);
+  outline: 4px solid var(--r-navy);
   outline-offset: 3px;
 }
 

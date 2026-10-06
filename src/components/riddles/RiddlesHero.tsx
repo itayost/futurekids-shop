@@ -41,8 +41,8 @@ export function RiddlesHero() {
           />
           <PreorderButton />
           {shipsBy && (
-            <p className="flex items-center gap-3 rounded-xl border-2 border-dashed border-white/70 px-4 py-3 font-bold leading-snug text-white">
-              <Truck className="size-6 shrink-0" strokeWidth={2.5} aria-hidden="true" />
+            <p className="flex items-center gap-3 rounded-xl border-2 border-dashed border-(--r-ink) px-4 py-3 font-bold leading-snug text-(--r-ink-strong)">
+              <Truck className="size-6 shrink-0 text-(--r-navy)" strokeWidth={2.5} aria-hidden="true" />
               <span className="text-balance">
                 הזמנתם גם ספרים מהמלאי? כל ההזמנה תגיע יחד, במשלוח אחד, במהלך {shipsBy}.
               </span>

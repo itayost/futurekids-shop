@@ -160,11 +160,11 @@ A cream page, warm-gray ink, and flat marker fills, with each book series bringi
 - **Subject Green** (subject-green, subject-green-text, green-wash): the green trilogy book, used the same way; also success states.
 
 ### Tertiary
-- **Sun** (sun): the highlighter yellow. Small, loud callouts: the riddles pre-order tape and ticket stub, focus outlines inside the riddles scope, text selection, and occasional site badges.
+- **Sun** (sun): the highlighter yellow. Small, loud callouts: the riddles pre-order tape and ticket stub, focus outlines inside the riddles lightbox, text selection, and occasional site badges.
 
 ### Riddles series (sub-theme, scoped to the riddles page and its homepage promo)
-- **Cover Orange** (riddles-orange): the cover's upper field. The stamped shadow behind the hero, promo and closing titles. The hero's upper field is Cream (#fdf3e1); the homepage promo and the closing panel are Soft Orange (#ffedd5, Tailwind orange-100), matching the pastel grounds of the other book cards.
-- **Cover Navy** (riddles-navy): the cover's lower field. Hero lower band, the author panel, numerals and icons in fact lists, the series-number disc.
+- **Cover Orange** (riddles-orange): the cover's upper field. The stamped shadow behind the hero, promo and closing titles. The hero is all Cream (#fdf3e1), leaving the cover to carry the book's colours; the homepage promo and the closing panel are Soft Orange (#ffedd5, Tailwind orange-100), matching the pastel grounds of the other book cards.
+- **Cover Navy** (riddles-navy): the cover's lower field. The author panel, numerals and icons in fact lists, the series-number disc.
 - **Word-Game Purple** (riddles-purple) and **Pattern Green** (riddles-green): the book's colour code for its word-game and numbers-and-patterns families; they appear only inside the book's own page images.
 - **Brick Red** (riddles-red, hover riddles-red-deep): the series' action colour. Pre-order button, pre-order sticker, savings tag, strikethrough line, and the site-wide navbar "חדש" badge that points to the series.
 
