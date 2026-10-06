@@ -65,18 +65,7 @@
   }
 }
 
-/* The title's stamped outline */
-.title {
-  text-shadow: 5px 5px 0 var(--r-ink);
-}
-
-@media (max-width: 767px) {
-  .title {
-    text-shadow: 4px 4px 0 var(--r-ink);
-  }
-}
-
-/* The same stamp on light grounds: ink letters, cover-orange shadow */
+/* Stamped titles: ink letters, cover-orange shadow */
 .titleWarm {
   text-shadow: 5px 5px 0 var(--r-orange);
 }

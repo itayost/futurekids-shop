@@ -100,7 +100,7 @@ export function PreorderTerms() {
 export function RiddlesClose() {
   return (
     <section
-      className="mx-auto mt-16 grid max-w-[880px] items-center gap-6 rounded-3xl border-4 border-(--r-ink) bg-(--r-orange) px-5 py-6 text-center shadow-[10px_10px_0_0_var(--r-ink)] md:mt-20 md:grid-cols-[180px_1fr] md:gap-8 md:p-8 md:text-start"
+      className="mx-auto mt-16 grid max-w-[880px] items-center gap-6 rounded-3xl border-4 border-(--r-ink) bg-(--r-orange-soft) px-5 py-6 text-center shadow-[10px_10px_0_0_var(--r-ink)] md:mt-20 md:grid-cols-[180px_1fr] md:gap-8 md:p-8 md:text-start"
       aria-labelledby="riddles-close"
     >
       <Image
@@ -112,7 +112,7 @@ export function RiddlesClose() {
         className="mx-auto h-auto w-[150px] -rotate-3 rounded-md border-4 border-(--r-ink) shadow-[6px_6px_0_0_var(--r-ink)] md:w-[180px]"
       />
       <div className="min-w-0">
-        <h2 id="riddles-close" className={`${styles.title} mb-4 text-3xl font-black text-white md:text-[40px]`}>
+        <h2 id="riddles-close" className={`${styles.titleWarm} mb-4 text-3xl font-black text-(--r-ink-strong) md:text-[40px]`}>
           {shipsBy ? 'הבטיחו לעצמכם עותק ראשון' : 'הספר כאן'}
         </h2>
         <PriceTicket className="mb-5 text-start md:max-w-[460px]" />
