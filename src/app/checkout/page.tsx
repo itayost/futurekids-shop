@@ -88,16 +88,6 @@ export default function CheckoutPage() {
     setCouponMsg(data.message);
   };
 
-  const couponFieldProps = {
-    value: couponInput,
-    onChange: setCouponInput,
-    onApply: applyCoupon,
-    applied: couponApplied,
-    discount: couponDiscount,
-    message: couponMsg,
-    hasExcludedItem: hasCouponExcludedItem,
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -203,6 +193,33 @@ export default function CheckoutPage() {
     );
   }
 
+  // Rendered once per layout: inside the details card on desktop, under the
+  // order summary on mobile. On mobile the button sits outside the form, so
+  // it is tied to it by id.
+  const paySection = (
+    <>
+      {error && (
+        <div className="bg-red-50 border-2 border-red-500 rounded-xl p-4 text-red-700 font-bold text-center">
+          {error}
+        </div>
+      )}
+
+      <button
+        type="submit"
+        form="checkout-form"
+        disabled={isSubmitting}
+        className="btn-retro bg-pink-500 text-white text-xl w-full py-4 rounded-xl font-black border-2 border-[#545454] hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {isSubmitting ? 'מעבר לתשלום...' : 'המשך לתשלום מאובטח'}
+      </button>
+
+      <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+        <Lock className="w-4 h-4" />
+        תועברו לדף תשלום מאובטח | החשבונית תישלח למייל
+      </div>
+    </>
+  );
+
   return (
     <div className="bg-gray-50 min-h-screen py-10">
       <div className="container mx-auto px-6 max-w-5xl">
@@ -269,7 +286,7 @@ export default function CheckoutPage() {
                 פרטים למשלוח
               </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form id="checkout-form" onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-md font-bold text-[#545454] mb-2">שם פרטי</label>
@@ -382,36 +399,8 @@ export default function CheckoutPage() {
                 </div>
               )}
 
-              {/* Coupon input - mobile only, so it is seen before paying */}
-              <CouponField {...couponFieldProps} className="lg:hidden" />
-              {couponDiscount > 0 && (
-                <div className="lg:hidden flex justify-between items-baseline pt-3 border-t-2 border-[#545454]">
-                  <span className="text-lg font-bold">סה&quot;כ לתשלום</span>
-                  <span className="flex items-baseline gap-2 tabular-nums">
-                    <span className="text-[#767676] line-through">₪{finalTotal + couponDiscount}</span>
-                    <span className="text-3xl font-black">₪{finalTotal}</span>
-                  </span>
-                </div>
-              )}
-
-              {error && (
-                <div className="bg-red-50 border-2 border-red-500 rounded-xl p-4 text-red-700 font-bold text-center">
-                  {error}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="btn-retro bg-pink-500 text-white text-xl w-full py-4 rounded-xl font-black border-2 border-[#545454] hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? 'מעבר לתשלום...' : 'המשך לתשלום מאובטח'}
-              </button>
-
-              <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
-                <Lock className="w-4 h-4" />
-                תועברו לדף תשלום מאובטח | החשבונית תישלח למייל
-              </div>
+              {/* Desktop: pay button inside the details card */}
+              <div className="hidden lg:block space-y-6">{paySection}</div>
             </form>
             </div>
           </div>
@@ -470,8 +459,15 @@ export default function CheckoutPage() {
                   </div>
                 )}
 
-                {/* Coupon input - desktop; on mobile it sits above the pay button */}
-                <CouponField {...couponFieldProps} className="hidden lg:block" />
+                <CouponField
+                  value={couponInput}
+                  onChange={setCouponInput}
+                  onApply={applyCoupon}
+                  applied={couponApplied}
+                  discount={couponDiscount}
+                  message={couponMsg}
+                  hasExcludedItem={hasCouponExcludedItem}
+                />
                 {couponDiscount > 0 && (
                   <div className="flex justify-between items-center text-emerald-600">
                     <span>הנחת קופון:</span>
@@ -495,6 +491,9 @@ export default function CheckoutPage() {
                 </div>
               </div>
             </div>
+
+            {/* Mobile: pay button after the summary, so the coupon and total are seen first */}
+            <div className="lg:hidden mt-6 space-y-4">{paySection}</div>
           </div>
         </div>
       </div>
