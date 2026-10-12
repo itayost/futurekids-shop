@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { ChevronLeft, Lock, ShoppingBag, Gift, Truck, MapPin } from 'lucide-react';
 import { useCart } from '@/components/CartProvider';
 import PickupPointSelector from '@/components/PickupPointSelector';
+import CouponField from '@/components/CouponField';
 import { PickupPoint } from '@/types';
 import { trackInitiateCheckout, getFbCookies } from '@/lib/pixel';
 import { SHIPPING_COSTS } from '@/lib/shipping';
@@ -85,6 +86,16 @@ export default function CheckoutPage() {
       setCouponApplied(false);
     }
     setCouponMsg(data.message);
+  };
+
+  const couponFieldProps = {
+    value: couponInput,
+    onChange: setCouponInput,
+    onApply: applyCoupon,
+    applied: couponApplied,
+    discount: couponDiscount,
+    message: couponMsg,
+    hasExcludedItem: hasCouponExcludedItem,
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -371,6 +382,18 @@ export default function CheckoutPage() {
                 </div>
               )}
 
+              {/* Coupon input - mobile only, so it is seen before paying */}
+              <CouponField {...couponFieldProps} className="lg:hidden" />
+              {couponDiscount > 0 && (
+                <div className="lg:hidden flex justify-between items-baseline pt-3 border-t-2 border-[#545454]">
+                  <span className="text-lg font-bold">סה&quot;כ לתשלום</span>
+                  <span className="flex items-baseline gap-2 tabular-nums">
+                    <span className="text-[#767676] line-through">₪{finalTotal + couponDiscount}</span>
+                    <span className="text-3xl font-black">₪{finalTotal}</span>
+                  </span>
+                </div>
+              )}
+
               {error && (
                 <div className="bg-red-50 border-2 border-red-500 rounded-xl p-4 text-red-700 font-bold text-center">
                   {error}
@@ -447,29 +470,8 @@ export default function CheckoutPage() {
                   </div>
                 )}
 
-                {/* Coupon input */}
-                <div className="flex gap-2 py-2">
-                  <input
-                    type="text"
-                    value={couponInput}
-                    onChange={(e) => setCouponInput(e.target.value)}
-                    placeholder="קוד קופון"
-                    className="input-brutal flex-1 rounded-lg p-2 bg-gray-50 text-sm"
-                  />
-                  <button
-                    type="button"
-                    onClick={applyCoupon}
-                    className="btn-retro bg-pink-500 hover:bg-pink-600 text-white font-bold rounded-lg px-4 py-2 border-2 border-[#545454] text-sm"
-                  >
-                    החל
-                  </button>
-                </div>
-                {hasCouponExcludedItem && (
-                  <p className="text-xs text-gray-500">ספרים שכבר נמכרים במחיר מבצע אינם כלולים בהנחת קופון</p>
-                )}
-                {couponMsg && (
-                  <p className={`text-sm ${couponApplied ? 'text-emerald-600' : 'text-red-600'}`}>{couponMsg}</p>
-                )}
+                {/* Coupon input - desktop; on mobile it sits above the pay button */}
+                <CouponField {...couponFieldProps} className="hidden lg:block" />
                 {couponDiscount > 0 && (
                   <div className="flex justify-between items-center text-emerald-600">
                     <span>הנחת קופון:</span>
