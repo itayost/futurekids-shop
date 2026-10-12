@@ -10,7 +10,6 @@ interface CouponFieldProps {
   discount: number;
   message: string | null;
   hasExcludedItem: boolean;
-  className?: string;
 }
 
 export default function CouponField({
@@ -21,18 +20,16 @@ export default function CouponField({
   discount,
   message,
   hasExcludedItem,
-  className = '',
 }: CouponFieldProps) {
   return (
-    <div className={`space-y-2 ${className}`}>
+    <div className="space-y-2">
       <div className="flex gap-2 py-2">
         <input
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={(e) => {
-            // Rendered inside the checkout form on mobile: Enter must apply
-            // the coupon, not submit the order.
+            // Enter applies the coupon, like the button next to it.
             if (e.key === 'Enter') {
               e.preventDefault();
               onApply();
