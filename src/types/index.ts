@@ -24,6 +24,8 @@ export interface Product {
   compareAtPrice?: number;
   // Already discounted (e.g. pre-sale), so coupons never apply to it.
   excludeFromCoupons?: boolean;
+  // Keeps its price during a sitewide sale (see lib/sale.ts).
+  excludeFromSale?: boolean;
   // Not in stock yet; shipsBy is a Hebrew label such as 'נובמבר 2026'.
   preorder?: { shipsBy: string };
   // A dedicated page that replaces the generic /products/[slug] page.
@@ -39,6 +41,9 @@ export interface CartItem {
   image: string;
 }
 
+// A cart line priced for right now; `price` above is only the stored fallback.
+export type PricedCartItem = CartItem & { regularPrice: number };
+
 export interface Toast {
   id: string;
   message: string;
@@ -48,7 +53,7 @@ export interface Toast {
 }
 
 export interface CartContextType {
-  items: CartItem[];
+  items: PricedCartItem[];
   addItem: (product: Product) => void;
   addItems: (products: Product[]) => void;
   removeItem: (productId: string) => void;
@@ -59,6 +64,7 @@ export interface CartContextType {
   bundleName: string | null;
   hasBundle: boolean;
   total: number;
+  saleSavings: number;
   itemCount: number;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;

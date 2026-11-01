@@ -5,7 +5,9 @@ import { CartItem, CartContextType, Product, Toast } from '@/types';
 import ToastContainer from './Toast';
 import { trackAddToCart } from '@/lib/pixel';
 import { CART_STORAGE_KEY, scheduleCartSync } from '@/lib/cart-sync';
-import { computeBundleDiscount } from '@/lib/bundle-discount';
+import { priceCart } from '@/lib/cart-pricing';
+import { priceOf, saleMoment } from '@/lib/sale';
+import { useSaleActive } from './sale/useSaleActive';
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
@@ -71,7 +73,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     trackAddToCart({
       content_name: product.name,
       content_ids: [product.id],
-      value: product.price,
+      value: priceOf(product, Date.now()),
     });
     // Show toast instead of opening cart
     addToast({
@@ -117,7 +119,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       trackAddToCart({
         content_name: product.name,
         content_ids: [product.id],
-        value: product.price,
+        value: priceOf(product, Date.now()),
       });
     });
 
@@ -160,20 +162,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems([]);
   };
 
-  // Bundle detection (shared with the checkout server so both agree)
-  const { bundleDiscount, bundleName } = computeBundleDiscount(
-    items.map((i) => ({ productId: i.productId, quantity: i.quantity }))
-  );
+  // Prices come from the catalog on every render, never from what was stored
+  // with the item, and through the same function the checkout server uses.
+  const saleActive = useSaleActive();
+  const { lines, subtotal, bundleDiscount, bundleName, total, saleSavings } = priceCart(items, saleMoment(saleActive));
 
   const hasBundle = bundleDiscount > 0;
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const total = subtotal - bundleDiscount;
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <CartContext.Provider
       value={{
-        items,
+        items: lines,
         addItem,
         addItems,
         removeItem,
@@ -184,6 +184,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         bundleName,
         hasBundle,
         total,
+        saleSavings,
         itemCount,
         isOpen,
         setIsOpen,

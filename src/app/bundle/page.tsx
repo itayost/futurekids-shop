@@ -6,6 +6,8 @@ import { Star, Check, Gift, Users, BookOpen } from 'lucide-react';
 import BookComposite from '@/components/BookComposite';
 import { bundles, books, workbooks } from '@/lib/products';
 import { useCart } from '@/components/CartProvider';
+import { SwingTag } from '@/components/sale/SwingTag';
+import { salePriceOf } from '@/lib/sale';
 
 const bundleIcons = [
   <BookOpen key="books" className="w-5 h-5" />,
@@ -141,13 +143,16 @@ function BundleContent() {
           </ul>
 
           <div className="flex flex-wrap items-end gap-3 sm:gap-4 mb-8">
-            <div className="text-5xl sm:text-6xl font-black text-[#545454]">₪{selectedBundle.price}</div>
-            <div className="text-xl sm:text-2xl text-gray-400 line-through font-bold mb-1 sm:mb-2">
+            <div className="when-regular text-5xl sm:text-6xl font-black text-[#545454]">₪{selectedBundle.price}</div>
+            <div className="when-regular text-xl sm:text-2xl text-gray-400 line-through font-bold mb-1 sm:mb-2">
               ₪{selectedBundle.originalPrice}
             </div>
-            <div className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-bold border border-emerald-300 mb-1 sm:mb-2">
+            <div className="when-regular bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-bold border border-emerald-300 mb-1 sm:mb-2">
               חיסכון של ₪{selectedBundle.savings}
             </div>
+            <div className="when-sale text-5xl sm:text-6xl font-black text-[#545454] tabular-nums">₪{salePriceOf(selectedBundle.price)}</div>
+            <s className="when-sale text-xl sm:text-2xl text-[#767676] font-bold mb-1 sm:mb-2"><span className="sr-only">במקום </span>₪{selectedBundle.price}</s>
+            <SwingTag className="when-sale relative mb-1 sm:mb-2" size="chip" rotate={-3} value="מחיר שופינג IL" />
           </div>
 
           <button

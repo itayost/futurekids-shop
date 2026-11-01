@@ -5,6 +5,8 @@ import { Product } from '@/types';
 import { CompanionOffer } from '@/domain/product-relationships';
 import { X, Plus, Check } from 'lucide-react';
 import Image from 'next/image';
+import { priceOf, saleMoment } from '@/lib/sale';
+import { useSaleActive } from '@/components/sale/useSaleActive';
 
 interface CompanionProductModalProps {
   isOpen: boolean;
@@ -36,9 +38,13 @@ export function CompanionProductModal({
     };
   }, [isOpen, onClose]);
 
+  const moment = saleMoment(useSaleActive());
+
   if (!isOpen) return null;
 
-  const { baseProduct, companionProduct, bundlePrice } = offer;
+  const { baseProduct, companionProduct } = offer;
+  const companionPrice = priceOf(companionProduct, moment);
+  const bundlePrice = priceOf(baseProduct, moment) + companionPrice;
   const isBaseBook = baseProduct.type === 'book';
 
   return (
@@ -98,7 +104,7 @@ export function CompanionProductModal({
               onClick={onAddCompanion}
               className="btn-retro bg-emerald-500 hover:bg-emerald-600 text-white text-xl py-4 rounded-xl font-black border-4 border-[#545454] w-full transition-transform hover:scale-[1.02]"
             >
-              כן! הוסף גם {companionProduct.type === 'book' ? 'את הספר' : 'את החוברת'} - ₪{companionProduct.price}
+              כן! הוסף גם {companionProduct.type === 'book' ? 'את הספר' : 'את החוברת'} - ₪{companionPrice}
             </button>
             <button
               onClick={onSkip}
@@ -114,6 +120,7 @@ export function CompanionProductModal({
 }
 
 function ProductPreview({ product, isAdded = false }: { product: Product; isAdded?: boolean }) {
+  const moment = saleMoment(useSaleActive());
   const colorBg = {
     blue: 'bg-sky-100',
     pink: 'bg-pink-100',
@@ -137,7 +144,7 @@ function ProductPreview({ product, isAdded = false }: { product: Product; isAdde
         />
       </div>
       <p className="text-xs font-bold mt-2 text-center line-clamp-2">{product.name}</p>
-      <p className="text-sm font-black text-center">₪{product.price}</p>
+      <p className="text-sm font-black text-center">₪{priceOf(product, moment)}</p>
     </div>
   );
 }

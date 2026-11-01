@@ -26,6 +26,11 @@ describe('buildCartReminderEmailHtml', () => {
     expect(html).toContain(UNSUB);
   });
 
+  test('drops the club coupon tip when asked to', () => {
+    const html = buildCartReminderEmailHtml({ items: ITEMS, total: 135, unsubscribeUrl: UNSUB, hideClubTip: true });
+    expect(html).not.toContain('CLUB10');
+  });
+
   test('mentions the club coupon', () => {
     const html = buildCartReminderEmailHtml({ items: ITEMS, total: 135, unsubscribeUrl: UNSUB });
     expect(html).toContain('CLUB10');

@@ -6,6 +6,7 @@ import {
   computeBundleDiscount,
 } from './bundle-discount';
 import { bundles } from './products';
+import { salePriceOf } from './sale';
 
 const BOOKS = ['ai-book', 'encryption-book', 'algorithms-book'];
 const WORKBOOKS = ['ai-workbook', 'encryption-workbook', 'algorithms-workbook'];
@@ -153,6 +154,41 @@ describe('computeBundleDiscount is optimal for the customer', () => {
         const actual = computeBundleDiscount(cart(b, w)).bundleDiscount;
         const best = bestPossibleDiscount(b, w);
         if (actual !== best) worse.push(`${b} book sets + ${w} workbook sets: got ${actual}, best ${best}`);
+      }
+    }
+    expect(worse).toEqual([]);
+  });
+});
+
+describe('computeBundleDiscount during the sale', () => {
+  it('uses the smaller sale discount for each tier', () => {
+    expect(computeBundleDiscount(cart(1, 0), { sale: true }).bundleDiscount).toBe(11);
+    expect(computeBundleDiscount(cart(1, 1), { sale: true }).bundleDiscount).toBe(35);
+    expect(computeBundleDiscount(cart(1, 2), { sale: true }).bundleDiscount).toBe(67);
+  });
+
+  it('keeps the bundle name', () =>
+    expect(computeBundleDiscount(cart(1, 1), { sale: true }).bundleName).toBe('מארז החוקרים הצעירים'));
+
+  // Units at their sale prices minus the tier's sale discount must land exactly
+  // on 15% off today's bundle price, rounded down.
+  it('every tier lands on the advertised sale price of its bundle', () => {
+    for (const b of bundles) {
+      const units = 3 * salePriceOf(75) + 3 * b.workbookQuantity * salePriceOf(30);
+      const tier = BUNDLE_TIERS.find((t) => t.name === b.name)!;
+      expect(units - tier.saleDiscount).toBe(salePriceOf(b.price));
+    }
+  });
+
+  it('still packs optimally for the customer with the sale discounts', () => {
+    const tiers = BUNDLE_TIERS.map((t) => ({ w: t.workbookSets, d: t.saleDiscount }));
+    const best = (b: number, w: number): number =>
+      b === 0 ? 0 : Math.max(...tiers.filter((t) => w >= t.w).map((t) => t.d + best(b - 1, w - t.w)));
+    const worse: string[] = [];
+    for (let b = 0; b <= 6; b++) {
+      for (let w = 0; w <= 6; w++) {
+        const actual = computeBundleDiscount(cart(b, w), { sale: true }).bundleDiscount;
+        if (actual !== best(b, w)) worse.push(`${b}x${w}: got ${actual}, best ${best(b, w)}`);
       }
     }
     expect(worse).toEqual([]);

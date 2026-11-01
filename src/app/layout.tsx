@@ -12,6 +12,8 @@ import CookieBanner from "@/components/CookieBanner";
 import ClubPopup from "@/components/ClubPopup";
 import WhatsAppFab from "@/components/WhatsAppFab";
 import AccessibilityWidget from "@/components/AccessibilityWidget";
+import { SaleBar } from "@/components/sale/SaleBar";
+import { saleClockScript } from "@/lib/sale";
 
 const rubik = Rubik({
   variable: "--font-rubik",
@@ -76,13 +78,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="he" dir="rtl">
+    <html lang="he" dir="rtl" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: saleClockScript }} />
+      </head>
       <body className={`${rubik.variable} font-sans antialiased min-h-screen flex flex-col`}>
         <JsonLd />
         <MetaPixel />
         <GoogleAnalytics />
         <AccessibilityWidget />
         <CartProvider>
+          <SaleBar />
           <Navbar />
           <main className="flex-grow">
             {children}

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { CheckCircle, Home, Mail, Loader2 } from 'lucide-react';
 import { trackPurchase } from '@/lib/pixel';
 import { CART_STORAGE_KEY, SYNCED_CART_STORAGE_KEY } from '@/lib/cart-sync';
+import { priceCart } from '@/lib/cart-pricing';
 import { CartItem } from '@/types';
 
 function LoadingFallback() {
@@ -59,7 +60,7 @@ function PaymentSuccessContent() {
                 event_id: orderId,
                 content_ids: cartItems.map((i) => i.productId),
                 num_items: cartItems.reduce((sum, i) => sum + i.quantity, 0),
-                value: cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0),
+                value: priceCart(cartItems, Date.now()).total,
               });
             } catch { /* ignore parse errors */ }
           }

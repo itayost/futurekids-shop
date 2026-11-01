@@ -5,6 +5,8 @@ import { BookOpen, ChevronLeft, Users } from 'lucide-react';
 import { getProductBySlug, products } from '@/lib/products';
 import { ProductPageCTA } from '@/components/ProductPageCTA';
 import { ExamplePagesGallery } from '@/components/ExamplePagesGallery';
+import { SwingTag, saleLayout } from '@/components/sale/SwingTag';
+import { salePriceOf } from '@/lib/sale';
 
 const colorClasses = {
   blue: {
@@ -68,10 +70,18 @@ export default async function ProductPage({ params }: Props) {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Product Image */}
-          <div className="bg-white border-4 border-[#545454] rounded-3xl p-6 hard-shadow relative">
-            <div className="absolute -top-4 left-2 sm:-top-6 sm:-left-6 bg-yellow-400 border-4 border-[#545454] text-[#545454] font-black text-xl sm:text-2xl px-4 sm:px-6 py-2 sm:py-3 rounded-full transform -rotate-12 shadow-lg">
+          <div className={`${saleLayout.productRoom} bg-white border-4 border-[#545454] rounded-3xl p-6 hard-shadow relative`}>
+            <div className="when-regular absolute -top-4 left-2 sm:-top-6 sm:-left-6 bg-yellow-400 border-4 border-[#545454] text-[#545454] font-black text-xl sm:text-2xl px-4 sm:px-6 py-2 sm:py-3 rounded-full transform -rotate-12 shadow-lg">
               ₪{product.price}
             </div>
+            <SwingTag
+              className="when-sale absolute z-10 -top-[58px] -left-1.5 sm:-top-[52px] sm:-left-4 lg:-left-12"
+              size="product"
+              rotate={-8}
+              label="מחיר שופינג IL"
+              value={`₪${salePriceOf(product.price)}`}
+              note={<>במקום <s>₪{product.price}</s></>}
+            />
 
             <div className={`${colors.bgLight} rounded-xl h-64 sm:h-80 md:h-96 flex items-center justify-center p-4`}>
               <Image

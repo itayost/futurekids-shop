@@ -8,6 +8,8 @@ import BookWorkbookPairCard from '@/components/BookWorkbookPairCard';
 import LogoMarquee from '@/components/LogoMarquee';
 import { RiddlesPromo } from '@/components/riddles/RiddlesPromo';
 import { books, workbooks, bundles } from '@/lib/products';
+import { salePriceOf } from '@/lib/sale';
+import { SwingTag, saleLayout } from '@/components/sale/SwingTag';
 import { useCart } from '@/components/CartProvider';
 
 // Create book+workbook pairs
@@ -92,8 +94,16 @@ export default function Home() {
             </a>
           </div>
         </div>
-        <div className="md:w-1/2 flex justify-center animate-hero-scale pb-3 pr-3 md:pb-4 md:pr-4">
-          <div className="bg-white border-4 border-[#545454] rounded-2xl md:rounded-3xl p-4 md:p-8 hard-shadow-lg flex items-center justify-center">
+        <div className={`${saleLayout.heroRoom} md:w-1/2 flex justify-center animate-hero-scale pb-3 pr-3 md:pb-4 md:pr-4`}>
+          <div className="relative bg-white border-4 border-[#545454] rounded-2xl md:rounded-3xl p-4 md:p-8 hard-shadow-lg flex items-center justify-center">
+            <SwingTag
+              className="when-sale absolute z-20 -top-[62px] left-0 md:-top-[50px] md:left-3 lg:-left-10 xl:-left-[104px]"
+              size="hero"
+              rotate={-7}
+              label="שופינג IL"
+              value="15% הנחה"
+              note="על כל האתר · 4-5 בנובמבר"
+            />
             <div className="relative w-[240px] h-[210px] md:w-[320px] md:h-[280px]">
               {/* Book 1 - AI (back left) */}
               <div className="absolute left-0 top-1/2 -translate-y-[60%] transform -rotate-12 animate-book-1">
@@ -212,12 +222,15 @@ export default function Home() {
             <p className="text-lg text-gray-700 mb-6 max-w-2xl mx-auto leading-relaxed">
               {selectedBundle.description}
             </p>
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <span className="text-5xl font-black">₪{selectedBundle.price}</span>
-              <span className="text-2xl text-gray-400 line-through">₪{selectedBundle.originalPrice}</span>
-              <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-bold border border-emerald-300">
+            <div className="flex flex-wrap items-center justify-center gap-4 mb-6">
+              <span className="when-regular text-5xl font-black">₪{selectedBundle.price}</span>
+              <span className="when-regular text-2xl text-gray-400 line-through">₪{selectedBundle.originalPrice}</span>
+              <span className="when-regular bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-bold border border-emerald-300">
                 חיסכון של ₪{selectedBundle.savings}
               </span>
+              <span className="when-sale text-5xl font-black tabular-nums">₪{salePriceOf(selectedBundle.price)}</span>
+              <s className="when-sale text-2xl font-bold text-[#767676]"><span className="sr-only">במקום </span>₪{selectedBundle.price}</s>
+              <SwingTag className="when-sale relative" size="chip" rotate={-3} value="מחיר שופינג IL" />
             </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button

@@ -271,3 +271,13 @@ select.input-brutal {
     animation: none;
   }
 }
+
+/* Sale window: prerendered pages carry both prices. saleClockScript sets
+   data-sale on <html> before first paint, and these pick which one shows. */
+html:not([data-sale]) .when-sale {
+  display: none !important;
+}
+
+html[data-sale] .when-regular {
+  display: none !important;
+}

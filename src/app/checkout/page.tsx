@@ -13,6 +13,9 @@ import { trackInitiateCheckout, getFbCookies } from '@/lib/pixel';
 import { SHIPPING_COSTS } from '@/lib/shipping';
 import { getProductById } from '@/lib/products';
 import { preorderShippingNote } from '@/lib/preorder';
+import { useSaleActive } from '@/components/sale/useSaleActive';
+import { SalePrice } from '@/components/sale/SalePrice';
+import { SaleSavings } from '@/components/sale/SaleSavings';
 
 type ShippingOption = 'pickup-point' | 'delivery';
 
@@ -23,7 +26,8 @@ const SHIPPING_OPTIONS = {
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, subtotal, bundleDiscount, bundleName, hasBundle, total } = useCart();
+  const { items, subtotal, bundleDiscount, bundleName, hasBundle, total, saleSavings } = useCart();
+  const saleActive = useSaleActive();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [shippingMethod, setShippingMethod] = useState<ShippingOption>('pickup-point');
@@ -42,11 +46,17 @@ export default function CheckoutPage() {
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [couponApplied, setCouponApplied] = useState(false);
   const [couponMsg, setCouponMsg] = useState<string | null>(null);
+  // The server's total when it differed from the one shown, kept only while the
+  // cart and shipping still produce the total it answered.
+  const [serverQuote, setServerQuote] = useState<{ shown: number; total: number } | null>(null);
 
   const shippingCost = SHIPPING_OPTIONS[shippingMethod].price;
   const hasCouponExcludedItem = items.some((item) => getProductById(item.productId)?.excludeFromCoupons);
   const shippingNote = preorderShippingNote(items.map((item) => item.productId));
-  const finalTotal = total + shippingCost - couponDiscount;
+  // A coupon applied before the sale started no longer counts once it is on.
+  const activeCoupon = saleActive ? 0 : couponDiscount;
+  const shownTotal = total + shippingCost - activeCoupon;
+  const finalTotal = serverQuote?.shown === shownTotal ? serverQuote.total : shownTotal;
 
   // Track InitiateCheckout on page load
   useEffect(() => {
@@ -137,7 +147,8 @@ export default function CheckoutPage() {
             price: item.price,
             quantity: item.quantity,
           })),
-          couponCode: couponApplied ? couponInput : undefined,
+          couponCode: couponApplied && !saleActive ? couponInput : undefined,
+          expectedTotal: finalTotal,
           shippingMethod,
           fbc,
           fbp,
@@ -153,6 +164,15 @@ export default function CheckoutPage() {
         setCouponDiscount(0);
         setCouponMsg(result.message || 'הקופון כבר אינו בתוקף');
         setError('הקופון כבר אינו בתוקף. הסכום עודכן — אנא בדקו ונסו שוב.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // The shown price is out of date (a tab open across the start or end of a
+      // sale, or a wrong device clock). Say so before charging a different amount.
+      if (result.priceChanged) {
+        setServerQuote({ shown: shownTotal, total: result.total });
+        setError(`הסכום לתשלום עודכן ל-₪${result.total}. לחיצה נוספת תמשיך לתשלום בסכום הזה.`);
         setIsSubmitting(false);
         return;
       }
@@ -430,7 +450,17 @@ export default function CheckoutPage() {
                           <p className="text-xs font-bold text-gray-500">רכישה מוקדמת · צפוי ב{preorder.shipsBy}</p>
                         )}
                         <p className="text-gray-500 text-sm">כמות: {item.quantity}</p>
-                        <p className="font-black text-pink-500">₪{item.price * item.quantity}</p>
+                        <p className="font-black text-pink-500">
+                          {item.regularPrice > item.price ? (
+                            <SalePrice
+                              price={item.price * item.quantity}
+                              was={item.regularPrice * item.quantity}
+                              wasClassName="text-[#767676]"
+                            />
+                          ) : (
+                            `₪${item.price * item.quantity}`
+                          )}
+                        </p>
                       </div>
                     </div>
                   );
@@ -459,19 +489,25 @@ export default function CheckoutPage() {
                   </div>
                 )}
 
-                <CouponField
-                  value={couponInput}
-                  onChange={setCouponInput}
-                  onApply={applyCoupon}
-                  applied={couponApplied}
-                  discount={couponDiscount}
-                  message={couponMsg}
-                  hasExcludedItem={hasCouponExcludedItem}
-                />
-                {couponDiscount > 0 && (
+                {saleActive ? (
+                  <p className="my-2.5 rounded-lg border-2 border-dashed border-[#545454] px-3 py-2.5 text-[13px] font-bold leading-relaxed text-[#3a3a3a]">
+                    בימי שופינג IL המחירים כבר כוללים 15% הנחה, ולכן אין שימוש בקופונים. המשלוח במחיר רגיל.
+                  </p>
+                ) : (
+                  <CouponField
+                    value={couponInput}
+                    onChange={setCouponInput}
+                    onApply={applyCoupon}
+                    applied={couponApplied}
+                    discount={couponDiscount}
+                    message={couponMsg}
+                    hasExcludedItem={hasCouponExcludedItem}
+                  />
+                )}
+                {activeCoupon > 0 && (
                   <div className="flex justify-between items-center text-emerald-600">
                     <span>הנחת קופון:</span>
-                    <span className="font-bold">-₪{couponDiscount}</span>
+                    <span className="font-bold">-₪{activeCoupon}</span>
                   </div>
                 )}
 
@@ -489,6 +525,7 @@ export default function CheckoutPage() {
                   <span className="text-lg font-bold">סה&quot;כ:</span>
                   <span className="text-3xl font-black">₪{finalTotal}</span>
                 </div>
+                <SaleSavings amount={saleSavings} />
               </div>
             </div>
 
