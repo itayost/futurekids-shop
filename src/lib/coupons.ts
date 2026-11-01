@@ -1,6 +1,7 @@
 import type { Product } from '@/types';
 import { computeBundleDiscount } from './bundle-discount';
 import { normalizeCartItems } from './cart-snapshot';
+import { isSaleActive } from './sale';
 
 export type DiscountType = 'percent' | 'fixed';
 
@@ -73,11 +74,14 @@ export function computeCouponDiscount(
   return Math.max(0, Math.min(raw, priceAfterBundle));
 }
 
+const SALE_MESSAGE = 'בימי שופינג IL המחירים כבר כוללים הנחה, ולכן אין שימוש בקופונים';
+
 const fail = (message: string): CouponValidation => ({ valid: false, discount: 0, code: null, message });
 
 // What is wrong with the code itself, whatever the cart holds; a usable
 // coupon comes back narrowed.
 function checkCouponCode(coupon: Coupon | null, now: Date): { coupon: Coupon } | { error: string } {
+  if (isSaleActive(now.getTime())) return { error: SALE_MESSAGE };
   if (!coupon) return { error: 'קוד קופון לא תקין' };
   if (!coupon.active) return { error: 'הקופון אינו פעיל' };
   if (coupon.expires_at && new Date(coupon.expires_at) <= now) return { error: 'תוקף הקופון פג' };

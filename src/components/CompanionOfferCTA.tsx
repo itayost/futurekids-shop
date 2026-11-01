@@ -6,6 +6,8 @@ import { CompanionOffer } from '@/domain/product-relationships';
 import { useCart } from './CartProvider';
 import { CompanionProductModal } from './modals/CompanionProductModal';
 import { books, workbooks, bundles, productHref } from '@/lib/products';
+import { salePriceOf } from '@/lib/sale';
+import { SalePrice } from './sale/SalePrice';
 import { Package, ShoppingCart, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
@@ -80,7 +82,15 @@ export function CompanionOfferCTA({ offer, colorClasses }: CompanionOfferCTAProp
               {baseProduct.type === 'book' ? 'ספר' : 'חוברת'} + {companionProduct.type === 'book' ? 'ספר' : 'חוברת'} ביחד
             </span>
           </div>
-          <div className="text-3xl font-black mt-1">₪{bundlePrice}</div>
+          <div className="text-3xl font-black mt-1">
+            <span className="when-regular">₪{bundlePrice}</span>
+            <SalePrice
+              className="when-sale"
+              price={salePriceOf(baseProduct.price) + salePriceOf(companionProduct.price)}
+              was={bundlePrice}
+              wasClassName="opacity-85"
+            />
+          </div>
         </button>
 
         {/* Divider */}
@@ -98,14 +108,20 @@ export function CompanionOfferCTA({ offer, colorClasses }: CompanionOfferCTAProp
           >
             <ShoppingCart className="w-5 h-5 mx-auto mb-1" />
             <div className="text-sm">רק {baseProduct.type === 'book' ? 'הספר' : 'החוברת'}</div>
-            <div className="text-xl font-black">₪{baseProduct.price}</div>
+            <div className="text-xl font-black">
+              <span className="when-regular">₪{baseProduct.price}</span>
+              <SalePrice className="when-sale" price={salePriceOf(baseProduct.price)} was={baseProduct.price} wasClassName="opacity-85" />
+            </div>
           </button>
           <Link
             href={productHref(companionProduct)}
             className="btn-retro bg-white hover:bg-gray-50 text-gray-800 py-4 rounded-xl font-bold border-2 border-[#545454] text-center transition-transform hover:scale-[1.02] flex flex-col items-center justify-center"
           >
             <div className="text-sm">רק {companionProduct.type === 'book' ? 'הספר' : 'החוברת'}</div>
-            <div className="text-xl font-black">₪{companionProduct.price}</div>
+            <div className="text-xl font-black">
+              <span className="when-regular">₪{companionProduct.price}</span>
+              <SalePrice className="when-sale" price={salePriceOf(companionProduct.price)} was={companionProduct.price} wasClassName="text-[#767676]" />
+            </div>
             <div className="text-xs text-gray-500">לפרטים נוספים &larr;</div>
           </Link>
         </div>
@@ -126,7 +142,12 @@ export function CompanionOfferCTA({ offer, colorClasses }: CompanionOfferCTAProp
             <Sparkles className="w-6 h-6" />
             <span>{FULL_BUNDLE.name} - כל הספרים + החוברות</span>
           </div>
-          <div className="flex items-center justify-center gap-3 mt-1">
+          <div className="when-sale flex items-center justify-center gap-3 mt-1">
+            <span className="text-2xl font-black">₪{salePriceOf(FULL_BUNDLE.price)}</span>
+            <s className="text-base opacity-70">₪{FULL_BUNDLE.price}</s>
+            <span className="text-xs bg-white/25 px-2 py-0.5 rounded-full border border-white/40">מחיר שופינג IL</span>
+          </div>
+          <div className="when-regular flex items-center justify-center gap-3 mt-1">
             <span className="text-2xl font-black">₪{FULL_BUNDLE.price}</span>
             <span className="text-base line-through opacity-70">₪{FULL_BUNDLE.originalPrice}</span>
             <span className="text-xs bg-white/25 px-2 py-0.5 rounded-full border border-white/40">

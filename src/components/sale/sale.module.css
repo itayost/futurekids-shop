@@ -1,0 +1,112 @@
+/* The Shopping IL swing tag: a die-cut paper price tag tied on with string.
+   Positioning comes from the caller (absolute on media, relative inline). */
+.tag {
+  --tag-ink: #545454;
+  --tag-sun: #facc15;
+  --cut: 14px;
+  --hole-x: 16px;
+  --hole: 4.5px;
+  --lift: 4px;
+  --string: 52px;
+
+  isolation: isolate;
+  display: inline-block;
+  padding: 9px 34px 10px 14px;
+  color: #3a3a3a;
+  font-weight: 900;
+  line-height: 1.1;
+  white-space: nowrap;
+  text-align: start;
+  transform: rotate(var(--tag-rotate, -5deg));
+  filter: drop-shadow(var(--lift) var(--lift) 0 var(--tag-ink));
+}
+
+.tag::before,
+.tag::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+}
+
+/* Outline: the ink shape, with a small hole through it. */
+.tag::before {
+  inset: 0;
+  background: var(--tag-ink);
+  border-radius: 10px 0 0 10px;
+  clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%);
+  mask: radial-gradient(circle at calc(100% - var(--hole-x)) 50%, transparent calc(var(--hole) - 2px), #000 calc(var(--hole) - 1.5px));
+}
+
+/* Fill: inset by the stroke, with a wider hole so an ink ring shows around it. */
+.tag::after {
+  inset: 3px;
+  background: var(--tag-sun);
+  border-radius: 8px 0 0 8px;
+  clip-path: polygon(0 0, calc(100% - var(--cut) + 1.76px) 0, 100% calc(var(--cut) - 1.76px), 100% calc(100% - var(--cut) + 1.76px), calc(100% - var(--cut) + 1.76px) 100%, 0 100%);
+  mask: radial-gradient(circle at calc(100% - var(--hole-x) + 3px) 50%, transparent var(--hole), #000 calc(var(--hole) + 0.5px));
+}
+
+.string {
+  position: absolute;
+  bottom: 50%;
+  right: calc(var(--hole-x) - 22px);
+  width: 30px;
+  height: var(--string);
+  overflow: visible;
+  pointer-events: none;
+}
+
+.label { display: block; font-size: 12px; }
+.value { display: block; margin-top: 2px; font-size: 26px; font-variant-numeric: tabular-nums; }
+.note { display: block; margin-top: 3px; font-size: 13px; font-weight: 700; }
+.note s { text-decoration-thickness: 2px; }
+
+.product,
+.hero {
+  --cut: 20px;
+  --hole-x: 21px;
+  --hole: 6.5px;
+  --lift: 6px;
+  --string: 70px;
+}
+
+.product { padding: 13px 44px 15px 20px; }
+.product .label { font-size: 15px; }
+.product .value { margin-top: 3px; font-size: 40px; }
+.product .note { font-size: 14px; }
+
+.hero { padding: 14px 48px 16px 22px; }
+.hero .label { font-size: 16px; }
+.hero .value { margin-top: 3px; font-size: 42px; letter-spacing: -0.01em; }
+
+.chip {
+  --cut: 10px;
+  --hole-x: 13px;
+  --hole: 3.5px;
+  --lift: 3px;
+  padding: 7px 30px 8px 12px;
+}
+.chip .value { margin: 0; font-size: 15px; }
+
+/* The tag needs room above the media frame on phones, where it stacks below the
+   copy; a margin here only applies while the sale is on. */
+@media (max-width: 767px) {
+  :global(html[data-sale]) .heroRoom { margin-top: 42px; }
+  :global(html[data-sale]) .productRoom { margin-top: 32px; }
+
+  .card { padding: 7px 28px 8px 9px; }
+  .card .label { font-size: 11px; }
+  .card .value { font-size: 21px; }
+  .card .note { margin-top: 2px; font-size: 11px; }
+
+  /* A short string on phones, where text sits right above the tag. */
+  .product { --cut: 16px; --hole-x: 17px; --hole: 5px; --string: 36px; padding: 9px 36px 10px 14px; }
+  .product .label { font-size: 13px; }
+  .product .value { font-size: 28px; }
+  .product .note { font-size: 12px; }
+
+  .hero { --cut: 16px; --hole-x: 17px; --hole: 5px; --string: 44px; padding: 10px 36px 12px 16px; }
+  .hero .label { font-size: 13px; }
+  .hero .value { font-size: 30px; }
+  .hero .note { font-size: 11.5px; }
+}

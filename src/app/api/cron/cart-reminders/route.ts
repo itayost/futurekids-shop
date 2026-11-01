@@ -4,8 +4,9 @@ import { sendEmail } from '@/lib/email';
 import {
   buildCartReminderEmailHtml,
   CART_REMINDER_SUBJECT,
-  type ReminderItem,
 } from '@/lib/cart-reminder-email';
+import { repriceForReminder } from '@/lib/cart-pricing';
+import { isSaleActive } from '@/lib/sale';
 import { buildUnsubscribeUrl } from '@/lib/unsubscribe';
 import { parseMemberCartRow, recomputeSnapshotTotal } from '@/lib/cart-snapshot';
 import { isQuietHours } from '@/lib/quiet-hours';
@@ -81,7 +82,7 @@ export async function GET(request: NextRequest) {
       reminderBudget > 0
         ? await sql`
             SELECT DISTINCT ON (LOWER(o.email))
-                   o.id, o.email, o.first_name, o.total
+                   o.id, o.email, o.first_name, o.total, o.shipping_cost
             FROM orders o
             WHERE o.status IN ('PENDING', 'FAILED')
               AND o.reminder_sent_at IS NULL
@@ -118,9 +119,10 @@ export async function GET(request: NextRequest) {
       }
 
       const itemRows = await sql`
-        SELECT product_name, quantity, price FROM order_items WHERE order_id = ${order.id}
+        SELECT product_id, product_name, quantity, price FROM order_items WHERE order_id = ${order.id}
       `;
-      const items: ReminderItem[] = itemRows.map((row) => ({
+      const items = itemRows.map((row) => ({
+        productId: row.product_id as string,
         name: row.product_name as string,
         quantity: Number(row.quantity),
         price: parseFloat(row.price),
@@ -131,15 +133,22 @@ export async function GET(request: NextRequest) {
       }
 
       const email = (order.email as string).toLowerCase();
+      const quote = repriceForReminder(
+        items,
+        parseFloat(order.total),
+        parseFloat(order.shipping_cost) || 0,
+        Date.now()
+      );
       const ok = await sendEmail({
         toEmail: email,
         toName: (order.first_name as string) || undefined,
         subject: CART_REMINDER_SUBJECT,
         html: buildCartReminderEmailHtml({
           firstName: (order.first_name as string) || undefined,
-          items,
-          total: parseFloat(order.total),
+          items: quote.items,
+          total: quote.total,
           unsubscribeUrl: buildUnsubscribeUrl(email),
+          hideClubTip: isSaleActive(Date.now()),
         }),
         unsubscribeUrl: buildUnsubscribeUrl(email),
       });
@@ -192,17 +201,19 @@ export async function GET(request: NextRequest) {
 
       const email = cart.email as string;
       const firstName = (cart.first_name as string) || undefined;
+      // Stored totals predate the current bundle rules; re-price so the email
+      // never quotes less than checkout will charge.
+      const quote = repriceForReminder(snapshot.items, recomputeSnapshotTotal(snapshot), 0, Date.now());
       const ok = await sendEmail({
         toEmail: email,
         toName: firstName,
         subject: CART_REMINDER_SUBJECT,
         html: buildCartReminderEmailHtml({
           firstName,
-          items: snapshot.items,
-          // Stored totals predate the current bundle rules; re-price so the
-          // email never quotes less than checkout will charge.
-          total: recomputeSnapshotTotal(snapshot),
+          items: quote.items,
+          total: quote.total,
           unsubscribeUrl: buildUnsubscribeUrl(email),
+          hideClubTip: isSaleActive(Date.now()),
         }),
         unsubscribeUrl: buildUnsubscribeUrl(email),
       });

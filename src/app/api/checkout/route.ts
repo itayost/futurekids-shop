@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { createPaymentUrl } from '@/lib/icount';
-import { computeBundleDiscount } from '@/lib/bundle-discount';
+import { priceCart } from '@/lib/cart-pricing';
 import { normalizeCode, parseCouponRow, validateCouponForCart } from '@/lib/coupons';
 import { getProductById } from '@/lib/products';
 import { SHIPPING_COSTS } from '@/lib/shipping';
@@ -28,6 +28,8 @@ interface CheckoutRequest {
   apartment?: string;
   items: OrderItem[];
   couponCode?: string;
+  // The total the customer was looking at when they pressed pay.
+  expectedTotal?: number;
   shippingMethod?: 'pickup-point' | 'delivery';
   pickupPointCode?: string;
   pickupPointName?: string;
@@ -83,7 +85,7 @@ export async function POST(request: NextRequest) {
 
     // Server-authoritative line items: resolve price + name from the catalog by
     // productId; the client is trusted only for quantity. Never trust client prices.
-    const lineItems: {
+    const orderLines: {
       productId: string;
       name: string;
       price: number;
@@ -99,7 +101,7 @@ export async function POST(request: NextRequest) {
       if (!Number.isInteger(quantity) || quantity <= 0) {
         return NextResponse.json({ error: 'Invalid quantity in order' }, { status: 400 });
       }
-      lineItems.push({
+      orderLines.push({
         productId: product.id,
         name: orderLineName(product),
         price: product.price,
@@ -109,10 +111,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Server-authoritative amounts — never trust client-sent totals.
-    const subtotal = lineItems.reduce((sum, it) => sum + it.price * it.quantity, 0);
-    const { bundleDiscount, bundleName } = computeBundleDiscount(
-      lineItems.map((it) => ({ productId: it.productId, quantity: it.quantity }))
-    );
+    const now = Date.now();
+    const { lines: lineItems, bundleDiscount, bundleName, total: productsTotal } = priceCart(orderLines, now);
 
     const shippingCost = SHIPPING_COSTS[body.shippingMethod];
 
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
     if (rawCode) {
       const couponRows = await sql`SELECT * FROM coupons WHERE code = ${rawCode} LIMIT 1`;
       const coupon = couponRows[0] ? parseCouponRow(couponRows[0] as Record<string, unknown>) : null;
-      const check = validateCouponForCart(coupon, lineItems, new Date());
+      const check = validateCouponForCart(coupon, lineItems, new Date(now));
       if (check.valid) {
         couponCode = check.code;
         couponDiscount = check.discount;
@@ -130,13 +130,20 @@ export async function POST(request: NextRequest) {
         // Coupon was applied by the client but is no longer valid — do not silently
         // charge full price. Return the updated total for the customer to confirm.
         return NextResponse.json(
-          { couponRejected: true, message: check.message, total: subtotal - bundleDiscount + shippingCost },
+          { couponRejected: true, message: check.message, total: productsTotal + shippingCost },
           { status: 409 }
         );
       }
     }
 
-    const total = subtotal - bundleDiscount - couponDiscount + shippingCost;
+    const total = productsTotal - couponDiscount + shippingCost;
+
+    // The browser's clock decides what the page shows, so a tab left open across
+    // the sale boundary (or a wrong clock) can display a different total. Never
+    // charge a number the customer did not see: send it back for them to confirm.
+    if (typeof body.expectedTotal === 'number' && body.expectedTotal !== total) {
+      return NextResponse.json({ priceChanged: true, total }, { status: 409 });
+    }
 
     // Capture Meta tracking params for CAPI
     const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null;

@@ -9,9 +9,14 @@ import { products, bundles, books, workbooks, getProductById } from '@/lib/produ
 import { Product } from '@/types';
 import { getCompanionProduct } from '@/application/hooks/useCompanionOffer';
 import { preorderShippingNote } from '@/lib/preorder';
+import { priceOf, saleMoment, salePriceOf } from '@/lib/sale';
+import { useSaleActive } from './sale/useSaleActive';
+import { SaleSavings } from './sale/SaleSavings';
 
 export default function Cart() {
-  const { items, isOpen, setIsOpen, removeItem, updateQuantity, subtotal, bundleDiscount, bundleName, hasBundle, total, itemCount, addItem } = useCart();
+  const { items, isOpen, setIsOpen, removeItem, updateQuantity, subtotal, bundleDiscount, bundleName, hasBundle, total, saleSavings, itemCount, addItem } = useCart();
+  const saleActive = useSaleActive();
+  const moment = saleMoment(saleActive);
   const [isClosing, setIsClosing] = useState(false);
   const bundle = bundles[1]; // Default bundle (most popular)
 
@@ -136,8 +141,8 @@ export default function Cart() {
                     <p className="font-black text-sm">{bundle.name}</p>
                     <p className="text-xs text-gray-600">3 ספרים + 3 חוברות</p>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-pink-500 font-black">₪{bundle.price}</span>
-                      <span className="text-gray-400 text-xs line-through">₪{bundle.originalPrice}</span>
+                      <span className="text-pink-500 font-black">₪{saleActive ? salePriceOf(bundle.price) : bundle.price}</span>
+                      <span className="text-gray-400 text-xs line-through">₪{saleActive ? bundle.price : bundle.originalPrice}</span>
                     </div>
                   </div>
                   <div className="bg-pink-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex-shrink-0">
@@ -170,7 +175,7 @@ export default function Cart() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-sm truncate">{product.name}</p>
-                        <p className="text-pink-500 font-black">₪{product.price}</p>
+                        <p className="text-pink-500 font-black">₪{priceOf(product, moment)}</p>
                       </div>
                       <div className="bg-[#545454] text-white px-3 py-1.5 rounded-lg text-xs font-bold flex-shrink-0">
                         + הוסף
@@ -184,6 +189,7 @@ export default function Cart() {
             <div className="space-y-4">
               {items.map((item) => {
                 const product = getProductById(item.productId);
+                const was = product?.compareAtPrice ?? (item.regularPrice > item.price ? item.regularPrice : null);
                 return (
                   <div
                     key={item.productId}
@@ -205,9 +211,7 @@ export default function Cart() {
                       )}
                       <p className="flex items-baseline gap-2">
                         <span className="text-pink-500 font-black">₪{item.price}</span>
-                        {product?.compareAtPrice ? (
-                          <span className="text-gray-400 text-xs line-through">₪{product.compareAtPrice}</span>
-                        ) : null}
+                        {was ? <span className="text-gray-400 text-xs line-through">₪{was}</span> : null}
                       </p>
                       <div className="flex items-center gap-2 mt-2">
                         <button
@@ -267,7 +271,7 @@ export default function Cart() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-sm truncate">{product.name}</p>
-                      <p className="text-pink-500 font-black">₪{product.price}</p>
+                      <p className="text-pink-500 font-black">₪{priceOf(product, moment)}</p>
                     </div>
                     <div className="bg-[#545454] text-white px-3 py-1.5 rounded-lg text-xs font-bold flex-shrink-0">
                       + הוסף
@@ -304,11 +308,14 @@ export default function Cart() {
             )}
 
             {/* Total */}
-            <div className="flex items-center justify-between mb-4 pt-2 border-t border-gray-200">
-              <span className="text-lg font-bold">סה&quot;כ לתשלום:</span>
-              <span key={total} className="text-3xl font-black animate-pop">
-                ₪{total}
-              </span>
+            <div className="mb-4">
+              <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+                <span className="text-lg font-bold">סה&quot;כ לתשלום:</span>
+                <span key={total} className="text-3xl font-black animate-pop">
+                  ₪{total}
+                </span>
+              </div>
+              <SaleSavings amount={saleSavings} />
             </div>
             <Link
               href="/checkout"

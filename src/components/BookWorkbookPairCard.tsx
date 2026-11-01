@@ -9,6 +9,9 @@ import { useCart } from './CartProvider';
 import { CompanionProductModal } from './modals/CompanionProductModal';
 import { productRelationshipService } from '@/domain/product-relationships';
 import { productHref } from '@/lib/products';
+import { salePriceOf } from '@/lib/sale';
+import { SwingTag } from './sale/SwingTag';
+import { SalePrice } from './sale/SalePrice';
 
 interface BookWorkbookPairCardProps {
   book: Product;
@@ -47,6 +50,9 @@ export default function BookWorkbookPairCard({ book, workbook }: BookWorkbookPai
   const [showModal, setShowModal] = useState(false);
   const colors = colorClasses[book.color];
   const bundlePrice = book.price + workbook.price;
+  const saleBookPrice = salePriceOf(book.price);
+  const saleWorkbookPrice = salePriceOf(workbook.price);
+  const saleBundlePrice = saleBookPrice + saleWorkbookPrice;
 
   const cartProductIds = items.map(item => item.productId);
   const hasWorkbookInCart = cartProductIds.includes(workbook.id);
@@ -90,9 +96,15 @@ export default function BookWorkbookPairCard({ book, workbook }: BookWorkbookPai
             />
           </div>
           {/* Price Badge */}
-          <div className="absolute top-3 left-3 bg-yellow-400 border-2 border-[#545454] text-[#545454] font-black text-lg px-3 py-1 rounded-full transform -rotate-6">
+          <div className="when-regular absolute top-3 left-3 bg-yellow-400 border-2 border-[#545454] text-[#545454] font-black text-lg px-3 py-1 rounded-full transform -rotate-6">
             ₪{bundlePrice}
           </div>
+          <SwingTag
+            className="when-sale absolute top-4 left-2.5 z-[5]"
+            label="מחיר שופינג IL"
+            value={`₪${saleBundlePrice}`}
+            note={<>במקום <s>₪{bundlePrice}</s></>}
+          />
         </div>
 
         {/* Content */}
@@ -110,7 +122,8 @@ export default function BookWorkbookPairCard({ book, workbook }: BookWorkbookPai
           >
             <Package className="w-5 h-5" />
             <span>ספר + חוברת ביחד</span>
-            <span className="font-black">₪{bundlePrice}</span>
+            <span className="when-regular font-black">₪{bundlePrice}</span>
+            <SalePrice className="when-sale font-black" price={saleBundlePrice} was={bundlePrice} wasClassName="opacity-85" />
           </button>
 
           {/* Divider */}
@@ -128,7 +141,8 @@ export default function BookWorkbookPairCard({ book, workbook }: BookWorkbookPai
             >
               <ShoppingCart className="w-4 h-4 mb-1" />
               <span>רק ספר</span>
-              <span className="font-black">₪{book.price}</span>
+              <span className="when-regular font-black">₪{book.price}</span>
+              <SalePrice className="when-sale font-black" price={saleBookPrice} was={book.price} wasClassName="text-[#767676]" />
             </button>
             <button
               onClick={handleAddWorkbookOnly}
@@ -136,7 +150,8 @@ export default function BookWorkbookPairCard({ book, workbook }: BookWorkbookPai
             >
               <ShoppingCart className="w-4 h-4 mb-1" />
               <span>רק חוברת</span>
-              <span className="font-black">₪{workbook.price}</span>
+              <span className="when-regular font-black">₪{workbook.price}</span>
+              <SalePrice className="when-sale font-black" price={saleWorkbookPrice} was={workbook.price} wasClassName="text-[#767676]" />
             </button>
           </div>
 

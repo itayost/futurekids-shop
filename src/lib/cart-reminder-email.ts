@@ -21,6 +21,7 @@ export function buildCartReminderEmailHtml(params: {
   items: ReminderItem[];
   total: number;
   unsubscribeUrl: string;
+  hideClubTip?: boolean;
 }): string {
   const greeting = params.firstName ? `היי ${escapeHtml(params.firstName)}!` : 'היי!';
 
@@ -63,9 +64,9 @@ ${itemRows}
 <td style="padding:12px;background-color:${CREAM};font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:900;color:${INK};text-align:left;white-space:nowrap;">&#8362;${params.total}</td>
 </tr>
 </table>
-<p style="margin:0 0 20px;font-size:13px;line-height:1.6;color:#6b7280;">
+${params.hideClubTip ? '' : `<p style="margin:0 0 20px;font-size:13px;line-height:1.6;color:#6b7280;">
 טיפ: חברי מועדון KidCode מקבלים 10% הנחה עם הקוד CLUB10 בעמוד התשלום.
-</p>
+</p>`}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
 <tr>
 <td align="center" style="padding:0 0 8px;">

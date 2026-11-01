@@ -267,6 +267,9 @@ White sticky bar with a 4px Ink bottom rule. Links are Rubik 700, Ink, turning M
 ### Riddles Price Ticket (signature)
 A Paper card (18px corners, 4px Ink outline, Card shadow) split in two. The main part holds the price in 44px to 56px black-weight tabular figures, the list price struck through in Brick Red, and a red savings tag. A 4px dashed Ink divider leads to a Sun stub that gives the arrival month in Karantina. Used in the hero and the closing panel.
 
+### Sale Swing Tag (campaign, Shopping IL 4-5.11)
+A die-cut paper price tag in Sun with an Ink outline, chamfered corners on the hole end, a punched hole and a short string, tilted -3deg to -8deg, casting a zero-blur Ink shadow. It replaces the yellow price pill during a sale and reads "מחיר שופינג IL", the sale price, and "במקום" with the struck regular price. Sizes: card, product, hero, chip (no string). Ink and Sun belong to no book, so it sits on every subject colour. Companions: an Ink bar above the navbar with the campaign name in Sun, and a Sun savings line under totals. Prerendered pages carry both prices, switched by `data-sale` on `<html>`.
+
 ### Riddles Pre-order Tape (signature)
 A Sun strip with 4px Ink top and bottom rules, rotated -1.2deg across the top of the hero, repeating the pre-order terms with Brick Red dot separators. It scrolls slowly (38s loop), pauses on hover, and stops under reduced motion.
 

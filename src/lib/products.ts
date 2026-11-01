@@ -144,6 +144,7 @@ export const products: Product[] = [
     type: 'book',
     series: 'riddles',
     excludeFromCoupons: true,
+    excludeFromSale: true,
     preorder: { shipsBy: 'נובמבר 2026' },
     landingPath: '/riddles',
     features: [
