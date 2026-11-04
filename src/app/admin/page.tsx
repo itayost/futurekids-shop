@@ -62,6 +62,7 @@ export default function AdminPage() {
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
+  const [includePreorders, setIncludePreorders] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -166,8 +167,21 @@ export default function AdminPage() {
 
   const handleExport = (type: 'delivery' | 'pickup-point') => {
     // GET download; the admin_session cookie authorizes the request
-    window.location.href = `/api/admin/orders/export?type=${type}`;
+    const preorders = includePreorders ? '&preorders=1' : '';
+    window.location.href = `/api/admin/orders/export?type=${type}${preorders}`;
   };
+
+  // Paid orders the export holds back by default because they wait for a
+  // pre-order book.
+  const heldPreorderCount = useMemo(
+    () =>
+      orders.filter(
+        (order) =>
+          order.status === 'PAID' &&
+          classifyOrderShipping(order.items.map((item) => item.productId)) !== 'regular'
+      ).length,
+    [orders]
+  );
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('he-IL', {
@@ -340,8 +354,24 @@ export default function AdminPage() {
                 ייצוא נקודות חלוקה
               </button>
             </div>
+            <label className="flex items-center justify-center gap-2 mt-3 text-sm font-bold text-gray-700 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={includePreorders}
+                onChange={(e) => setIncludePreorders(e.target.checked)}
+                className="w-4 h-4 accent-orange-500"
+              />
+              לכלול הזמנות רכישה מוקדמת (כמו חידה!)
+              {heldPreorderCount > 0 && (
+                <span className="text-orange-700">({heldPreorderCount} הזמנות ששולמו)</span>
+              )}
+            </label>
             <p className="text-sm text-gray-500 mt-2 text-center">
-              מייצא הזמנות ששולמו (סטטוס: שולם) בפורמט קליטת קובץ של צ'יטה
+              מייצא הזמנות ששולמו (סטטוס: שולם) בפורמט קליטת קובץ של צ'יטה.
+              {' '}
+              {includePreorders
+                ? 'הזמנות רכישה מוקדמת ייכללו, כל הזמנה בשורה אחת.'
+                : 'הזמנות רכישה מוקדמת לא ייכללו עד צאת הספר.'}
             </p>
           </div>
         </div>

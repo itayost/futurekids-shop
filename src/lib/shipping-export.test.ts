@@ -131,7 +131,7 @@ describe('buildChitaCsv', () => {
 
   test('a pre-order-only order is left out until the book is released', () => {
     const preorderOnly: ExportOrder = { ...order, id: '2', items: [item('riddles-book-1', RIDDLES_LINE, 1)] };
-    const csv = buildChitaCsv([preorderOnly, order], 'delivery', new Map(), preorderCatalog);
+    const csv = buildChitaCsv([preorderOnly, order], 'delivery', new Map(), { getProduct: preorderCatalog });
     const rows = csv.split('\r\n').filter(Boolean);
     expect(rows).toHaveLength(2);
     expect(rows[1]).toContain('אלגו ס+ח');
@@ -139,15 +139,29 @@ describe('buildChitaCsv', () => {
 
   test('a mixed order is held back whole, to ship as one parcel on release', () => {
     const mixed: ExportOrder = { ...order, id: '3', items: [...order.items, item('riddles-book-1', RIDDLES_LINE, 1)] };
-    const rows = buildChitaCsv([mixed], 'delivery', new Map(), preorderCatalog).split('\r\n').filter(Boolean);
+    const rows = buildChitaCsv([mixed], 'delivery', new Map(), { getProduct: preorderCatalog }).split('\r\n').filter(Boolean);
     expect(rows).toHaveLength(1);
   });
 
   test('once released, a mixed order exports with every item in one row', () => {
     const mixed: ExportOrder = { ...order, items: [...order.items, item('riddles-book-1', RIDDLES_LINE, 1)] };
     const released: PreorderLookup = (id) => ({ name: id });
-    const row = buildChitaCsv([mixed], 'delivery', new Map(), released).split('\r\n')[1];
+    const row = buildChitaCsv([mixed], 'delivery', new Map(), { getProduct: released }).split('\r\n')[1];
     expect(row).toContain('אלגו ס+ח, חידה! ס');
+  });
+
+  test('with pre-orders included, pre-order-only and mixed orders export with the riddles shorthand', () => {
+    const preorderOnly: ExportOrder = { ...order, id: '2', items: [item('riddles-book-1', RIDDLES_LINE, 1)] };
+    const mixed: ExportOrder = { ...order, id: '3', items: [...order.items, item('riddles-book-1', RIDDLES_LINE, 1)] };
+    const csv = buildChitaCsv([order, preorderOnly, mixed], 'delivery', new Map(), {
+      getProduct: preorderCatalog,
+      includePreorders: true,
+    });
+    const rows = csv.split('\r\n').filter(Boolean);
+    expect(rows).toHaveLength(4);
+    expect(rows[1]).toMatch(/,אלגו ס\+ח$/);
+    expect(rows[2]).toMatch(/,חידה! ס$/);
+    expect(rows[3]).toContain('"אלגו ס+ח, חידה! ס"');
   });
 
   test('row carries formatted phone and detailed notes', () => {

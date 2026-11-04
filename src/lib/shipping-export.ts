@@ -118,19 +118,27 @@ function buildRow(fields: string[]): string {
   return cells.join(',');
 }
 
+export interface ChitaCsvOptions {
+  // Export orders holding a pre-order book too, for when stock has arrived
+  // ahead of the catalog entry dropping `preorder`.
+  includePreorders?: boolean;
+  getProduct?: PreorderLookup;
+}
+
 export function buildChitaCsv(
   orders: ExportOrder[],
   type: 'delivery' | 'pickup-point',
   pointsByCode: Map<string, PickupPoint>,
-  getProduct: PreorderLookup = getProductById
+  { includePreorders = false, getProduct = getProductById }: ChitaCsvOptions = {}
 ): string {
   const rows: string[] = [HEADER];
 
   for (const order of orders) {
     // An order holding a pre-order book ships whole, as one parcel, once the
-    // book is released and its catalog entry drops `preorder`.
+    // book is released and its catalog entry drops `preorder`, or when the
+    // admin asks for pre-orders explicitly.
     const shipping = classifyOrderShipping((order.items || []).map((item) => item.productId), getProduct);
-    if (shipping !== 'regular') continue;
+    if (shipping !== 'regular' && !includePreorders) continue;
 
     const name = `${order.first_name} ${order.last_name}`.trim();
     let cityName = '';
