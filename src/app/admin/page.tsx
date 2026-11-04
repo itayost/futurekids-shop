@@ -354,24 +354,30 @@ export default function AdminPage() {
                 ייצוא נקודות חלוקה
               </button>
             </div>
-            <label className="flex items-center justify-center gap-2 mt-3 text-sm font-bold text-gray-700 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={includePreorders}
-                onChange={(e) => setIncludePreorders(e.target.checked)}
-                className="w-4 h-4 accent-orange-500"
-              />
-              לכלול הזמנות רכישה מוקדמת (כמו חידה!)
-              {heldPreorderCount > 0 && (
+            {/* Only while some paid order waits for a pre-order book; once the
+                book is released its orders export as regular ones. */}
+            {heldPreorderCount > 0 && (
+              <label className="flex items-center justify-center gap-2 mt-3 text-sm font-bold text-gray-700 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={includePreorders}
+                  onChange={(e) => setIncludePreorders(e.target.checked)}
+                  className="w-4 h-4 accent-orange-500"
+                />
+                לכלול הזמנות רכישה מוקדמת
                 <span className="text-orange-700">({heldPreorderCount} הזמנות ששולמו)</span>
-              )}
-            </label>
+              </label>
+            )}
             <p className="text-sm text-gray-500 mt-2 text-center">
               מייצא הזמנות ששולמו (סטטוס: שולם) בפורמט קליטת קובץ של צ'יטה.
-              {' '}
-              {includePreorders
-                ? 'הזמנות רכישה מוקדמת ייכללו, כל הזמנה בשורה אחת.'
-                : 'הזמנות רכישה מוקדמת לא ייכללו עד צאת הספר.'}
+              {heldPreorderCount > 0 && (
+                <>
+                  {' '}
+                  {includePreorders
+                    ? 'הזמנות רכישה מוקדמת ייכללו, כל הזמנה בשורה אחת.'
+                    : 'הזמנות רכישה מוקדמת לא ייכללו עד צאת הספר.'}
+                </>
+              )}
             </p>
           </div>
         </div>

@@ -145,7 +145,6 @@ export const products: Product[] = [
     series: 'riddles',
     excludeFromCoupons: true,
     excludeFromSale: true,
-    preorder: { shipsBy: 'נובמבר 2026' },
     landingPath: '/riddles',
     features: [
       'משחקי מילים: הגדרות תרתי משמע שנונות, מילים שמסתתרות זו בתוך זו, צמדים מפתיעים ומפעל מילים עשיר.',
