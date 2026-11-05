@@ -97,29 +97,33 @@ const line = (productId: string, quantity = 1): CouponCartLine => {
   const product = getProductById(productId)!;
   return { productId, price: product.price, quantity, excludeFromCoupons: product.excludeFromCoupons };
 };
+// A product flagged excludeFromCoupons (a book already sold at a sale price).
+// No catalog product carries the flag right now, so these tests bring their own.
+const EXCLUDED_ID = 'presale-book';
+const excluded = (quantity = 1): CouponCartLine => ({ productId: EXCLUDED_ID, price: 120, quantity, excludeFromCoupons: true });
 const TRILOGY = ['ai-book', 'encryption-book', 'algorithms-book'];
 const WORKBOOKS = ['ai-workbook', 'encryption-workbook', 'algorithms-workbook'];
 const EXCLUDED_MESSAGE = 'הקופון אינו חל על ספרים שכבר נמכרים במחיר מבצע';
 
 describe('validateCouponForCart', () => {
   it('a percent coupon discounts only the coupon-eligible products', () => {
-    // ai-book 75 + riddles 120: 10% of 75 = 7.5 -> 8, the riddles book is untouched.
-    const r = validateCouponForCart(base, [line('ai-book'), line('riddles-book-1')], now);
+    // ai-book 75 + excluded 120: 10% of 75 = 7.5 -> 8, the excluded book is untouched.
+    const r = validateCouponForCart(base, [line('ai-book'), excluded()], now);
     expect(r.valid).toBe(true);
     expect(r.discount).toBe(8);
   });
 
   it('a fixed coupon is capped by the eligible basis, not the whole cart', () => {
-    // ai-workbook 30 + riddles 120: a 50 coupon can take at most the 30.
+    // ai-workbook 30 + excluded 120: a 50 coupon can take at most the 30.
     const fixed: Coupon = { ...base, discount_type: 'fixed', discount_value: 50 };
-    const r = validateCouponForCart(fixed, [line('ai-workbook'), line('riddles-book-1')], now);
+    const r = validateCouponForCart(fixed, [line('ai-workbook'), excluded()], now);
     expect(r.valid).toBe(true);
     expect(r.discount).toBe(30);
   });
 
   it('measures min_subtotal against the eligible basis only, and says so', () => {
     // 75 eligible + 120 excluded = 195 cart, but only 75 counts toward a 150 minimum.
-    const r = validateCouponForCart({ ...base, min_subtotal: 150 }, [line('ai-book'), line('riddles-book-1')], now);
+    const r = validateCouponForCart({ ...base, min_subtotal: 150 }, [line('ai-book'), excluded()], now);
     expect(r.valid).toBe(false);
     expect(r.message).toBe('הקופון תקף בהזמנה מעל ₪150, לא כולל ספרים במחיר מבצע');
   });
@@ -129,27 +133,33 @@ describe('validateCouponForCart', () => {
       .toBe('הקופון תקף בהזמנה מעל ₪150'));
 
   it('rejects a cart holding only excluded products with the sale-price message', () => {
-    const r = validateCouponForCart(base, [line('riddles-book-1', 2)], now);
+    const r = validateCouponForCart(base, [excluded(2)], now);
     expect(r).toEqual({ valid: false, discount: 0, code: null, message: EXCLUDED_MESSAGE });
   });
 
   it('still reports an unknown code as unknown on an excluded-only cart', () =>
-    expect(validateCouponForCart(null, [line('riddles-book-1')], now).message).toBe('קוד קופון לא תקין'));
+    expect(validateCouponForCart(null, [excluded()], now).message).toBe('קוד קופון לא תקין'));
 
   it('applies the bundle discount before the coupon in a mixed cart', () => {
-    // Researchers bundle: 225 + 90 - 45 = 270 eligible; 10% = 27. Riddles 120 excluded.
-    const cart = [...TRILOGY, ...WORKBOOKS].map((id) => line(id)).concat(line('riddles-book-1'));
+    // Researchers bundle: 225 + 90 - 45 = 270 eligible; 10% = 27. The excluded 120 is not.
+    const cart = [...TRILOGY, ...WORKBOOKS].map((id) => line(id)).concat(excluded());
     const r = validateCouponForCart(base, cart, now);
     expect(r.valid).toBe(true);
     expect(r.discount).toBe(27);
   });
 
-  it('CLUB10 on the trilogy book bundle plus the riddles book discounts the bundle only', () => {
+  it('CLUB10 on the trilogy book bundle plus an excluded book discounts the bundle only', () => {
     // Books bundle: 225 - 15 = 210; 10% = 21 (not 10% of 330 = 33).
     const club10: Coupon = { ...base, code: 'CLUB10' };
-    const cart = TRILOGY.map((id) => line(id)).concat(line('riddles-book-1'));
+    const cart = TRILOGY.map((id) => line(id)).concat(excluded());
     const r = validateCouponForCart(club10, cart, now);
     expect(r).toEqual({ valid: true, discount: 21, code: 'CLUB10', message: 'הקופון הוחל' });
+  });
+
+  it('counts the riddles book toward a coupon like any other book', () => {
+    // ai-book 75 + riddles 120 = 195; 10% = 19.5 -> 20.
+    const r = validateCouponForCart(base, [line('ai-book'), line('riddles-book-1')], now);
+    expect(r).toEqual({ valid: true, discount: 20, code: 'SAVE10', message: 'הקופון הוחל' });
   });
 
   it('matches validateCoupon on a cart with no excluded products', () => {
@@ -160,9 +170,12 @@ describe('validateCouponForCart', () => {
 });
 
 describe('parseCouponCartItems', () => {
-  it('resolves price and exclusion from the catalog, ignoring client prices', () =>
-    expect(parseCouponCartItems([{ productId: 'riddles-book-1', quantity: 2, price: 1 }], getProductById))
-      .toEqual([{ productId: 'riddles-book-1', price: 120, quantity: 2, excludeFromCoupons: true }]));
+  it('resolves price and exclusion from the catalog, ignoring client prices', () => {
+    const catalog = (id: string) =>
+      id === EXCLUDED_ID ? { id, name: 'ספר במבצע', price: 120, excludeFromCoupons: true } : getProductById(id);
+    expect(parseCouponCartItems([{ productId: EXCLUDED_ID, quantity: 2, price: 1 }], catalog))
+      .toEqual([{ productId: EXCLUDED_ID, price: 120, quantity: 2, excludeFromCoupons: true }]);
+  });
   it('drops an unknown (delisted) product, like the cart snapshot does', () =>
     expect(parseCouponCartItems([{ productId: 'nope', quantity: 1 }], getProductById)).toEqual([]));
   it('merges duplicate lines and caps the quantity like the cart snapshot does', () =>
@@ -196,5 +209,12 @@ describe('coupons during the Shopping IL sale', () => {
   it('accepts the same coupon once the sale is over', () => {
     const result = validateCouponForCart(club, lines, new Date('2026-11-06T00:00:00+02:00'));
     expect(result.valid).toBe(true);
+  });
+
+  it('takes coupons on the riddles book from midnight, not before', () => {
+    const riddles = [{ productId: 'riddles-book-1', price: 120, quantity: 1 }];
+    expect(validateCouponForCart(club, riddles, new Date('2026-11-05T23:59:59+02:00')).valid).toBe(false);
+    expect(validateCouponForCart(club, riddles, new Date('2026-11-06T00:00:00+02:00')))
+      .toEqual({ valid: true, discount: 12, code: 'CLUB10', message: 'הקופון הוחל' });
   });
 });

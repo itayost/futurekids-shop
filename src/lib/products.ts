@@ -139,12 +139,12 @@ export const products: Product[] = [
     description: 'מוכנים לגלות עד כמה המוח שלכם גמיש, חד ומלא דמיון?\n\nחידה! הוא לא עוד ספר חידות – הוא מגרש משחקים ממכר לכל המשפחה, שמחבר בין הומור שנון, איורים שובי לב וחשיבה מבריקה מחוץ לקופסה. כאן, השפה העברית, עולם הריגול ועקרונות הלוגיקה הופכים להרפתקה שפשוט אי אפשר להניח מהיד.',
     // List price. Shopping IL takes its 15% off like the rest of the site
     // (₪102) and it returns to this when the sale ends; see lib/sale.ts.
+    // Coupons apply as on any book (none do while the sale runs).
     price: 120,
     image: '/riddles/cover.jpg',
     color: 'blue',
     type: 'book',
     series: 'riddles',
-    excludeFromCoupons: true,
     landingPath: '/riddles',
     features: [
       'משחקי מילים: הגדרות תרתי משמע שנונות, מילים שמסתתרות זו בתוך זו, צמדים מפתיעים ומפעל מילים עשיר.',
