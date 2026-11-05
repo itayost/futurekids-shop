@@ -103,14 +103,14 @@ const EXCLUDED_MESSAGE = 'הקופון אינו חל על ספרים שכבר נ
 
 describe('validateCouponForCart', () => {
   it('a percent coupon discounts only the coupon-eligible products', () => {
-    // ai-book 75 + riddles 102: 10% of 75 = 7.5 -> 8, the riddles book is untouched.
+    // ai-book 75 + riddles 120: 10% of 75 = 7.5 -> 8, the riddles book is untouched.
     const r = validateCouponForCart(base, [line('ai-book'), line('riddles-book-1')], now);
     expect(r.valid).toBe(true);
     expect(r.discount).toBe(8);
   });
 
   it('a fixed coupon is capped by the eligible basis, not the whole cart', () => {
-    // ai-workbook 30 + riddles 102: a 50 coupon can take at most the 30.
+    // ai-workbook 30 + riddles 120: a 50 coupon can take at most the 30.
     const fixed: Coupon = { ...base, discount_type: 'fixed', discount_value: 50 };
     const r = validateCouponForCart(fixed, [line('ai-workbook'), line('riddles-book-1')], now);
     expect(r.valid).toBe(true);
@@ -118,7 +118,7 @@ describe('validateCouponForCart', () => {
   });
 
   it('measures min_subtotal against the eligible basis only, and says so', () => {
-    // 75 eligible + 102 excluded = 177 cart, but only 75 counts toward a 150 minimum.
+    // 75 eligible + 120 excluded = 195 cart, but only 75 counts toward a 150 minimum.
     const r = validateCouponForCart({ ...base, min_subtotal: 150 }, [line('ai-book'), line('riddles-book-1')], now);
     expect(r.valid).toBe(false);
     expect(r.message).toBe('הקופון תקף בהזמנה מעל ₪150, לא כולל ספרים במחיר מבצע');
@@ -137,7 +137,7 @@ describe('validateCouponForCart', () => {
     expect(validateCouponForCart(null, [line('riddles-book-1')], now).message).toBe('קוד קופון לא תקין'));
 
   it('applies the bundle discount before the coupon in a mixed cart', () => {
-    // Researchers bundle: 225 + 90 - 45 = 270 eligible; 10% = 27. Riddles 102 excluded.
+    // Researchers bundle: 225 + 90 - 45 = 270 eligible; 10% = 27. Riddles 120 excluded.
     const cart = [...TRILOGY, ...WORKBOOKS].map((id) => line(id)).concat(line('riddles-book-1'));
     const r = validateCouponForCart(base, cart, now);
     expect(r.valid).toBe(true);
@@ -145,7 +145,7 @@ describe('validateCouponForCart', () => {
   });
 
   it('CLUB10 on the trilogy book bundle plus the riddles book discounts the bundle only', () => {
-    // Books bundle: 225 - 15 = 210; 10% = 21 (not 10% of 312 = 31).
+    // Books bundle: 225 - 15 = 210; 10% = 21 (not 10% of 330 = 33).
     const club10: Coupon = { ...base, code: 'CLUB10' };
     const cart = TRILOGY.map((id) => line(id)).concat(line('riddles-book-1'));
     const r = validateCouponForCart(club10, cart, now);
@@ -162,7 +162,7 @@ describe('validateCouponForCart', () => {
 describe('parseCouponCartItems', () => {
   it('resolves price and exclusion from the catalog, ignoring client prices', () =>
     expect(parseCouponCartItems([{ productId: 'riddles-book-1', quantity: 2, price: 1 }], getProductById))
-      .toEqual([{ productId: 'riddles-book-1', price: 102, quantity: 2, excludeFromCoupons: true }]));
+      .toEqual([{ productId: 'riddles-book-1', price: 120, quantity: 2, excludeFromCoupons: true }]));
   it('drops an unknown (delisted) product, like the cart snapshot does', () =>
     expect(parseCouponCartItems([{ productId: 'nope', quantity: 1 }], getProductById)).toEqual([]));
   it('merges duplicate lines and caps the quantity like the cart snapshot does', () =>

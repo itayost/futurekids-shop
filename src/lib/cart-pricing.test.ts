@@ -36,17 +36,17 @@ describe('priceCart during the sale', () => {
     expect(cart.saleSavings).toBe(savings);
   });
 
-  it('keeps the riddles book at ₪102 with no sale savings', () => {
+  it('prices the riddles book at ₪102, 15% off its ₪120 list price', () => {
     const cart = priceCart([line('riddles-book-1')], DURING);
     expect(cart.total).toBe(102);
-    expect(cart.saleSavings).toBe(0);
-    expect(cart.lines[0].regularPrice).toBe(102);
+    expect(cart.saleSavings).toBe(18);
+    expect(cart.lines[0].regularPrice).toBe(120);
   });
 
-  it('adds the riddles book to a discounted bundle without touching either', () => {
+  it('adds the riddles book to a discounted bundle without touching the bundle', () => {
     const cart = priceCart([...set(1), line('riddles-book-1')], DURING);
     expect(cart.total).toBe(229 + 102);
-    expect(cart.saleSavings).toBe(41);
+    expect(cart.saleSavings).toBe(41 + 18);
   });
 });
 
@@ -58,6 +58,12 @@ describe('priceCart outside the sale', () => {
   });
 
   it('charges the regular bundle price', () => expect(priceCart(set(1), AFTER).total).toBe(270));
+
+  it('charges the riddles book its ₪120 list price once the sale ends', () => {
+    const cart = priceCart([line('riddles-book-1')], AFTER);
+    expect(cart.total).toBe(120);
+    expect(cart.saleSavings).toBe(0);
+  });
 
   // The bug this module exists for: a cart filled during the sale sits in
   // localStorage with ₪63 on it, then shows ₪63 while iCount charges ₪75.
