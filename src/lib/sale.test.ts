@@ -51,9 +51,14 @@ describe('priceOf', () => {
     expect(priceOf(book, AFTER)).toBe(75);
   });
 
-  // ₪102 is already 15% off the ₪120 list price; the client keeps it there.
-  it('holds the riddles book at ₪102 during the sale', () =>
+  // 15% off the ₪120 list price lands exactly on ₪102, its price until now.
+  it('sells the riddles book at ₪102 during the sale', () =>
     expect(priceOf(riddlesBook, DURING)).toBe(102));
+
+  it('returns the riddles book to ₪120 at midnight when the sale ends', () => {
+    expect(priceOf(riddlesBook, Date.parse('2026-11-05T23:59:59+02:00'))).toBe(102);
+    expect(priceOf(riddlesBook, Date.parse('2026-11-06T00:00:00+02:00'))).toBe(120);
+  });
 });
 
 describe('saleClockScript', () => {

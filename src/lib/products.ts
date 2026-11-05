@@ -137,14 +137,14 @@ export const products: Product[] = [
     slug: 'riddles',
     name: 'חידה! לכל המשפחה',
     description: 'מוכנים לגלות עד כמה המוח שלכם גמיש, חד ומלא דמיון?\n\nחידה! הוא לא עוד ספר חידות – הוא מגרש משחקים ממכר לכל המשפחה, שמחבר בין הומור שנון, איורים שובי לב וחשיבה מבריקה מחוץ לקופסה. כאן, השפה העברית, עולם הריגול ועקרונות הלוגיקה הופכים להרפתקה שפשוט אי אפשר להניח מהיד.',
-    price: 102,
-    compareAtPrice: 120,
+    // List price. Shopping IL takes its 15% off like the rest of the site
+    // (₪102) and it returns to this when the sale ends; see lib/sale.ts.
+    price: 120,
     image: '/riddles/cover.jpg',
     color: 'blue',
     type: 'book',
     series: 'riddles',
     excludeFromCoupons: true,
-    excludeFromSale: true,
     landingPath: '/riddles',
     features: [
       'משחקי מילים: הגדרות תרתי משמע שנונות, מילים שמסתתרות זו בתוך זו, צמדים מפתיעים ומפעל מילים עשיר.',

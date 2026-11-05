@@ -1,4 +1,4 @@
-import { book, listPrice, savings, savingsPercent, shipMonth, shipYear } from './content';
+import { book, salePercent, salePrice, shipMonth, shipYear } from './content';
 import styles from './riddles.module.css';
 
 interface PriceTicketProps {
@@ -19,21 +19,17 @@ export function PriceTicket({ label, meta, className = '' }: PriceTicketProps) {
         <p className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-2">
           <span className="text-[44px] font-black leading-none tracking-[-0.02em] tabular-nums md:text-[56px]">
             <span className="text-[0.5em]">₪</span>
-            {book.price}
+            <span className="when-sale">{salePrice}</span>
+            <span className="when-regular">{book.price}</span>
           </span>
-          {savings > 0 && (
-            <>
-              <span className="sr-only">במקום</span>
-              <s className="text-[22px] font-bold text-[#767676] tabular-nums decoration-(--r-red) decoration-[3px]">
-                ₪{listPrice}
-              </s>
-            </>
-          )}
-          {savings > 0 && (
-            <span className="rounded-md border-2 border-(--r-ink) bg-(--r-red) px-2 py-1 text-sm font-black text-white">
-              חוסכים {savingsPercent}%
-            </span>
-          )}
+          {/* Shopping IL only: gone with the sale, no deploy needed. */}
+          <span className="when-sale sr-only">במקום</span>
+          <s className="when-sale text-[22px] font-bold text-[#767676] tabular-nums decoration-(--r-red) decoration-[3px]">
+            ₪{book.price}
+          </s>
+          <span className="when-sale rounded-md border-2 border-(--r-ink) bg-(--r-red) px-2 py-1 text-sm font-black text-white">
+            חוסכים {salePercent}%
+          </span>
         </p>
         {meta && <p className="mt-2 text-sm font-medium max-md:hidden">{meta}</p>}
       </div>

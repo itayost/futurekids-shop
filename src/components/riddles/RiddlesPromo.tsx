@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Info, ShoppingCart } from 'lucide-react';
 import AddToCartButton from '@/components/AddToCartButton';
-import { book, listPrice, savings, shipsBy } from './content';
+import { book, salePrice, shipsBy } from './content';
 import styles from './riddles.module.css';
 
 // Homepage band introducing the new series: buy from here, or read more on /riddles.
@@ -39,13 +39,12 @@ export function RiddlesPromo() {
           </p>
           <p className="mt-5 flex flex-wrap items-center justify-center gap-3 md:justify-start">
             <span className="rounded-xl border-[3px] border-(--r-ink) bg-(--r-paper) px-3 py-1.5 font-black tabular-nums">
-              <span className="text-2xl">₪{book.price}</span>
-              {savings > 0 && (
-                <>
-                  {' '}
-                  <s className="text-base text-[#767676] decoration-(--r-red) decoration-2">₪{listPrice}</s>
-                </>
-              )}
+              <span className="when-regular text-2xl">₪{book.price}</span>
+              <span className="when-sale">
+                <span className="text-2xl">₪{salePrice}</span>
+                <span className="sr-only">במקום</span>{' '}
+                <s className="text-base text-[#767676] decoration-(--r-red) decoration-2">₪{book.price}</s>
+              </span>
             </span>
             {shipsBy && (
               <span className="rounded-xl border-[3px] border-(--r-ink) bg-(--r-sun) px-3 py-2 font-black">

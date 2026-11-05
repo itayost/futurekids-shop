@@ -1,11 +1,13 @@
 import { riddlesBook } from '@/lib/products';
+import { SALE, salePriceOf } from '@/lib/sale';
 
 // Everything the landing page states about price and timing comes from the
-// catalog entry, so the page and the cart can never disagree.
+// catalog entry and the sale window, so the page and the cart can never
+// disagree. The pages are prerendered with both prices; .when-sale and
+// .when-regular show the right one as the sale starts and ends.
 export const book = riddlesBook;
-export const listPrice = riddlesBook.compareAtPrice ?? riddlesBook.price;
-export const savings = listPrice - riddlesBook.price;
-export const savingsPercent = Math.round((savings / listPrice) * 100);
+export const salePrice = salePriceOf(riddlesBook.price);
+export const salePercent = SALE.percent;
 
 // "נובמבר 2026" -> { month: 'נובמבר', year: '2026' }. Null once the book is
 // released and its catalog entry drops `preorder`.
