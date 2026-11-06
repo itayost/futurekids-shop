@@ -13,10 +13,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const type = new URL(request.url).searchParams.get('type');
+  const params = new URL(request.url).searchParams;
+  const type = params.get('type');
   if (type !== 'delivery' && type !== 'pickup-point') {
     return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
   }
+  const includePreorders = params.get('preorders') === '1';
 
   try {
     // Only PAID orders need shipping labels created.
@@ -53,7 +55,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const csv = buildChitaCsv(orders, type, pointsByCode);
+    const csv = buildChitaCsv(orders, type, pointsByCode, { includePreorders });
 
     const label = type === 'delivery' ? 'home' : 'pickup';
     const date = new Date().toISOString().slice(0, 10);

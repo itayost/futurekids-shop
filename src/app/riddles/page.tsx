@@ -3,7 +3,7 @@ import { Karantina } from 'next/font/google';
 import { RiddlesHero } from '@/components/riddles/RiddlesHero';
 import { RiddlesGallery } from '@/components/riddles/RiddlesGallery';
 import { PreorderTerms, RiddleCategories, RiddlesAbout, RiddlesClose } from '@/components/riddles/RiddlesDetails';
-import { book, listPrice, shipsBy } from '@/components/riddles/content';
+import { book, shipsBy } from '@/components/riddles/content';
 import styles from '@/components/riddles/riddles.module.css';
 
 // Hand-lettered display face echoing the book's cover titles.
@@ -17,7 +17,7 @@ const hand = Karantina({
 const BASE_URL = 'https://www.kidcode.org.il';
 const TITLE = shipsBy ? 'חידה! לכל המשפחה | רכישה מוקדמת' : 'חידה! לכל המשפחה';
 const DESCRIPTION = shipsBy
-  ? `ספר חידות לכל המשפחה מאת ד"ר סתיו אלבר ושמרית שולמן. רכישה מוקדמת ב-₪${book.price} במקום ₪${listPrice}, הספר יגיע במהלך ${shipsBy}.`
+  ? `ספר חידות לכל המשפחה מאת ד"ר סתיו אלבר ושמרית שולמן. רכישה מוקדמת ב-₪${book.price}, הספר יגיע במהלך ${shipsBy}.`
   : `ספר חידות לכל המשפחה מאת ד"ר סתיו אלבר ושמרית שולמן: משחקי מילים, הצפנה, מספרים ותבניות.`;
 // 1200x630 share card: the cover on the site's cream, logo in the corner.
 const OG_IMAGE = { url: '/riddles/og.jpg', width: 1200, height: 630, alt: 'כריכת הספר חידה! לכל המשפחה' };
