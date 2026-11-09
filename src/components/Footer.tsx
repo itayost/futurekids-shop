@@ -23,6 +23,10 @@ export default function Footer() {
         <a href="/privacy" className="text-gray-400 text-xs mt-2 inline-block hover:text-pink-400 transition">
           מדיניות פרטיות
         </a>
+        <span className="text-gray-600 text-xs mx-2">|</span>
+        <a href="/shipping" className="text-gray-400 text-xs mt-2 inline-block hover:text-pink-400 transition">
+          משלוחים והחזרות
+        </a>
         <p className="text-gray-400 text-xs mt-4">
           בנייה ועיצוב:{' '}
           <a
