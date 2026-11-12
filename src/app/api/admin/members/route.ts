@@ -1,12 +1,6 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { sql } from '@/lib/db';
-
-async function isAdmin(): Promise<boolean> {
-  return (await cookies()).get('admin_session')?.value === 'authenticated';
-}
-
-const unauthorized = () => NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+import { isAdmin, unauthorized } from '@/lib/admin-auth';
 
 // Read-only club members listing for the admin dashboard, including each
 // member's open cart snapshot (if any) and paid-order count.
