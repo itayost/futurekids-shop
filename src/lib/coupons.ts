@@ -1,6 +1,7 @@
 import type { Product } from '@/types';
 import { computeBundleDiscount } from './bundle-discount';
 import { normalizeCartItems } from './cart-snapshot';
+import { isCouponExcluded } from './promo';
 import { isSaleActive } from './sale';
 
 export type DiscountType = 'percent' | 'fixed';
@@ -121,7 +122,9 @@ export interface CouponCartLine {
   excludeFromCoupons?: boolean;
 }
 
-type CouponProductLookup = (id: string) => Pick<Product, 'id' | 'name' | 'price' | 'excludeFromCoupons'> | undefined;
+type CouponProductLookup = (
+  id: string
+) => Pick<Product, 'id' | 'name' | 'price' | 'excludeFromCoupons' | 'promo'> | undefined;
 
 const EXCLUDED_MESSAGE = 'הקופון אינו חל על ספרים שכבר נמכרים במחיר מבצע';
 
@@ -161,15 +164,18 @@ export function validateCouponForCart(
 
 // Client cart payload for a coupon preview, parsed by the same rules as the
 // member cart snapshot (catalog prices, merged duplicates, capped quantities,
-// unknown products dropped); exclusion comes from the catalog too. Malformed
-// payloads return null.
-export function parseCouponCartItems(raw: unknown, getProduct: CouponProductLookup): CouponCartLine[] | null {
+// unknown products dropped); exclusion comes from the catalog too, as it
+// stands at `now` (a promo can exclude a product for its window only).
+// Malformed payloads return null.
+export function parseCouponCartItems(
+  raw: unknown,
+  getProduct: CouponProductLookup,
+  now: number
+): CouponCartLine[] | null {
   const snapshot = normalizeCartItems(raw, getProduct);
   if (!snapshot) return null;
-  return snapshot.items.map(({ productId, price, quantity }) => ({
-    productId,
-    price,
-    quantity,
-    excludeFromCoupons: getProduct(productId)?.excludeFromCoupons,
-  }));
+  return snapshot.items.map(({ productId, price, quantity }) => {
+    const product = getProduct(productId);
+    return { productId, price, quantity, excludeFromCoupons: product ? isCouponExcluded(product, now) : false };
+  });
 }

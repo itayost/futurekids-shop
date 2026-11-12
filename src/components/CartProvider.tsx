@@ -6,8 +6,8 @@ import ToastContainer from './Toast';
 import { trackAddToCart } from '@/lib/pixel';
 import { CART_STORAGE_KEY, scheduleCartSync } from '@/lib/cart-sync';
 import { priceCart } from '@/lib/cart-pricing';
-import { priceOf, saleMoment } from '@/lib/sale';
-import { useSaleActive } from './sale/useSaleActive';
+import { priceOf } from '@/lib/sale';
+import { usePriceMoment } from './sale/usePriceMoment';
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
@@ -164,8 +164,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   // Prices come from the catalog on every render, never from what was stored
   // with the item, and through the same function the checkout server uses.
-  const saleActive = useSaleActive();
-  const { lines, subtotal, bundleDiscount, bundleName, total, saleSavings } = priceCart(items, saleMoment(saleActive));
+  const moment = usePriceMoment();
+  const { lines, subtotal, bundleDiscount, bundleName, total, saleSavings } = priceCart(items, moment);
 
   const hasBundle = bundleDiscount > 0;
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);

@@ -173,22 +173,23 @@ describe('parseCouponCartItems', () => {
   it('resolves price and exclusion from the catalog, ignoring client prices', () => {
     const catalog = (id: string) =>
       id === EXCLUDED_ID ? { id, name: 'ספר במבצע', price: 120, excludeFromCoupons: true } : getProductById(id);
-    expect(parseCouponCartItems([{ productId: EXCLUDED_ID, quantity: 2, price: 1 }], catalog))
+    expect(parseCouponCartItems([{ productId: EXCLUDED_ID, quantity: 2, price: 1 }], catalog, now.getTime()))
       .toEqual([{ productId: EXCLUDED_ID, price: 120, quantity: 2, excludeFromCoupons: true }]);
   });
   it('drops an unknown (delisted) product, like the cart snapshot does', () =>
-    expect(parseCouponCartItems([{ productId: 'nope', quantity: 1 }], getProductById)).toEqual([]));
+    expect(parseCouponCartItems([{ productId: 'nope', quantity: 1 }], getProductById, now.getTime())).toEqual([]));
   it('merges duplicate lines and caps the quantity like the cart snapshot does', () =>
     expect(parseCouponCartItems(
       [{ productId: 'ai-book', quantity: 60 }, { productId: 'ai-book', quantity: 60 }],
-      getProductById
-    )).toEqual([{ productId: 'ai-book', price: 75, quantity: 99, excludeFromCoupons: undefined }]));
+      getProductById,
+      now.getTime()
+    )).toEqual([{ productId: 'ai-book', price: 75, quantity: 99, excludeFromCoupons: false }]));
   it.each([0, -1, 1.5, 'x', null])('rejects quantity %s', (quantity) =>
-    expect(parseCouponCartItems([{ productId: 'ai-book', quantity }], getProductById)).toBeNull());
+    expect(parseCouponCartItems([{ productId: 'ai-book', quantity }], getProductById, now.getTime())).toBeNull());
   it('rejects a payload that is not an array', () =>
-    expect(parseCouponCartItems({ productId: 'ai-book' }, getProductById)).toBeNull());
+    expect(parseCouponCartItems({ productId: 'ai-book' }, getProductById, now.getTime())).toBeNull());
   it('rejects a non-object entry', () =>
-    expect(parseCouponCartItems(['ai-book'], getProductById)).toBeNull());
+    expect(parseCouponCartItems(['ai-book'], getProductById, now.getTime())).toBeNull());
 });
 
 describe('coupons during the Shopping IL sale', () => {

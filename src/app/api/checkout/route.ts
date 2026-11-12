@@ -4,6 +4,7 @@ import { createPaymentUrl } from '@/lib/icount';
 import { priceCart } from '@/lib/cart-pricing';
 import { normalizeCode, parseCouponRow, validateCouponForCart } from '@/lib/coupons';
 import { getProductById } from '@/lib/products';
+import { isCouponExcluded } from '@/lib/promo';
 import { SHIPPING_COSTS } from '@/lib/shipping';
 import type { Product } from '@/types';
 
@@ -83,6 +84,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // One moment for the whole order, so price and coupon eligibility agree.
+    const now = Date.now();
+
     // Server-authoritative line items: resolve price + name from the catalog by
     // productId; the client is trusted only for quantity. Never trust client prices.
     const orderLines: {
@@ -106,12 +110,11 @@ export async function POST(request: NextRequest) {
         name: orderLineName(product),
         price: product.price,
         quantity,
-        excludeFromCoupons: product.excludeFromCoupons,
+        excludeFromCoupons: isCouponExcluded(product, now),
       });
     }
 
     // Server-authoritative amounts — never trust client-sent totals.
-    const now = Date.now();
     const { lines: lineItems, bundleDiscount, bundleName, total: productsTotal } = priceCart(orderLines, now);
 
     const shippingCost = SHIPPING_COSTS[body.shippingMethod];

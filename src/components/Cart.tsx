@@ -9,14 +9,14 @@ import { products, bundles, books, workbooks, getProductById } from '@/lib/produ
 import { Product } from '@/types';
 import { getCompanionProduct } from '@/application/hooks/useCompanionOffer';
 import { preorderShippingNote } from '@/lib/preorder';
-import { priceOf, saleMoment, salePriceOf } from '@/lib/sale';
-import { useSaleActive } from './sale/useSaleActive';
+import { isSaleActive, priceOf, salePriceOf } from '@/lib/sale';
+import { usePriceMoment } from './sale/usePriceMoment';
 import { SaleSavings } from './sale/SaleSavings';
 
 export default function Cart() {
   const { items, isOpen, setIsOpen, removeItem, updateQuantity, subtotal, bundleDiscount, bundleName, hasBundle, total, saleSavings, itemCount, addItem } = useCart();
-  const saleActive = useSaleActive();
-  const moment = saleMoment(saleActive);
+  const moment = usePriceMoment();
+  const saleActive = isSaleActive(moment);
   const [isClosing, setIsClosing] = useState(false);
   const bundle = bundles[1]; // Default bundle (most popular)
 
@@ -315,7 +315,7 @@ export default function Cart() {
                   ₪{total}
                 </span>
               </div>
-              <SaleSavings amount={saleSavings} />
+              <SaleSavings amount={saleSavings} sitewideSale={saleActive} />
             </div>
             <Link
               href="/checkout"

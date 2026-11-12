@@ -13,7 +13,9 @@ import { trackInitiateCheckout, getFbCookies } from '@/lib/pixel';
 import { SHIPPING_COSTS } from '@/lib/shipping';
 import { getProductById } from '@/lib/products';
 import { preorderShippingNote } from '@/lib/preorder';
-import { useSaleActive } from '@/components/sale/useSaleActive';
+import { usePriceMoment } from '@/components/sale/usePriceMoment';
+import { isSaleActive } from '@/lib/sale';
+import { isCouponExcluded } from '@/lib/promo';
 import { SalePrice } from '@/components/sale/SalePrice';
 import { SaleSavings } from '@/components/sale/SaleSavings';
 
@@ -27,7 +29,8 @@ const SHIPPING_OPTIONS = {
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, bundleDiscount, bundleName, hasBundle, total, saleSavings } = useCart();
-  const saleActive = useSaleActive();
+  const moment = usePriceMoment();
+  const saleActive = isSaleActive(moment);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [shippingMethod, setShippingMethod] = useState<ShippingOption>('pickup-point');
@@ -51,7 +54,10 @@ export default function CheckoutPage() {
   const [serverQuote, setServerQuote] = useState<{ shown: number; total: number } | null>(null);
 
   const shippingCost = SHIPPING_OPTIONS[shippingMethod].price;
-  const hasCouponExcludedItem = items.some((item) => getProductById(item.productId)?.excludeFromCoupons);
+  const hasCouponExcludedItem = items.some((item) => {
+    const product = getProductById(item.productId);
+    return product ? isCouponExcluded(product, moment) : false;
+  });
   const shippingNote = preorderShippingNote(items.map((item) => item.productId));
   // A coupon applied before the sale started no longer counts once it is on.
   const activeCoupon = saleActive ? 0 : couponDiscount;
@@ -525,7 +531,7 @@ export default function CheckoutPage() {
                   <span className="text-lg font-bold">סה&quot;כ:</span>
                   <span className="text-3xl font-black">₪{finalTotal}</span>
                 </div>
-                <SaleSavings amount={saleSavings} />
+                <SaleSavings amount={saleSavings} sitewideSale={saleActive} />
               </div>
             </div>
 

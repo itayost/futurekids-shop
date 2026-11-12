@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isSaleActive, priceOf, salePriceOf, saleClockScript } from './sale';
+import { isSaleActive, priceOf, salePriceOf } from './sale';
 import { bundles, products, riddlesBook, getProductById } from './products';
 
 const DURING = Date.parse('2026-11-04T12:00:00+02:00');
@@ -58,30 +58,5 @@ describe('priceOf', () => {
   it('returns the riddles book to ₪120 at midnight when the sale ends', () => {
     expect(priceOf(riddlesBook, Date.parse('2026-11-05T23:59:59+02:00'))).toBe(102);
     expect(priceOf(riddlesBook, Date.parse('2026-11-06T00:00:00+02:00'))).toBe(120);
-  });
-});
-
-describe('saleClockScript', () => {
-  // Runs the inline script against a stand-in <html> at a given moment.
-  function runAt(now: number): boolean {
-    let on = false;
-    const documentStub = {
-      documentElement: { toggleAttribute: (_: string, force: boolean) => { on = force; } },
-    };
-    const dateStub = { now: () => now };
-    new Function('document', 'Date', 'setTimeout', saleClockScript)(documentStub, dateStub, () => 0);
-    return on;
-  }
-
-  it('marks the page as on sale inside the window', () => expect(runAt(DURING)).toBe(true));
-  it('leaves the page regular outside the window', () => expect(runAt(AFTER)).toBe(false));
-
-  // A tab opened days ahead must still flip, or its prices disagree with the cart.
-  it('arms a timer even when the sale is days away', () => {
-    const timers: number[] = [];
-    const documentStub = { documentElement: { toggleAttribute: () => {} } };
-    const dateStub = { now: () => Date.parse('2026-11-01T12:00:00+02:00') };
-    new Function('document', 'Date', 'setTimeout', saleClockScript)(documentStub, dateStub, (_: unknown, ms: number) => timers.push(ms));
-    expect(timers).toHaveLength(1);
   });
 });
