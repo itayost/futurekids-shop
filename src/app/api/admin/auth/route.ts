@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { isAdmin } from '@/lib/admin-auth';
+import { ADMIN_SESSION_COOKIE, ADMIN_SESSION_TTL_MS, passwordMatches, signAdminSession } from '@/lib/admin-session';
+import { clientIp, rateLimitAllows } from '@/lib/rate-limit';
+
+// Password attempts per IP per window, so the password cannot be guessed online.
+const LOGIN_LIMIT = { scope: 'admin-login', limit: 10, windowSeconds: 15 * 60 };
 
 export async function POST(request: NextRequest) {
   try {
+    if (!(await rateLimitAllows({ ...LOGIN_LIMIT, ip: clientIp(request) }))) {
+      return NextResponse.json({ error: 'Too many attempts, try again later' }, { status: 429 });
+    }
+
     const { password } = await request.json();
 
     if (!process.env.ADMIN_PASSWORD) {
@@ -13,13 +22,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (password === process.env.ADMIN_PASSWORD) {
+    if (passwordMatches(password)) {
       const response = NextResponse.json({ success: true });
-      response.cookies.set('admin_session', 'authenticated', {
+      response.cookies.set(ADMIN_SESSION_COOKIE, signAdminSession(Date.now()), {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
-        maxAge: 60 * 60 * 24, // 24 hours
+        maxAge: ADMIN_SESSION_TTL_MS / 1000,
         path: '/',
       });
       return response;
@@ -38,19 +47,12 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET() {
-  const cookieStore = await cookies();
-  const session = cookieStore.get('admin_session');
-
-  if (session?.value === 'authenticated') {
-    return NextResponse.json({ authenticated: true });
-  }
-
-  return NextResponse.json({ authenticated: false });
+  return NextResponse.json({ authenticated: await isAdmin() });
 }
 
 export async function DELETE() {
   const response = NextResponse.json({ success: true });
-  response.cookies.set('admin_session', '', {
+  response.cookies.set(ADMIN_SESSION_COOKIE, '', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',

@@ -1,14 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { sql } from '@/lib/db';
+import { isAdmin, unauthorized } from '@/lib/admin-auth';
 import { normalizeCode } from '@/lib/coupons';
-
-async function isAdmin(): Promise<boolean> {
-  const session = (await cookies()).get('admin_session');
-  return session?.value === 'authenticated';
-}
-
-const unauthorized = () => NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
 export async function GET() {
   if (!(await isAdmin())) return unauthorized();

@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { sql } from '@/lib/db';
-
-async function isAdmin(): Promise<boolean> {
-  const session = (await cookies()).get('admin_session');
-  return session?.value === 'authenticated';
-}
+import { isAdmin } from '@/lib/admin-auth';
 
 interface OrderItem {
   productId: string;

@@ -1,17 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { sql } from '@/lib/db';
+import { isAdmin, unauthorized } from '@/lib/admin-auth';
 import { getPickupPoints } from '@/lib/pickup-points';
 import { buildChitaCsv } from '@/lib/shipping-export';
 import type { ExportOrder } from '@/lib/shipping-export';
 import type { PickupPoint } from '@/types';
 
 export async function GET(request: NextRequest) {
-  // Admin auth (mirrors /api/admin/auth GET)
-  const session = (await cookies()).get('admin_session');
-  if (session?.value !== 'authenticated') {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  if (!(await isAdmin())) return unauthorized();
 
   const params = new URL(request.url).searchParams;
   const type = params.get('type');
