@@ -13,7 +13,7 @@ import ClubPopup from "@/components/ClubPopup";
 import WhatsAppFab from "@/components/WhatsAppFab";
 import AccessibilityWidget from "@/components/AccessibilityWidget";
 import { SaleBar } from "@/components/sale/SaleBar";
-import { saleClockScript } from "@/lib/sale";
+import { PRICE_CLOCK_SCRIPT, PROMO_CSS } from "@/lib/price-clock";
 
 const rubik = Rubik({
   variable: "--font-rubik",
@@ -80,7 +80,9 @@ export default function RootLayout({
   return (
     <html lang="he" dir="rtl" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: saleClockScript }} />
+        {/* Built from catalog constants only, never from request data. */}
+        <script dangerouslySetInnerHTML={{ __html: PRICE_CLOCK_SCRIPT }} />
+        <style dangerouslySetInnerHTML={{ __html: PROMO_CSS }} />
       </head>
       <body className={`${rubik.variable} font-sans antialiased min-h-screen flex flex-col`}>
         <JsonLd />

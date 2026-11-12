@@ -5,8 +5,8 @@ import { Product } from '@/types';
 import { CompanionOffer } from '@/domain/product-relationships';
 import { X, Plus, Check } from 'lucide-react';
 import Image from 'next/image';
-import { priceOf, saleMoment } from '@/lib/sale';
-import { useSaleActive } from '@/components/sale/useSaleActive';
+import { priceOf } from '@/lib/sale';
+import { usePriceMoment } from '@/components/sale/usePriceMoment';
 
 interface CompanionProductModalProps {
   isOpen: boolean;
@@ -38,7 +38,7 @@ export function CompanionProductModal({
     };
   }, [isOpen, onClose]);
 
-  const moment = saleMoment(useSaleActive());
+  const moment = usePriceMoment();
 
   if (!isOpen) return null;
 
@@ -120,7 +120,7 @@ export function CompanionProductModal({
 }
 
 function ProductPreview({ product, isAdded = false }: { product: Product; isAdded?: boolean }) {
-  const moment = saleMoment(useSaleActive());
+  const moment = usePriceMoment();
   const colorBg = {
     blue: 'bg-sky-100',
     pink: 'bg-pink-100',

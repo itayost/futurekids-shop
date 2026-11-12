@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Info, ShoppingCart } from 'lucide-react';
 import AddToCartButton from '@/components/AddToCartButton';
-import { book, salePrice, shipsBy } from './content';
+import { NO_COUPONS_NOTE, book, offPromo, onPromo, promo, promoPrice, shipsBy } from './content';
 import styles from './riddles.module.css';
 
 // Homepage band introducing the new series: buy from here, or read more on /riddles.
@@ -39,12 +39,18 @@ export function RiddlesPromo() {
           </p>
           <p className="mt-5 flex flex-wrap items-center justify-center gap-3 md:justify-start">
             <span className="rounded-xl border-[3px] border-(--r-ink) bg-(--r-paper) px-3 py-1.5 font-black tabular-nums">
-              <span className="when-regular text-2xl">₪{book.price}</span>
-              <span className="when-sale">
-                <span className="text-2xl">₪{salePrice}</span>
-                <span className="sr-only">במקום</span>{' '}
-                <s className="text-base text-[#767676] decoration-(--r-red) decoration-2">₪{book.price}</s>
-              </span>
+              {promo ? (
+                <>
+                  <span className={`${offPromo} text-2xl`}>₪{book.price}</span>
+                  <span className={onPromo}>
+                    <span className="text-2xl">₪{promoPrice}</span>
+                    <span className="sr-only">במקום</span>{' '}
+                    <s className="text-base text-[#767676] decoration-(--r-red) decoration-2">₪{book.price}</s>
+                  </span>
+                </>
+              ) : (
+                <span className="text-2xl">₪{book.price}</span>
+              )}
             </span>
             {shipsBy && (
               <span className="rounded-xl border-[3px] border-(--r-ink) bg-(--r-sun) px-3 py-2 font-black">
@@ -60,6 +66,12 @@ export function RiddlesPromo() {
               {shipsBy ? 'לרכישה מוקדמת' : 'הוספה לסל'}
             </AddToCartButton>
           </p>
+          {promo && (
+            <p className={`${onPromo} mt-3 text-sm font-bold text-(--r-ink-strong)`}>
+              <span className="text-(--r-red-deep)">{promo.label}</span>
+              {promo.excludeFromCoupons && ` · ${NO_COUPONS_NOTE}`}
+            </p>
+          )}
         </div>
         <Link
           href="/riddles"

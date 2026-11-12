@@ -3,7 +3,7 @@ import { Karantina } from 'next/font/google';
 import { RiddlesHero } from '@/components/riddles/RiddlesHero';
 import { RiddlesGallery } from '@/components/riddles/RiddlesGallery';
 import { PreorderTerms, RiddleCategories, RiddlesAbout, RiddlesClose } from '@/components/riddles/RiddlesDetails';
-import { book, shipsBy } from '@/components/riddles/content';
+import { book, promo, promoPrice, shipsBy } from '@/components/riddles/content';
 import styles from '@/components/riddles/riddles.module.css';
 
 // Hand-lettered display face echoing the book's cover titles.
@@ -43,6 +43,11 @@ export const metadata: Metadata = {
   },
 };
 
+// 'YYYY-MM-DD' of the last day a window ending at `endsAt` covers, in Israel.
+function lastDayOf(endsAt: number): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jerusalem' }).format(endsAt - 1);
+}
+
 function productJsonLd() {
   return {
     '@context': 'https://schema.org',
@@ -55,7 +60,10 @@ function productJsonLd() {
       '@type': 'Offer',
       url: `${BASE_URL}/riddles`,
       priceCurrency: 'ILS',
-      price: book.price,
+      // The launch price, valid through its last day (Israel time). Rich
+      // results drop it once that day has passed.
+      price: promo ? promoPrice : book.price,
+      ...(promo && { priceValidUntil: lastDayOf(promo.endsAt) }),
       availability: shipsBy ? 'https://schema.org/PreOrder' : 'https://schema.org/InStock',
     },
   };

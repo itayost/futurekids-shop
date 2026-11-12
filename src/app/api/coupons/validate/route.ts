@@ -14,14 +14,15 @@ export async function POST(request: NextRequest) {
 
     // Prices and coupon eligibility come from the catalog; the client sends
     // only what is in the cart.
-    const lines = parseCouponCartItems(body.items, getProductById);
+    const now = new Date();
+    const lines = parseCouponCartItems(body.items, getProductById, now.getTime());
     if (!lines) {
       return NextResponse.json({ valid: false, discount: 0, code: null, message: 'הסל אינו תקין, נסו לרענן את העמוד' });
     }
 
     const rows = await sql`SELECT * FROM coupons WHERE code = ${code} LIMIT 1`;
     const coupon = rows[0] ? parseCouponRow(rows[0] as Record<string, unknown>) : null;
-    const result = validateCouponForCart(coupon, lines, new Date());
+    const result = validateCouponForCart(coupon, lines, now);
     return NextResponse.json(result);
   } catch (error) {
     console.error('Coupon validate error:', error);

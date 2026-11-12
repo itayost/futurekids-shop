@@ -137,10 +137,16 @@ export const products: Product[] = [
     slug: 'riddles',
     name: 'חידה! לכל המשפחה',
     description: 'מוכנים לגלות עד כמה המוח שלכם גמיש, חד ומלא דמיון?\n\nחידה! הוא לא עוד ספר חידות – הוא מגרש משחקים ממכר לכל המשפחה, שמחבר בין הומור שנון, איורים שובי לב וחשיבה מבריקה מחוץ לקופסה. כאן, השפה העברית, עולם הריגול ועקרונות הלוגיקה הופכים להרפתקה שפשוט אי אפשר להניח מהיד.',
-    // List price. Shopping IL takes its 15% off like the rest of the site
-    // (₪102) and it returns to this when the sale ends; see lib/sale.ts.
-    // Coupons apply as on any book (none do while the sale runs).
+    // List price. The launch promo below takes it to ₪102 until the end of
+    // November 2026 and it returns to this at midnight into 1.12, no deploy.
     price: 120,
+    promo: {
+      percent: 15,
+      startsAt: Date.parse('2026-11-12T00:00:00+02:00'),
+      endsAt: Date.parse('2026-12-01T00:00:00+02:00'),
+      label: 'מחיר השקה עד סוף החודש',
+      excludeFromCoupons: true,
+    },
     image: '/riddles/cover.jpg',
     color: 'blue',
     type: 'book',

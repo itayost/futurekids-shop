@@ -1,13 +1,17 @@
 import { riddlesBook } from '@/lib/products';
-import { SALE, salePriceOf } from '@/lib/sale';
+import { discountedPrice } from '@/lib/promo';
+import { whenNoPromo, whenPromo } from '@/lib/price-clock';
 
 // Everything the landing page states about price and timing comes from the
-// catalog entry and the sale window, so the page and the cart can never
-// disagree. The pages are prerendered with both prices; .when-sale and
-// .when-regular show the right one as the sale starts and ends.
+// catalog entry and its promo, so the page and the cart can never disagree.
+// The pages are prerendered with both prices; the promo classes show the right
+// one as the promo starts and ends (see lib/price-clock.ts).
 export const book = riddlesBook;
-export const salePrice = salePriceOf(riddlesBook.price);
-export const salePercent = SALE.percent;
+export const promo = riddlesBook.promo ?? null;
+export const promoPrice = promo ? discountedPrice(riddlesBook.price, promo.percent) : riddlesBook.price;
+export const onPromo = whenPromo(riddlesBook.id);
+export const offPromo = whenNoPromo(riddlesBook.id);
+export const NO_COUPONS_NOTE = 'לא ניתן לשלב עם קופונים';
 
 // "נובמבר 2026" -> { month: 'נובמבר', year: '2026' }. Null once the book is
 // released and its catalog entry drops `preorder`.

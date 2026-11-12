@@ -1,3 +1,5 @@
+import type { ProductPromo } from '@/lib/promo';
+
 export interface ExamplePage {
   src: string;
   source: 'book' | 'workbook';
@@ -26,6 +28,8 @@ export interface Product {
   excludeFromCoupons?: boolean;
   // Keeps its price during a sitewide sale (see lib/sale.ts).
   excludeFromSale?: boolean;
+  // A time-boxed price of its own, such as a launch price (see lib/promo.ts).
+  promo?: ProductPromo;
   // Not in stock yet; shipsBy is a Hebrew label such as 'נובמבר 2026'.
   preorder?: { shipsBy: string };
   // A dedicated page that replaces the generic /products/[slug] page.
