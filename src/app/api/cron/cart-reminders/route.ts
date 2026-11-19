@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
       reminderBudget > 0
         ? await sql`
             SELECT DISTINCT ON (LOWER(o.email))
-                   o.id, o.email, o.first_name, o.total, o.shipping_cost
+                   o.id, o.email, o.first_name, o.total, o.shipping_method, o.shipping_cost
             FROM orders o
             WHERE o.status IN ('PENDING', 'FAILED')
               AND o.reminder_sent_at IS NULL
@@ -136,7 +136,10 @@ export async function GET(request: NextRequest) {
       const quote = repriceForReminder(
         items,
         parseFloat(order.total),
-        parseFloat(order.shipping_cost) || 0,
+        {
+          method: (order.shipping_method as string | null) ?? null,
+          cost: parseFloat(order.shipping_cost) || 0,
+        },
         Date.now()
       );
       const ok = await sendEmail({
@@ -203,7 +206,13 @@ export async function GET(request: NextRequest) {
       const firstName = (cart.first_name as string) || undefined;
       // Stored totals predate the current bundle rules; re-price so the email
       // never quotes less than checkout will charge.
-      const quote = repriceForReminder(snapshot.items, recomputeSnapshotTotal(snapshot), 0, Date.now());
+      // A cart has no shipping method yet, so its quote is products only.
+      const quote = repriceForReminder(
+        snapshot.items,
+        recomputeSnapshotTotal(snapshot),
+        { method: null, cost: 0 },
+        Date.now()
+      );
       const ok = await sendEmail({
         toEmail: email,
         toName: firstName,
