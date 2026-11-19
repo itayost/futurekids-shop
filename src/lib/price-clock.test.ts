@@ -8,11 +8,12 @@ import {
   promoCss,
   type PriceWindow,
 } from './price-clock';
-import { priceOf } from './sale';
+import { priceOf } from './promo';
 import { products } from './products';
 
-const SALE_W: PriceWindow = {
-  attr: 'data-sale',
+// A second, earlier promo, so the script and boundaries are tested on more than one window.
+const EARLY_W: PriceWindow = {
+  attr: 'data-promo-early-book',
   startsAt: Date.parse('2026-11-04T00:00:00+02:00'),
   endsAt: Date.parse('2026-11-06T00:00:00+02:00'),
 };
@@ -34,11 +35,11 @@ function runAt(script: string, now: number) {
 }
 
 describe('priceClockScript', () => {
-  const script = priceClockScript([SALE_W, LAUNCH_W]);
+  const script = priceClockScript([EARLY_W, LAUNCH_W]);
 
   it('marks each window open or closed on its own', () => {
     const { attrs } = runAt(script, Date.parse('2026-11-20T12:00:00+02:00'));
-    expect(attrs.get('data-sale')).toBe(false);
+    expect(attrs.get('data-promo-early-book')).toBe(false);
     expect(attrs.get('data-promo-riddles-book-1')).toBe(true);
   });
 
@@ -58,9 +59,11 @@ describe('priceClockScript', () => {
     expect(runAt(script, Date.parse('2026-11-01T12:00:00+02:00')).timers).toHaveLength(1));
 
   it('escapes markup in attribute names', () =>
-    expect(priceClockScript([{ ...SALE_W, attr: '</script>' }])).not.toContain('</script>'));
+    expect(priceClockScript([{ ...EARLY_W, attr: '</script>' }])).not.toContain('</script>'));
 
   it('is built from the live catalog', () => expect(PRICE_CLOCK_SCRIPT).toContain('data-promo-riddles-book-1'));
+
+  it('carries no sitewide sale window', () => expect(PRICE_CLOCK_SCRIPT).not.toContain('data-sale'));
 });
 
 describe('promoCss', () => {
@@ -74,18 +77,18 @@ describe('promoCss', () => {
 });
 
 describe('priceMoment', () => {
-  const b = priceBoundaries([SALE_W, LAUNCH_W]);
+  const b = priceBoundaries([EARLY_W, LAUNCH_W]);
 
   it('sorts and de-duplicates boundaries', () =>
-    expect(priceBoundaries([LAUNCH_W, SALE_W, LAUNCH_W])).toEqual([
-      SALE_W.startsAt, SALE_W.endsAt, LAUNCH_W.startsAt, LAUNCH_W.endsAt,
+    expect(priceBoundaries([LAUNCH_W, EARLY_W, LAUNCH_W])).toEqual([
+      EARLY_W.startsAt, EARLY_W.endsAt, LAUNCH_W.startsAt, LAUNCH_W.endsAt,
     ]));
 
   it('stays put between boundaries', () =>
     expect(priceMoment(b, Date.parse('2026-11-20T12:00:00+02:00'))).toBe(LAUNCH_W.startsAt));
 
   it('lands just before the first boundary when nothing has started', () =>
-    expect(priceMoment(b, 0)).toBe(SALE_W.startsAt - 1));
+    expect(priceMoment(b, 0)).toBe(EARLY_W.startsAt - 1));
 
   it('moves on exactly at a boundary', () => expect(priceMoment(b, LAUNCH_W.endsAt)).toBe(LAUNCH_W.endsAt));
 

@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { activePromo, discountedPrice, isCouponExcluded, type ProductPromo } from './promo';
-import { priceOf } from './sale';
+import { activePromo, discountedPrice, isCouponExcluded, priceOf, type ProductPromo } from './promo';
 import { priceCart } from './cart-pricing';
 import { validateCouponForCart, parseCouponCartItems, type Coupon } from './coupons';
 import { getProductById, riddlesBook } from './products';

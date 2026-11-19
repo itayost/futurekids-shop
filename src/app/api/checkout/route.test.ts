@@ -23,8 +23,11 @@ vi.mock('@/lib/icount', () => ({
 
 import { POST } from './route';
 
-const DURING = Date.parse('2026-11-04T12:00:00+02:00');
-const AFTER = Date.parse('2026-11-06T00:00:00+02:00');
+// The riddles book launch price runs 12.11 to the end of November 2026.
+const DURING = Date.parse('2026-11-20T12:00:00+02:00');
+const AFTER = Date.parse('2026-12-01T00:00:00+02:00');
+// The days of the ended Shopping IL sale, now priced like any other day.
+const SHOPPING_IL = Date.parse('2026-11-04T12:00:00+02:00');
 
 const unit = (productId: string, quantity = 1) => ({ productId, name: 'ignored', price: 1, quantity });
 const BOOKS = ['ai-book', 'encryption-book', 'algorithms-book'].map((id) => unit(id));
@@ -52,75 +55,97 @@ beforeEach(() => {
 
 afterEach(() => vi.useRealTimers());
 
-describe('POST /api/checkout during the sale', () => {
+// Pickup ships free from ₪100 of products, so most carts below carry no shipping.
+describe('POST /api/checkout during the riddles launch price', () => {
   beforeEach(() => vi.useFakeTimers({ toFake: ['Date'], now: DURING }));
 
-  it('charges the sale price and stores it on the order', async () => {
-    const res = await checkout([unit('ai-book'), unit('ai-workbook')]);
+  it('holds the riddles book at ₪102 and stores it on the order', async () => {
+    const res = await checkout([unit('riddles-book-1')]);
     expect(res.status).toBe(200);
-    expect(orderTotal()).toBe(88 + 20);
-    expect(itemPrices()).toEqual([63, 25]);
-  });
-
-  it('sends iCount lines that add up to the order total', async () => {
-    await checkout([...BOOKS, ...WORKBOOKS]);
-    const sum = icount.items.reduce((total, line) => total + line.price * line.quantity, 0);
-    expect(orderTotal()).toBe(229);
-    expect(sum).toBe(229);
-  });
-
-  it('holds the riddles book at ₪102', async () => {
-    await checkout([unit('riddles-book-1')]);
     expect(orderTotal()).toBe(102);
+    expect(itemPrices()).toEqual([102]);
   });
 
-  it('ignores a price sent by the browser', async () => {
-    await checkout([{ productId: 'ai-book', quantity: 1, price: 1 }]);
-    expect(itemPrices()).toEqual([63]);
-  });
-
-  it('rejects a coupon without writing an order', async () => {
-    db.coupon = {
-      id: '1', code: 'CLUB10', discount_type: 'percent', discount_value: 10,
-      min_subtotal: null, max_uses: null, used_count: 0, active: true, expires_at: null,
-    };
-    const res = await checkout([unit('ai-book')], { couponCode: 'CLUB10' });
-    const body = await res.json();
-    expect(res.status).toBe(409);
-    expect(body.couponRejected).toBe(true);
-    expect(body.total).toBe(63 + 20);
-    expect(wroteOrder()).toBe(false);
-  });
-});
-
-describe('POST /api/checkout after the sale', () => {
-  beforeEach(() => vi.useFakeTimers({ toFake: ['Date'], now: AFTER }));
-
-  it('charges list price again', async () => {
+  it('charges the trilogy its list price', async () => {
     await checkout([unit('ai-book'), unit('ai-workbook')]);
     expect(orderTotal()).toBe(105);
     expect(itemPrices()).toEqual([75, 30]);
   });
 
-  it('charges the regular bundle price again', async () => {
+  it('sends iCount lines that add up to the order total', async () => {
+    await checkout([...BOOKS, ...WORKBOOKS, unit('riddles-book-1')]);
+    const sum = icount.items.reduce((total, line) => total + line.price * line.quantity, 0);
+    expect(orderTotal()).toBe(270 + 102);
+    expect(sum).toBe(270 + 102);
+  });
+
+  it('ignores a price sent by the browser', async () => {
+    await checkout([{ productId: 'riddles-book-1', quantity: 1, price: 1 }]);
+    expect(itemPrices()).toEqual([102]);
+  });
+
+  it('rejects a coupon on the launch-priced book without writing an order', async () => {
+    db.coupon = {
+      id: '1', code: 'CLUB10', discount_type: 'percent', discount_value: 10,
+      min_subtotal: null, max_uses: null, used_count: 0, active: true, expires_at: null,
+    };
+    const res = await checkout([unit('riddles-book-1')], { couponCode: 'CLUB10' });
+    const body = await res.json();
+    expect(res.status).toBe(409);
+    expect(body.couponRejected).toBe(true);
+    expect(body.total).toBe(102);
+    expect(wroteOrder()).toBe(false);
+  });
+});
+
+describe('POST /api/checkout on the days of the ended Shopping IL sale', () => {
+  beforeEach(() => vi.useFakeTimers({ toFake: ['Date'], now: SHOPPING_IL }));
+
+  it('charges list price', async () => {
+    await checkout([unit('ai-book'), unit('ai-workbook')]);
+    expect(orderTotal()).toBe(105);
+    expect(itemPrices()).toEqual([75, 30]);
+  });
+
+  it('takes a coupon', async () => {
+    db.coupon = {
+      id: '1', code: 'CLUB10', discount_type: 'percent', discount_value: 10,
+      min_subtotal: null, max_uses: null, used_count: 0, active: true, expires_at: null,
+    };
+    const res = await checkout([unit('ai-book')], { couponCode: 'CLUB10' });
+    expect(res.status).toBe(200);
+    expect(orderTotal()).toBe(75 - 8 + 20);
+  });
+});
+
+describe('POST /api/checkout after the launch price', () => {
+  beforeEach(() => vi.useFakeTimers({ toFake: ['Date'], now: AFTER }));
+
+  it('charges the riddles book its list price again', async () => {
+    await checkout([unit('riddles-book-1')]);
+    expect(orderTotal()).toBe(120);
+    expect(itemPrices()).toEqual([120]);
+  });
+
+  it('charges the regular bundle price', async () => {
     await checkout([...BOOKS, ...WORKBOOKS]);
     expect(orderTotal()).toBe(270);
   });
 
-  // A tab left open past midnight still shows ₪83. Charging ₪95 without a word
-  // is the one thing this must never do.
+  // A tab left open past midnight still shows ₪102. Charging ₪120 without a
+  // word is the one thing this must never do.
   it('stops before charging when the customer saw a different total', async () => {
-    const res = await checkout([unit('ai-book')], { expectedTotal: 83 });
+    const res = await checkout([unit('riddles-book-1')], { expectedTotal: 102 });
     const body = await res.json();
     expect(res.status).toBe(409);
-    expect(body).toEqual({ priceChanged: true, total: 95 });
+    expect(body).toEqual({ priceChanged: true, total: 120 });
     expect(wroteOrder()).toBe(false);
   });
 
   it('goes ahead once the customer has confirmed the new total', async () => {
-    const res = await checkout([unit('ai-book')], { expectedTotal: 95 });
+    const res = await checkout([unit('riddles-book-1')], { expectedTotal: 120 });
     expect(res.status).toBe(200);
-    expect(orderTotal()).toBe(95);
+    expect(orderTotal()).toBe(120);
   });
 });
 

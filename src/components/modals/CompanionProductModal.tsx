@@ -5,7 +5,7 @@ import { Product } from '@/types';
 import { CompanionOffer } from '@/domain/product-relationships';
 import { X, Plus, Check } from 'lucide-react';
 import Image from 'next/image';
-import { priceOf } from '@/lib/sale';
+import { priceOf } from '@/lib/promo';
 import { usePriceMoment } from '@/components/sale/usePriceMoment';
 
 interface CompanionProductModalProps {
