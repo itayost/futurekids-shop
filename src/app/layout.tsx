@@ -12,7 +12,6 @@ import CookieBanner from "@/components/CookieBanner";
 import ClubPopup from "@/components/ClubPopup";
 import WhatsAppFab from "@/components/WhatsAppFab";
 import AccessibilityWidget from "@/components/AccessibilityWidget";
-import { SaleBar } from "@/components/sale/SaleBar";
 import { FreeShippingBar } from "@/components/FreeShippingBar";
 import { PRICE_CLOCK_SCRIPT, PROMO_CSS } from "@/lib/price-clock";
 
@@ -91,7 +90,6 @@ export default function RootLayout({
         <GoogleAnalytics />
         <AccessibilityWidget />
         <CartProvider>
-          <SaleBar />
           <FreeShippingBar />
           <Navbar />
           <main className="flex-grow">

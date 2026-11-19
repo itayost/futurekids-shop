@@ -1,10 +1,9 @@
 import { products } from './products';
-import { SALE } from './sale';
 
-// Every dated price change on the site: the sitewide sale and each product's
-// own promo. Prerendered pages carry both prices of anything dated, and a
-// clock in <head> marks <html> with which windows are open, so CSS can show
-// the right price with no deploy at either end and no flash on load.
+// Every dated price change on the site: each product's own promo. Prerendered
+// pages carry both prices of anything dated, and a clock in <head> marks
+// <html> with which windows are open, so CSS can show the right price with no
+// deploy at either end and no flash on load.
 export interface PriceWindow {
   attr: string;
   startsAt: number;
@@ -21,12 +20,11 @@ export const whenPromo = (productId: string) => `when-promo-${productId}`;
 export const whenNoPromo = (productId: string) => `when-no-promo-${productId}`;
 
 export function priceWindows(): PriceWindow[] {
-  const promos = products.flatMap((p) =>
+  return products.flatMap((p) =>
     p.promo && SAFE_ID.test(p.id)
       ? [{ attr: promoAttr(p.id), startsAt: p.promo.startsAt, endsAt: p.promo.endsAt }]
       : []
   );
-  return [{ attr: 'data-sale', startsAt: SALE.startsAt, endsAt: SALE.endsAt }, ...promos];
 }
 
 // Runs in <head> before first paint. Display only: the server re-checks every
@@ -37,7 +35,6 @@ export function priceClockScript(windows: PriceWindow[]): string {
 }
 
 // The .when-promo-* / .when-no-promo-* rules for each product with a promo.
-// The sitewide sale's .when-sale / .when-regular live in globals.css.
 export function promoCss(productIds: string[]): string {
   return productIds
     .filter((id) => SAFE_ID.test(id))

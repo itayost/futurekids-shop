@@ -6,7 +6,7 @@ import ToastContainer from './Toast';
 import { trackAddToCart } from '@/lib/pixel';
 import { CART_STORAGE_KEY, scheduleCartSync } from '@/lib/cart-sync';
 import { priceCart } from '@/lib/cart-pricing';
-import { priceOf } from '@/lib/sale';
+import { priceOf } from '@/lib/promo';
 import { usePriceMoment } from './sale/usePriceMoment';
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
