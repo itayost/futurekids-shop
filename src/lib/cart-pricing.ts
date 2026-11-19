@@ -1,6 +1,7 @@
 import { computeBundleDiscount } from './bundle-discount';
 import { getProductById } from './products';
 import { priceOf } from './promo';
+import { isShippingMethod, shippingCostFor } from './shipping';
 
 interface CartLine {
   productId: string;
@@ -49,15 +50,21 @@ export function priceCart<T extends CartLine>(items: T[], now: number): PricedCa
 }
 
 // A reminder email quotes an order that may have been priced on the other side
-// of a promo window. Re-quote it at today's prices when they moved; otherwise
-// keep the stored total, which may legitimately include a coupon.
+// of a promo window. Re-quote it at today's prices when they moved, including
+// whether it now ships free; otherwise keep the stored total, which may
+// legitimately include a coupon. An order with no known method keeps its
+// stored shipping cost.
 export function repriceForReminder<T extends CartLine>(
   items: T[],
   total: number,
-  shippingCost: number,
+  shipping: { method: string | null; cost: number },
   now: number
 ): { items: T[]; total: number } {
   const priced = priceCart(items, now);
   const moved = priced.lines.some((line, i) => line.price !== items[i].price);
-  return moved ? { items: priced.lines, total: priced.total + shippingCost } : { items, total };
+  if (!moved) return { items, total };
+  const shippingCost = isShippingMethod(shipping.method)
+    ? shippingCostFor(shipping.method, priced.total)
+    : shipping.cost;
+  return { items: priced.lines, total: priced.total + shippingCost };
 }

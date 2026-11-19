@@ -55,27 +55,28 @@ beforeEach(() => {
 
 afterEach(() => vi.useRealTimers());
 
+// Pickup ships free from ₪100 of products, so most carts below carry no shipping.
 describe('POST /api/checkout during the riddles launch price', () => {
   beforeEach(() => vi.useFakeTimers({ toFake: ['Date'], now: DURING }));
 
   it('holds the riddles book at ₪102 and stores it on the order', async () => {
     const res = await checkout([unit('riddles-book-1')]);
     expect(res.status).toBe(200);
-    expect(orderTotal()).toBe(102 + 20);
+    expect(orderTotal()).toBe(102);
     expect(itemPrices()).toEqual([102]);
   });
 
   it('charges the trilogy its list price', async () => {
     await checkout([unit('ai-book'), unit('ai-workbook')]);
-    expect(orderTotal()).toBe(105 + 20);
+    expect(orderTotal()).toBe(105);
     expect(itemPrices()).toEqual([75, 30]);
   });
 
   it('sends iCount lines that add up to the order total', async () => {
     await checkout([...BOOKS, ...WORKBOOKS, unit('riddles-book-1')]);
     const sum = icount.items.reduce((total, line) => total + line.price * line.quantity, 0);
-    expect(orderTotal()).toBe(270 + 102 + 20);
-    expect(sum).toBe(270 + 102 + 20);
+    expect(orderTotal()).toBe(270 + 102);
+    expect(sum).toBe(270 + 102);
   });
 
   it('ignores a price sent by the browser', async () => {
@@ -92,7 +93,7 @@ describe('POST /api/checkout during the riddles launch price', () => {
     const body = await res.json();
     expect(res.status).toBe(409);
     expect(body.couponRejected).toBe(true);
-    expect(body.total).toBe(102 + 20);
+    expect(body.total).toBe(102);
     expect(wroteOrder()).toBe(false);
   });
 });
@@ -102,7 +103,7 @@ describe('POST /api/checkout on the days of the ended Shopping IL sale', () => {
 
   it('charges list price', async () => {
     await checkout([unit('ai-book'), unit('ai-workbook')]);
-    expect(orderTotal()).toBe(105 + 20);
+    expect(orderTotal()).toBe(105);
     expect(itemPrices()).toEqual([75, 30]);
   });
 
@@ -122,28 +123,83 @@ describe('POST /api/checkout after the launch price', () => {
 
   it('charges the riddles book its list price again', async () => {
     await checkout([unit('riddles-book-1')]);
-    expect(orderTotal()).toBe(120 + 20);
+    expect(orderTotal()).toBe(120);
     expect(itemPrices()).toEqual([120]);
   });
 
   it('charges the regular bundle price', async () => {
     await checkout([...BOOKS, ...WORKBOOKS]);
-    expect(orderTotal()).toBe(270 + 20);
+    expect(orderTotal()).toBe(270);
   });
 
-  // A tab left open past midnight still shows ₪122. Charging ₪140 without a
+  // A tab left open past midnight still shows ₪102. Charging ₪120 without a
   // word is the one thing this must never do.
   it('stops before charging when the customer saw a different total', async () => {
-    const res = await checkout([unit('riddles-book-1')], { expectedTotal: 122 });
+    const res = await checkout([unit('riddles-book-1')], { expectedTotal: 102 });
     const body = await res.json();
     expect(res.status).toBe(409);
-    expect(body).toEqual({ priceChanged: true, total: 140 });
+    expect(body).toEqual({ priceChanged: true, total: 120 });
     expect(wroteOrder()).toBe(false);
   });
 
   it('goes ahead once the customer has confirmed the new total', async () => {
-    const res = await checkout([unit('riddles-book-1')], { expectedTotal: 140 });
+    const res = await checkout([unit('riddles-book-1')], { expectedTotal: 120 });
     expect(res.status).toBe(200);
-    expect(orderTotal()).toBe(140);
+    expect(orderTotal()).toBe(120);
+  });
+});
+
+describe('POST /api/checkout free shipping', () => {
+  beforeEach(() => vi.useFakeTimers({ toFake: ['Date'], now: AFTER }));
+
+  const DELIVERY = { shippingMethod: 'delivery', address: undefined, street: 'Herzl', houseNumber: '1' };
+  // The shipping_cost value handed to the orders INSERT, by its place in the statement.
+  const orderShippingCost = () => db.statements.find((s) => s.text.includes('INSERT INTO orders'))?.values[11];
+  const icountSum = () => icount.items.reduce((total, line) => total + line.price * line.quantity, 0);
+
+  it('charges for a pickup point below ₪100', async () => {
+    await checkout([unit('ai-book')]);
+    expect(orderTotal()).toBe(75 + 20);
+    expect(orderShippingCost()).toBe(20);
+  });
+
+  it('ships to a pickup point free from ₪100 and records the free shipping', async () => {
+    await checkout([unit('ai-book'), unit('ai-workbook')]);
+    expect(orderTotal()).toBe(105);
+    expect(orderShippingCost()).toBe(0);
+    expect(icount.items.map((line) => line.name)).not.toContain(expect.stringContaining('נקודת איסוף'));
+    expect(icountSum()).toBe(105);
+  });
+
+  it('charges for home delivery below ₪300', async () => {
+    await checkout([unit('ai-book'), unit('ai-workbook')], DELIVERY);
+    expect(orderTotal()).toBe(105 + 40);
+    expect(icountSum()).toBe(105 + 40);
+  });
+
+  it('delivers home free from ₪300', async () => {
+    await checkout([unit('ai-book', 4)], DELIVERY);
+    expect(orderTotal()).toBe(300);
+    expect(icountSum()).toBe(300);
+  });
+
+  // The threshold is the products total before the coupon, so applying a
+  // coupon can never make the order cost more than it did without one.
+  it('keeps free shipping when a coupon takes the products under ₪100', async () => {
+    db.coupon = {
+      id: '1', code: 'CLUB10', discount_type: 'percent', discount_value: 10,
+      min_subtotal: null, max_uses: null, used_count: 0, active: true, expires_at: null,
+    };
+    const res = await checkout([unit('ai-book'), unit('ai-workbook')], { couponCode: 'CLUB10' });
+    expect(res.status).toBe(200);
+    expect(orderTotal()).toBe(105 - 11);
+    expect(icountSum()).toBe(105 - 11);
+  });
+
+  it('stops before charging when the page still showed paid shipping', async () => {
+    const res = await checkout([unit('ai-book'), unit('ai-workbook')], { expectedTotal: 125 });
+    expect(res.status).toBe(409);
+    expect(await res.json()).toEqual({ priceChanged: true, total: 105 });
+    expect(wroteOrder()).toBe(false);
   });
 });

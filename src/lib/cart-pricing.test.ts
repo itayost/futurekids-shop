@@ -87,23 +87,26 @@ describe('priceCart outside any promo', () => {
 
 describe('repriceForReminder', () => {
   const item = (productId: string, price: number, quantity = 1) => ({ productId, name: productId, quantity, price });
+  const pickup = { method: 'pickup-point', cost: 20 };
 
   // Abandoned on 30.11, reminded on 1.12: must not quote the ended launch price.
+  // Both totals clear the ₪100 free pickup threshold.
   it('re-quotes a launch-priced order at list price after the launch price', () => {
-    const result = repriceForReminder([item('riddles-book-1', 102)], 122, 20, AFTER);
+    const result = repriceForReminder([item('riddles-book-1', 102)], 102, pickup, AFTER);
     expect(result.items[0].price).toBe(120);
-    expect(result.total).toBe(140);
+    expect(result.total).toBe(120);
   });
 
   it('re-quotes a list-priced order at the launch price while it runs', () => {
-    const result = repriceForReminder([item('riddles-book-1', 120)], 140, 20, DURING);
+    const result = repriceForReminder([item('riddles-book-1', 120)], 120, pickup, DURING);
     expect(result.items[0].price).toBe(102);
-    expect(result.total).toBe(122);
+    expect(result.total).toBe(102);
   });
 
-  // An order placed during the Shopping IL sale stored ₪63; today it costs ₪75.
+  // An order placed during the Shopping IL sale stored ₪63; today it costs ₪75,
+  // still under the free pickup threshold.
   it('re-quotes an order priced during the ended Shopping IL sale', () => {
-    const result = repriceForReminder([item('ai-book', 63)], 83, 20, AFTER);
+    const result = repriceForReminder([item('ai-book', 63)], 83, pickup, AFTER);
     expect(result.items[0].price).toBe(75);
     expect(result.total).toBe(95);
   });
@@ -111,13 +114,25 @@ describe('repriceForReminder', () => {
   // A coupon order's total already reflects its discount; leave it alone when
   // nothing about the prices has moved.
   it('leaves the order total untouched when prices have not changed', () => {
-    const result = repriceForReminder([item('ai-book', 75)], 87, 20, AFTER);
+    const result = repriceForReminder([item('ai-book', 75)], 87, pickup, AFTER);
     expect(result.total).toBe(87);
   });
 
   it('keeps an item that is no longer in the catalog at its stored price', () => {
-    const result = repriceForReminder([item('delisted', 40)], 60, 20, AFTER);
+    const result = repriceForReminder([item('delisted', 40)], 60, pickup, AFTER);
     expect(result.items[0].price).toBe(40);
     expect(result.total).toBe(60);
+  });
+
+  // ₪88 paid ₪20 to a pickup point during the sale; at list price the same
+  // cart is ₪105, which ships free.
+  it('re-checks free shipping at the new prices', () => {
+    const result = repriceForReminder([item('ai-book', 63), item('ai-workbook', 25)], 108, pickup, AFTER);
+    expect(result.total).toBe(105);
+  });
+
+  it('keeps the stored shipping cost for an order with no known method', () => {
+    const result = repriceForReminder([item('ai-book', 63), item('ai-workbook', 25)], 108, { method: null, cost: 20 }, AFTER);
+    expect(result.total).toBe(125);
   });
 });

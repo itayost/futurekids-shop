@@ -10,7 +10,7 @@ import PickupPointSelector from '@/components/PickupPointSelector';
 import CouponField from '@/components/CouponField';
 import { PickupPoint } from '@/types';
 import { trackInitiateCheckout, getFbCookies } from '@/lib/pixel';
-import { SHIPPING_COSTS } from '@/lib/shipping';
+import { FREE_SHIPPING_FROM, SHIPPING_COSTS, shippingCostFor, type ShippingMethod } from '@/lib/shipping';
 import { getProductById } from '@/lib/products';
 import { preorderShippingNote } from '@/lib/preorder';
 import { usePriceMoment } from '@/components/sale/usePriceMoment';
@@ -18,11 +18,11 @@ import { isCouponExcluded } from '@/lib/promo';
 import { SalePrice } from '@/components/sale/SalePrice';
 import { SaleSavings } from '@/components/sale/SaleSavings';
 
-type ShippingOption = 'pickup-point' | 'delivery';
+type ShippingOption = ShippingMethod;
 
 const SHIPPING_OPTIONS = {
-  'pickup-point': { label: 'נקודות איסוף', price: SHIPPING_COSTS['pickup-point'], icon: MapPin },
-  delivery: { label: 'משלוח עד הבית', price: SHIPPING_COSTS.delivery, icon: Truck },
+  'pickup-point': { label: 'נקודות איסוף', icon: MapPin },
+  delivery: { label: 'משלוח עד הבית', icon: Truck },
 };
 
 export default function CheckoutPage() {
@@ -51,7 +51,8 @@ export default function CheckoutPage() {
   // cart and shipping still produce the total it answered.
   const [serverQuote, setServerQuote] = useState<{ shown: number; total: number } | null>(null);
 
-  const shippingCost = SHIPPING_OPTIONS[shippingMethod].price;
+  // Measured on the cart before the coupon, exactly as the checkout API does.
+  const shippingCost = shippingCostFor(shippingMethod, total);
   const hasCouponExcludedItem = items.some((item) => {
     const product = getProductById(item.productId);
     return product ? isCouponExcluded(product, moment) : false;
@@ -269,6 +270,7 @@ export default function CheckoutPage() {
                 {(Object.entries(SHIPPING_OPTIONS) as [ShippingOption, typeof SHIPPING_OPTIONS['pickup-point']][]).map(([key, option]) => {
                   const Icon = option.icon;
                   const isSelected = shippingMethod === key;
+                  const isFree = shippingCostFor(key, total) === 0;
                   return (
                     <button
                       key={key}
@@ -288,9 +290,22 @@ export default function CheckoutPage() {
                         </div>
                         <div>
                           <p className="font-black text-lg">{option.label}</p>
-                          <p className={`font-bold ${isSelected ? 'text-pink-500' : 'text-gray-500'}`}>
-                            ₪{option.price}
-                          </p>
+                          {isFree ? (
+                            <p className={`flex items-baseline gap-1.5 font-bold ${isSelected ? 'text-emerald-600' : 'text-gray-500'}`}>
+                              חינם
+                              <span className="sr-only">במקום</span>
+                              <s className="text-sm font-bold text-[#767676] decoration-2">₪{SHIPPING_COSTS[key]}</s>
+                            </p>
+                          ) : (
+                            <>
+                              <p className={`font-bold ${isSelected ? 'text-pink-500' : 'text-gray-500'}`}>
+                                ₪{SHIPPING_COSTS[key]}
+                              </p>
+                              <p className="text-xs font-bold text-[#767676]">
+                                חינם ברכישה מעל ₪{FREE_SHIPPING_FROM[key]}
+                              </p>
+                            </>
+                          )}
                         </div>
                       </div>
                     </button>
@@ -508,12 +523,12 @@ export default function CheckoutPage() {
                 )}
 
                 {/* Shipping */}
-                <div className="flex justify-between items-center text-gray-600">
+                <div className={`flex justify-between items-center ${shippingCost === 0 ? 'text-emerald-600' : 'text-gray-600'}`}>
                   <span className="flex items-center gap-1">
                     {shippingMethod === 'delivery' ? <Truck size={16} /> : <MapPin size={16} />}
                     {SHIPPING_OPTIONS[shippingMethod].label}:
                   </span>
-                  <span className="font-bold">₪{shippingCost}</span>
+                  <span className="font-bold">{shippingCost === 0 ? 'חינם' : `₪${shippingCost}`}</span>
                 </div>
 
                 {/* Total */}
