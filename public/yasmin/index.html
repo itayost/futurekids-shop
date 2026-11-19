@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>גן יסמין - אפליקציית למידה</title>
+    
+    <!-- React & Babel CDNs -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        @keyframes fade-in-up {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fade-in-up 0.5s ease-out forwards;
+        }
+        .animate-spin-slow {
+            animation: spin 10s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fef3c7; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #fbbf24; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f59e0b; 
+        }
+    </style>
+</head>
+<body class="bg-amber-50 font-sans text-gray-800 m-0 p-0 overflow-hidden">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- Icons (Inline SVGs to avoid external dependencies) ---
+        const PlayIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>;
+        const Volume2Icon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>;
+        const MenuIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg>;
+        const XIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>;
+
+        // --- Data ---
+        const MENU_DATA = [
+          {
+            category: "עברית",
+            icon: "📖",
+            color: "bg-pink-100 text-pink-700",
+            hover: "hover:bg-pink-200",
+            theme: "pink",
+            items: [
+              { id: "heb-letters", title: "אותיות", icon: "🔠", content: "בואו נלמד את אותיות הא'-ב' ביחד!" },
+              { id: "heb-combinations", title: "צירופי מילים", icon: "➕", content: "לפעמים חיבור של שני דברים שונים יוצר משהו חדש לגמרי. מה יוצא מחיבור התמונות הבאות?" },
+              { id: "heb-rhymes", title: "חרוזים", icon: "🎵", content: "חתול ו... שבלול! ילד ו... פלד! איזה כיף למצוא מילים שמתחרזות." },
+              { id: "heb-sounds", title: "צליל פותח", icon: "🔊", content: "באיזה צליל מתחילה המילה 'כלב'?" },
+              { id: "heb-opposites", title: "הפכים", icon: "↔️", content: "מה ההפך מ'גדול'? 'קטן'! בואו נלמד הפכים." }
+            ]
+          },
+          {
+            category: "ערבית",
+            icon: "💬",
+            color: "bg-emerald-100 text-emerald-700",
+            hover: "hover:bg-emerald-200",
+            theme: "emerald",
+            items: [
+              { id: "ar-colors", title: "צבעים", icon: "🎨", content: "בואו נכיר את כל הצבעים היפים בשפה הערבית." },
+              { id: "ar-animals", title: "חיות", icon: "🐪", content: "איך אומרים חתול בערבית? בואו נלמד את שמות החיות." },
+              { id: "ar-body", title: "איברי גוף", icon: "👁️", content: "ראש, כתף, ברך... בואו נלמד את איברי הגוף בערבית." },
+              { id: "ar-family", title: "בני משפחה", icon: "👨‍👩‍👧‍👦", content: "אבא, אמא, אח ואחות... בואו נכיר את בני המשפחה בערבית." },
+              { id: "ar-rosh-hashana", title: "ראש השנה", icon: "🍯", content: "תפוח בדבש, רימון ושופר – מילים לחג בערבית." },
+              { id: "ar-days", title: "ימות השבוע", icon: "📅", content: "יום ראשון, יום שני... בואו נספור את ימי השבוע בערבית." },
+              { id: "ar-numbers", title: "מספרים", icon: "🔢", content: "וַאחִד, אִתְנֵין... בואו נספור עד 10 בערבית." }
+            ]
+          },
+          {
+            category: "אנגלית",
+            icon: "🌍",
+            color: "bg-blue-100 text-blue-700",
+            hover: "hover:bg-blue-200",
+            theme: "blue",
+            items: [
+              { id: "en-colors", title: "צבעים (Colors)", icon: "🎨", content: "Red, Blue, Yellow! בואו נלמד את הצבעים באנגלית." },
+              { id: "en-animals", title: "חיות (Animals)", icon: "🦁", content: "נכיר חיות חמודות ונלמד את שמותיהן באנגלית." },
+              { id: "en-numbers", title: "מספרים (Numbers)", icon: "🔢", content: "One, Two, Three! בואו נספור יחד באנגלית." }
+            ]
+          },
+          {
+            category: "חשבון",
+            icon: "🧮",
+            color: "bg-purple-100 text-purple-700",
+            hover: "hover:bg-purple-200",
+            theme: "purple",
+            items: [
+              { id: "math-30", title: "מספרים עד 100", icon: "💯", content: "מאחד ועד מאה! נלמד לזהות את כל המספרים." },
+              { id: "math-count", title: "מנייה", icon: "🔢", content: "כמה פריטים יש כאן? בואו נספור ביחד!" },
+              { id: "math-compare", title: "השוואה", icon: "⚖️", content: "איפה יש יותר? נשווה בין שתי קבוצות." }
+            ]
+          }
+        ];
+
+        // סוכון בסוף כל מילה בערבית מונע ממנוע הדיבור להוסיף סיומת ספרותית "-און" ומשאיר הגייה טבעית ומדוברת
+        const ARABIC_COLORS = [
+          { id: 'red', bg: '#EF4444', text: 'אחמר', speak: 'أَحْمَرْ', textColor: 'white' },
+          { id: 'blue', bg: '#3B82F6', text: 'אזרק', speak: 'أَزْرَقْ', textColor: 'white' },
+          { id: 'green', bg: '#22C55E', text: 'אח\'דר', speak: 'أَخْضَرْ', textColor: 'white' },
+          { id: 'yellow', bg: '#FACC15', text: 'אספר', speak: 'أَصْفَرْ', textColor: 'black' },
+          { id: 'purple', bg: '#A855F7', text: 'בנפסג\'י', speak: 'بَنَفْسَجِيْ', textColor: 'white' },
+          { id: 'brown', bg: '#8B4513', text: 'בוני', speak: 'بُنِّيْ', textColor: 'white' },
+          { id: 'burgundy', bg: '#800020', text: 'חַ\'מְרִי', speak: 'خَمْرِيْ', textColor: 'white' },
+          { id: 'lightblue', bg: '#06B6D4', text: 'אַזְרַק פָאתִח', speak: 'أَزْرَقْ فَاتِحْ', textColor: 'black' },
+          { id: 'black', bg: '#000000', text: 'אסווד', speak: 'أَسْوَدْ', textColor: 'white' },
+          { id: 'white', bg: '#FFFFFF', text: 'אבייד', speak: 'أَبْيَضْ', textColor: 'black', border: true },
+          { id: 'orange', bg: '#F97316', text: 'בורתוקאלי', speak: 'بُرْتُقَالِيْ', textColor: 'white' },
+          { id: 'pink', bg: '#EC4899', text: 'ורדי', speak: 'وَرْدِيْ', textColor: 'white' }
+        ];
+
+        const ENGLISH_COLORS = [
+          { id: 'red', bg: '#EF4444', text: 'Red', speak: 'Red', textColor: 'white' },
+          { id: 'blue', bg: '#2563EB', text: 'Blue', speak: 'Blue', textColor: 'white' },
+          { id: 'green', bg: '#22C55E', text: 'Green', speak: 'Green', textColor: 'white' },
+          { id: 'yellow', bg: '#FACC15', text: 'Yellow', speak: 'Yellow', textColor: 'black' },
+          { id: 'orange', bg: '#F97316', text: 'Orange', speak: 'Orange', textColor: 'white' },
+          { id: 'purple', bg: '#9333EA', text: 'Purple', speak: 'Purple', textColor: 'white' },
+          { id: 'pink', bg: '#EC4899', text: 'Pink', speak: 'Pink', textColor: 'white' },
+          { id: 'turquoise', bg: '#2DD4BF', text: 'Turquoise', speak: 'Turquoise', textColor: 'black' },
+          { id: 'black', bg: '#000000', text: 'Black', speak: 'Black', textColor: 'white' },
+          { id: 'white', bg: '#FFFFFF', text: 'White', speak: 'White', textColor: 'black', border: true },
+          { id: 'brown', bg: '#8B4513', text: 'Brown', speak: 'Brown', textColor: 'white' },
+          { id: 'gray', bg: '#9CA3AF', text: 'Gray', speak: 'Gray', textColor: 'black' },
+          { id: 'gold', bg: 'linear-gradient(135deg, #FFD700 0%, #FFF2A8 20%, #D4AF37 50%, #FFF2A8 80%, #FFD700 100%)', text: 'Gold', speak: 'Gold', textColor: 'black' },
+          { id: 'silver', bg: 'linear-gradient(135deg, #E0E0E0 0%, #FFFFFF 20%, #BDBDBD 50%, #FFFFFF 80%, #E0E0E0 100%)', text: 'Silver', speak: 'Silver', textColor: 'black' },
+          { id: 'darkred', bg: '#7F1D1D', text: 'Dark Red', speak: 'Dark Red', textColor: 'white' },
+          { id: 'lightred', bg: '#FCA5A5', text: 'Light Red', speak: 'Light Red', textColor: 'black' },
+          { id: 'darkblue', bg: '#1E3A8A', text: 'Dark Blue', speak: 'Dark Blue', textColor: 'white' },
+          { id: 'lightblue', bg: '#7DD3FC', text: 'Light Blue', speak: 'Light Blue', textColor: 'black' },
+          { id: 'darkgreen', bg: '#14532D', text: 'Dark Green', speak: 'Dark Green', textColor: 'white' },
+          { id: 'lightgreen', bg: '#86EFAC', text: 'Light Green', speak: 'Light Green', textColor: 'black' },
+          { id: 'darkpurple', bg: '#581C87', text: 'Dark Purple', speak: 'Dark Purple', textColor: 'white' },
+          { id: 'lightpurple', bg: '#D8B4FE', text: 'Light Purple', speak: 'Light Purple', textColor: 'black' },
+          { id: 'colorful', bg: 'linear-gradient(45deg, #EF4444, #F97316, #FACC15, #22C55E, #3B82F6, #A855F7)', text: 'Colorful', speak: 'Colorful', textColor: 'white' }
+        ];
+
+        const ARABIC_ANIMALS = [
+          { id: 'cat', emoji: '🐱', text: 'בִּסּ', speak: 'بِسّْ' },
+          { id: 'dog', emoji: '🐶', text: 'כַּלְבּ', speak: 'كَلْبْ' },
+          { id: 'mouse', emoji: '🐭', text: 'פָאר', speak: 'فَارْ' },
+          { id: 'elephant', emoji: '🐘', text: 'פִיל', speak: 'فِيلْ' },
+          { id: 'giraffe', emoji: '🦒', text: 'זַרָאפַה', speak: 'زَرَافَةْ' },
+          { id: 'lion', emoji: '🦁', text: 'אַסַד', speak: 'أَسَدْ' },
+          { id: 'penguin', emoji: '🐧', text: 'בִּטְרִיק', speak: 'بِطْرِيقْ' },
+          { id: 'rabbit', emoji: '🐰', text: 'אַרְנַב', speak: 'أَرْنَبْ' },
+          { id: 'tiger', emoji: '🐯', text: 'נִמְר', speak: 'نِمْرْ' },
+          { id: 'bear', emoji: '🐻', text: 'דֻבּ', speak: 'دُبّْ' },
+          { id: 'butterfly', emoji: '🦋', text: 'פַרָאשַׁה', speak: 'فَرَاشَةْ' },
+          { id: 'fish', emoji: '🐟', text: 'סַמַכַּה', speak: 'سَمَكَةْ' },
+          { id: 'bird', emoji: '🐦', text: 'עַצְפוּר', speak: 'عَصْفُورْ' }
+        ];
+
+        const ARABIC_BODY_PARTS = [
+          { id: 'head', emoji: '🗣️', text: 'רָאס', speak: 'رَاسْ', hint: 'ראש' },
+          { id: 'eye', emoji: '👁️', text: 'עַיְן', speak: 'عَيْنْ', hint: 'עין' },
+          { id: 'knee', emoji: '🦵', text: 'רֻכְּבַּה', speak: 'رُكْبَةْ', hint: 'ברך' },
+          { id: 'leg', emoji: '🦶', text: 'רִגְ\'ל', speak: 'رِجْلْ', hint: 'רגל' },
+          { id: 'nose', emoji: '👃', text: 'אַנְף', speak: 'أَنْفْ', hint: 'אף' },
+          { id: 'mouth', emoji: '👄', text: 'פַם', speak: 'فَمْ', hint: 'פה' },
+          { id: 'ear', emoji: '👂', text: 'אֻדֻ\'ן', speak: 'أُذُنْ', hint: 'אוזן' },
+          { id: 'shoulder', emoji: '🤷', text: 'כַּתִף', speak: 'كَتِفْ', hint: 'כתף' }
+        ];
+
+        const ARABIC_FAMILY = [
+          { id: 'father', emoji: '👨', text: 'אַבּ', speak: 'أَبْ', hint: 'אבא' },
+          { id: 'mother', emoji: '👩', text: 'אֻם', speak: 'أُمّْ', hint: 'אמא' },
+          { id: 'brother', emoji: '👦', text: 'אַח\'', speak: 'أَخْ', hint: 'אח', conflictGroup: 'brother' },
+          { id: 'sister', emoji: '👧', text: 'אֻחְ\'ת', speak: 'أُخْتْ', hint: 'אחות', conflictGroup: 'sister' },
+          { id: 'big-brother', emoji: '🧑', text: 'אַח\' כַּבִּיר', speak: 'أَخْ كَبِيرْ', hint: 'אח גדול', conflictGroup: 'brother' },
+          { id: 'little-brother', emoji: '👶', text: 'אַח\' צַעִ\'יר', speak: 'أَخْ صَغِيرْ', hint: 'אח קטן', conflictGroup: 'brother' },
+          { id: 'big-sister', emoji: '👱‍♀️', text: 'אֻחְ\'ת כַּבִּירַה', speak: 'أُخْتْ كَبِيرَةْ', hint: 'אחות גדולה', conflictGroup: 'sister' },
+          { id: 'little-sister', emoji: '👧🎀', text: 'אֻחְ\'ת צַעִ\'ירַה', speak: 'أُخْتْ صَغِيرَةْ', hint: 'אחות קטנה', conflictGroup: 'sister' },
+          { id: 'grandfather', emoji: '👴', text: 'גַ\'דּ', speak: 'جَدّْ', hint: 'סבא' },
+          { id: 'grandmother', emoji: '👵', text: 'גַ\'דַּה', speak: 'جَدَّةْ', hint: 'סבתא' }
+        ];
+
+        // Custom crisp inline SVGs for Rosh Hashanah items without standard emojis
+        const PomegranateSVG = () => (
+          <svg viewBox="0 0 64 64" className="w-12 h-12 md:w-14 md:h-14">
+            <path d="M24 14 L20 6 L28 10 L32 4 L36 10 L44 6 L40 14 Z" fill="#DC2626" />
+            <circle cx="32" cy="36" r="22" fill="#EF4444" />
+            <circle cx="24" cy="28" r="5" fill="#FCA5A5" opacity="0.5" />
+          </svg>
+        );
+
+        const FishHeadSVG = () => (
+          <svg viewBox="0 0 64 64" className="w-12 h-12 md:w-14 md:h-14">
+            <ellipse cx="32" cy="48" rx="26" ry="8" fill="#E2E8F0" stroke="#94A3B8" strokeWidth="2" />
+            <path d="M14 44 C14 22, 38 18, 48 32 L44 44 Z" fill="#60A5FA" stroke="#2563EB" strokeWidth="2" />
+            <circle cx="26" cy="32" r="3.5" fill="white" />
+            <circle cx="25" cy="32" r="1.8" fill="#1E293B" />
+            <path d="M16 38 Q22 40 25 37" stroke="#1E3A8A" strokeWidth="2" fill="none" strokeLinecap="round" />
+          </svg>
+        );
+
+        const DatesSVG = () => (
+          <svg viewBox="0 0 64 64" className="w-12 h-12 md:w-14 md:h-14">
+            <ellipse cx="24" cy="36" rx="10" ry="16" transform="rotate(-15 24 36)" fill="#78350F" />
+            <ellipse cx="40" cy="38" rx="10" ry="16" transform="rotate(15 40 38)" fill="#92400E" />
+            <ellipse cx="32" cy="28" rx="9" ry="15" fill="#B45309" />
+          </svg>
+        );
+
+        const ShofarSVG = () => (
+          <svg viewBox="0 0 64 64" className="w-12 h-12 md:w-14 md:h-14">
+            <path d="M10 46 C22 52, 42 46, 48 28 C51 20, 54 14, 58 14 L52 10 C44 12, 42 22, 36 30 C28 40, 18 42, 12 38 Z" fill="#F59E0B" stroke="#B45309" strokeWidth="2.5" strokeLinejoin="round" />
+          </svg>
+        );
+
+        const ARABIC_ROSH_HASHANA = [
+          { id: 'honey', emoji: '🍯', text: 'עַסַל', speak: 'عَسَلْ', hint: 'דבש' },
+          { id: 'pomegranate', svg: <PomegranateSVG />, text: 'רֻמָּאן', speak: 'رُمَّانْ', hint: 'רימון' },
+          { id: 'apple', emoji: '🍎', text: 'תֻפָּאחַה', speak: 'تُفَّاحَةْ', hint: 'תפוח' },
+          { id: 'fish-head', svg: <FishHeadSVG />, text: 'רָאס סַמַכַּה', speak: 'رَاسْ سَمَكَةْ', hint: 'ראש של דג' },
+          { id: 'dates', svg: <DatesSVG />, text: 'תַמְר', speak: 'تَمْرْ', hint: 'תמר' },
+          { id: 'shofar', svg: <ShofarSVG />, text: 'בּוּק', speak: 'بُوقْ', hint: 'שופר' }
+        ];
+
+        const ARABIC_DAYS = [
+          { id: 'ar-day-1', display: '1', spoken: 'الأَحَدْ', sub: 'אַל-אַחַד' },
+          { id: 'ar-day-2', display: '2', spoken: 'الإِثْنَيْنْ', sub: 'אַל-אִתְנַיְן' },
+          { id: 'ar-day-3', display: '3', spoken: 'الثُّلَاثَاءْ', sub: 'אַתֻּ\'לַאתַ\'אא' },
+          { id: 'ar-day-4', display: '4', spoken: 'الأَرْبِعَاءْ', sub: 'אַל-אַרְבִּעַאא' },
+          { id: 'ar-day-5', display: '5', spoken: 'الخَمِيسْ', sub: 'אַל-חַ\'מִיס' },
+          { id: 'ar-day-6', display: '6', spoken: 'الجُمْعَةْ', sub: 'אַל-גֻ\'מְעַה' },
+          { id: 'ar-day-7', display: '7', spoken: 'السَّبْتْ', sub: 'אַסַּבְּת' }
+        ];
+
+        const ARABIC_NUMBERS = [
+          { id: 'ar-num-1', display: '1', spoken: 'وَاحِدْ', sub: 'וַאחִד' },
+          { id: 'ar-num-2', display: '2', spoken: 'إِثْنَيْنْ', sub: 'אִתְנֵין' },
+          { id: 'ar-num-3', display: '3', spoken: 'ثَلَاثَةْ', sub: 'תַ\'לָאתַ\'ה' },
+          { id: 'ar-num-4', display: '4', spoken: 'أَرْبَعَةْ', sub: 'אַרְבַּעַה' },
+          { id: 'ar-num-5', display: '5', spoken: 'خَمْسَةْ', sub: 'חַ\'מְסַה' },
+          { id: 'ar-num-6', display: '6', spoken: 'سِتَّةْ', sub: 'סִתַּה' },
+          { id: 'ar-num-7', display: '7', spoken: 'سَبْعَةْ', sub: 'סַבְּעַה' },
+          { id: 'ar-num-8', display: '8', spoken: 'ثَمَانِيَةْ', sub: 'תַ\'מָאנִיַה' },
+          { id: 'ar-num-9', display: '9', spoken: 'تِسْعَةْ', sub: 'תִּסְעַה' },
+          { id: 'ar-num-10', display: '10', spoken: 'عَشَرَةْ', sub: 'עַשַׁרַה' }
+        ];
+
+        const ENGLISH_ANIMALS = [
+          { id: 'octopus', emoji: '🐙', text: 'Octopus', speak: 'Octopus' },
+          { id: 'fish', emoji: '🐟', text: 'Fish', speak: 'Fish' },
+          { id: 'giraffe', emoji: '🦒', text: 'Giraffe', speak: 'Giraffe' },
+          { id: 'lion', emoji: '🦁', text: 'Lion', speak: 'Lion' },
+          { id: 'monkey', emoji: '🐵', text: 'Monkey', speak: 'Monkey' },
+          { id: 'dog', emoji: '🐶', text: 'Dog', speak: 'Dog' },
+          { id: 'cat', emoji: '🐱', text: 'Cat', speak: 'Cat' },
+          { id: 'sheep', emoji: '🐑', text: 'Sheep', speak: 'Sheep' },
+          { id: 'fox', emoji: '🦊', text: 'Fox', speak: 'Fox' },
+          { id: 'horse', emoji: '🐴', text: 'Horse', speak: 'Horse' },
+          { id: 'cow', emoji: '🐮', text: 'Cow', speak: 'Cow' },
+          { id: 'bear', emoji: '🐻', text: 'Bear', speak: 'Bear' },
+          { id: 'bird', emoji: '🐦', text: 'Bird', speak: 'Bird' },
+          { id: 'mouse', emoji: '🐭', text: 'Mouse', speak: 'Mouse' },
+          { id: 'elephant', emoji: '🐘', text: 'Elephant', speak: 'Elephant' },
+          { id: 'jellyfish', emoji: '🪼', text: 'Jellyfish', speak: 'Jellyfish' },
+          { id: 'duck', emoji: '🦆', text: 'Duck', speak: 'Duck' },
+          { id: 'chicken', emoji: '🐔', text: 'Chicken', speak: 'Chicken' },
+          { id: 'pig', emoji: '🐷', text: 'Pig', speak: 'Pig' }
+        ];
+
+        const HEBREW_LETTERS = [
+          { id: 'aleph', display: 'א', spoken: 'א' },
+          { id: 'bet', display: 'ב', spoken: 'ב' },
+          { id: 'gimel', display: 'ג', spoken: 'ג' },
+          { id: 'dalet', display: 'ד', spoken: 'ד' },
+          { id: 'hey', display: 'ה', spoken: 'ה' },
+          { id: 'vav', display: 'ו', spoken: 'ו' },
+          { id: 'zayin', display: 'ז', spoken: 'ז' },
+          { id: 'chet', display: 'ח', spoken: 'ח' },
+          { id: 'tet', display: 'ט', spoken: 'ט' },
+          { id: 'yod', display: 'י', spoken: 'י' },
+          { id: 'kaf', display: 'כ', spoken: 'כ' },
+          { id: 'kaf-sofit', display: 'ך', spoken: 'כף סופית' },
+          { id: 'lamed', display: 'ל', spoken: 'ל' },
+          { id: 'mem', display: 'מ', spoken: 'מ' },
+          { id: 'mem-sofit', display: 'ם', spoken: 'מם סופית' },
+          { id: 'nun', display: 'נ', spoken: 'נ' },
+          { id: 'nun-sofit', display: 'ן', spoken: 'נון סופית' },
+          { id: 'samech', display: 'ס', spoken: 'ס' },
+          { id: 'ayin', display: 'ע', spoken: 'ע' },
+          { id: 'pey', display: 'פ', spoken: 'פ' },
+          { id: 'pey-sofit', display: 'ף', spoken: 'פֵּא סוֹפִית' },
+          { id: 'tzadi', display: 'צ', spoken: 'צ' },
+          { id: 'tzadi-sofit', display: 'ץ', spoken: 'צדי סופית' },
+          { id: 'kof', display: 'ק', spoken: 'ק' },
+          { id: 'resh', display: 'ר', spoken: 'ר' },
+          { id: 'shin', display: 'ש', spoken: 'ש' },
+          { id: 'tav', display: 'ת', spoken: 'ת' }
+        ];
+
+        const ENGLISH_NUMBERS = Array.from({ length: 15 }, (_, i) => {
+          const num = i + 1;
+          const words = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen'];
+          return { id: `en-num-${num}`, display: num.toString(), spoken: words[i], sub: words[i] };
+        });
+
+        const buildHebrewNumbersTo100 = () => {
+          const units = ['אחת', 'שתיים', 'שלוש', 'ארבע', 'חמש', 'שש', 'שבע', 'שמונה', 'תשע'];
+          const teens = ['עשר', 'אחת עשרה', 'שתים עשרה', 'שלוש עשרה', 'ארבע עשרה', 'חמש עשרה', 'שש עשרה', 'שבע עשרה', 'שמונה עשרה', 'תשע עשרה'];
+          const tens = ['עשרים', 'שלושים', 'ארבעים', 'חמישים', 'שישים', 'שבעים', 'שמונים', 'תשעים'];
+          const conjUnits = ['ואחת', 'ושתיים', 'ושלוש', 'וארבע', 'וחמש', 'ושש', 'ושבע', 'ושמונה', 'ותשע'];
+
+          const words = [...units, ...teens];
+          tens.forEach((tenWord) => {
+            words.push(tenWord);
+            conjUnits.forEach((u) => words.push(`${tenWord} ${u}`));
+          });
+          words.push('מאה');
+          return words;
+        };
+
+        const HEBREW_NUMBER_WORDS = buildHebrewNumbersTo100();
+
+        const MATH_NUMBERS = Array.from({ length: 100 }, (_, i) => {
+          const num = i + 1;
+          return { id: `math-num-${num}`, display: num.toString(), spoken: HEBREW_NUMBER_WORDS[i] };
+        });
+
+        const WORD_COMBINATIONS = [
+          { id: 1, w1: 'כדור', e1: '⚽', w2: 'שוקולד', e2: '🍫', result: 'כדור שוקולד', resultEmoji: '🧆' },
+          { id: 2, w1: 'בית', e1: '🏠', w2: 'קפה', e2: '☕', result: 'בית קפה', resultEmoji: '🏪' },
+          { id: 3, w1: 'ארגז', e1: '📦', w2: 'חול', w2Speak: 'חוֹל', e2: '🏜️', result: 'ארגז חול', resultSpeak: 'ארגז חוֹל', resultEmoji: '🏖️' },
+          { id: 4, w1: 'משקפיים', e1: '👓', w2: 'שמש', e2: '☀️', result: 'משקפי שמש', resultEmoji: '🕶️' },
+          { id: 6, w1: 'כוכב', e1: '⭐', w2: 'ים', w2Speak: 'יָם', e2: '🌊', result: 'כוכב ים', resultEmoji: '🌟' },
+          { id: 7, w1: 'מנורה', e1: '💡', w2: 'לילה', e2: '🌙', result: 'מנורת לילה', resultEmoji: '🏮' },
+          { id: 8, w1: 'בית', e1: '🏠', w2: 'בובות', e2: '🪆', result: 'בית בובות', resultEmoji: '🎪' },
+          { id: 10, w1: 'מברשת', e1: '🖌️', w2: 'שיניים', e2: '🦷', result: 'מברשת שיניים', resultEmoji: '🪥' },
+          { id: 11, w1: 'שעון', e1: '⌚', w2: 'חול', w2Speak: 'חוֹל', e2: '🏜️', result: 'שעון חול', resultSpeak: 'שעון חוֹל', resultEmoji: '⏳' },
+          { id: 12, w1: 'כדור', e1: '⚽', w2: 'סל', w2Speak: 'סַל', e2: '🧺', result: 'כדורסל', resultEmoji: '🏀' },
+          { id: 13, w1: 'רכבת', e1: '🚂', w2: 'הרים', w2Speak: 'הָרִים', e2: '⛰️', result: 'רכבת הרים', resultEmoji: '🎢' },
+          { id: 14, w1: 'בית', e1: '🏠', w2: 'עץ', e2: '🌳', result: 'בית עץ', resultEmoji: '🛖' },
+          { id: 15, w1: 'כלב', e1: '🐶', w2: 'ים', w2Speak: 'יָם', e2: '🌊', result: 'כלב ים', resultEmoji: '🦭' },
+          { id: 16, w1: 'איש', e1: '👨', w2: 'שלג', e2: '❄️', result: 'איש שלג', resultEmoji: '⛄' },
+          { id: 18, w1: 'בריכה', e1: '🏊‍♂️', w2: 'כדורים', e2: '🔴', result: 'בריכת כדורים', resultEmoji: '🎪' },
+          { id: 19, w1: 'ארמון', e1: '🏰', w2: 'חול', w2Speak: 'חוֹל', e2: '🏜️', result: 'ארמון חול', resultSpeak: 'ארמון חוֹל', resultEmoji: '🏖️' },
+          { id: 20, w1: 'בת', w1Speak: 'בַּת', e1: '👧', w2: 'ים', w2Speak: 'יָם', e2: '🌊', result: 'בת ים', resultEmoji: '🧜‍♀️' },
+          { id: 21, w1: 'צבעים', e1: '🎨', w2: 'מים', e2: '💧', result: 'צבעי מים', resultEmoji: '🖌️' },
+          { id: 23, w1: 'דג', w1Speak: 'דָּג', e1: '🐟', w2: 'חרב', w2Speak: 'חֶרֶב', e2: '🗡️', result: 'דג חרב', resultEmoji: '🦈' },
+          { id: 24, w1: 'ברווז', e1: '🦆', w2: 'אמבטיה', e2: '🛁', result: 'ברווז אמבטיה', resultEmoji: '🐥' },
+          { id: 25, w1: 'ביצה', e1: '🥚', w2: 'עין', w2Speak: 'עַיִן', e2: '👁️', result: 'ביצת עין', resultEmoji: '🍳' },
+          { id: 27, w1: 'צמר', e1: '🧶', w2: 'גפן', w2Speak: 'גֶּפֶן', e2: '🍇', result: 'צמר גפן', resultEmoji: '☁️' },
+          { id: 29, w1: 'בגד', w1Speak: 'בֶּגֶד', e1: '👕', w2: 'ים', w2Speak: 'יָם', e2: '🌊', result: 'בגד ים', resultEmoji: '🩱' },
+          { id: 30, w1: 'צבעים', e1: '🎨', w2: 'עיפרון', e2: '✏️', result: 'צבעי עיפרון', resultEmoji: '🖍️' },
+          { id: 31, w1: 'סולם', e1: '🪜', w2: 'חבלים', e2: '🪢', result: 'סולם חבלים', resultEmoji: '🧗' },
+          { id: 32, w1: 'בית', e1: '🏠', w2: 'ספר', w2Speak: 'סֵפֶר', e2: '📖', result: 'בית ספר', resultEmoji: '🏫' }
+        ];
+
+        const OPPOSITES_DATA = [
+          { id: 1, w1: 'גדול', w1Speak: 'גָּדוֹל', w2: 'קטן', w2Speak: 'קָטָן' },
+          { id: 2, w1: 'ארוך', w1Speak: 'אָרוֹךְ', w2: 'קצר', w2Speak: 'קָצָר' },
+          { id: 3, w1: 'מלא', w1Speak: 'מָלֵא', w2: 'ריק', w2Speak: 'רֵיק' },
+          { id: 4, w1: 'חם', w1Speak: 'חַם', w2: 'קר', w2Speak: 'קַר' },
+          { id: 5, w1: 'מהיר', w1Speak: 'מָהִיר', w2: 'איטי', w2Speak: 'אִיטִי' },
+          { id: 6, w1: 'כבד', w1Speak: 'כָּבֵד', w2: 'קל', w2Speak: 'קַל' },
+          { id: 7, w1: 'פתוח', w1Speak: 'פָּתוּחַ', w2: 'סגור', w2Speak: 'סָגוּר' },
+          { id: 8, w1: 'גבוה', w1Speak: 'גָּבוֹהַּ', w2: 'נמוך', w2Speak: 'נָמוּךְ' },
+          { id: 9, w1: 'ראשון', w1Speak: 'רִאשׁוֹן', w2: 'אחרון', w2Speak: 'אַחֲרוֹן' },
+          { id: 10, w1: 'יום', w1Speak: 'יוֹם', w2: 'לילה', w2Speak: 'לַיְלָה' },
+          { id: 11, w1: 'הרבה', w1Speak: 'הַרְבֵּה', w2: 'מעט', w2Speak: 'מְעַט' },
+          { id: 12, w1: 'רטוב', w1Speak: 'רָטוֹב', w2: 'יבש', w2Speak: 'יָבֵשׁ' },
+          { id: 13, w1: 'למעלה', w1Speak: 'לְמַעְלָה', w2: 'למטה', w2Speak: 'לְמַטָּה' },
+          { id: 14, w1: 'מלוכלך', w1Speak: 'מְלוּכְלָךְ', w2: 'נקי', w2Speak: 'נָקִי' },
+          { id: 15, w1: 'שטוח', w1Speak: 'שָׁטוּחַ', w2: 'נפוח', w2Speak: 'נָפוּחַ' },
+          { id: 16, w1: 'ימין', w1Speak: 'יָמִין', w2: 'שמאל', w2Speak: 'שְׂמֹאל' },
+          { id: 17, w1: 'שמח', w1Speak: 'שָׂמֵחַ', w2: 'עצוב', w2Speak: 'עָצוּב' },
+          { id: 18, w1: 'חזק', w1Speak: 'חָזָק', w2: 'חלש', w2Speak: 'חַלָּשׁ' },
+          { id: 19, w1: 'קשה', w1Speak: 'קָשֶׁה', w2: 'רך', w2Speak: 'רַךְ' },
+          { id: 20, w1: 'רחב', w1Speak: 'רָחָב', w2: 'צר', w2Speak: 'צַר' },
+          { id: 21, w1: 'בפנים', w1Speak: 'בִּפְנִים', w2: 'בחוץ', w2Speak: 'בַּחוּץ' },
+          { id: 22, w1: 'קרוב', w1Speak: 'קָרוֹב', w2: 'רחוק', w2Speak: 'רָחוֹק' },
+          { id: 23, w1: 'חדש', w1Speak: 'חָדָשׁ', w2: 'ישן', w2Speak: 'יָשָׁן' },
+          { id: 24, w1: 'עבה', w1Speak: 'עָבֶה', w2: 'דק', w2Speak: 'דַּק' },
+          { id: 26, w1: 'רועש', w1Speak: 'רוֹעֵשׁ', w2: 'שקט', w2Speak: 'שָׁקֵט' },
+          { id: 27, w1: 'אור', w1Speak: 'אוֹר', w2: 'חושך', w2Speak: 'חוֹשֶׁךְ' },
+          { id: 29, w1: 'קדימה', w1Speak: 'קָדִימָה', w2: 'אחורה', w2Speak: 'אָחוֹרָה' },
+          { id: 30, w1: 'ישר', w1Speak: 'יָשָׁר', w2: 'עקום', w2Speak: 'עָקוּם' },
+          { id: 31, w1: 'התחלה', w1Speak: 'הַתְחָלָה', w2: 'סוף', w2Speak: 'סוֹף' },
+          { id: 32, w1: 'יחד', w1Speak: 'יַחַד', w2: 'לבד', w2Speak: 'לְבַד' }
+        ];
+
+        const RHYMES_DATA = [
+          { target: { w: 'חתול', e: '🐱' }, match: { w: 'שבלול', e: '🐌' }, distractors: [{ w: 'כלב', e: '🐶' }, { w: 'שמש', e: '☀️' }, { w: 'עץ', e: '🌳' }] },
+          { target: { w: 'חיפושית', e: '🐞' }, match: { w: 'מכונית', e: '🚗' }, distractors: [{ w: 'פרח', e: '🌻' }, { w: 'כדור', e: '⚽' }, { w: 'ספר', e: '📖' }] },
+          { target: { w: 'נחש', e: '🐍' }, match: { w: 'דבש', e: '🍯' }, distractors: [{ w: 'מים', e: '💧' }, { w: 'עץ', e: '🌳' }, { w: 'רוח', e: '🌬️' }] },
+          { target: { w: 'ליצן', e: '🤡' }, match: { w: 'ענן', e: '☁️' }, distractors: [{ w: 'כובע', e: '🎩' }, { w: 'אוטו', e: '🚗' }, { w: 'נעליים', e: '👞' }] },
+          { target: { w: 'מלפפון', e: '🥒' }, match: { w: 'סבון', e: '🧼' }, distractors: [{ w: 'בננה', e: '🍌' }, { w: 'מחשב', e: '💻' }, { w: 'כיסא', e: '🪑' }] },
+          { target: { w: 'פרה', e: '🐮' }, match: { w: 'סירה', e: '⛵' }, distractors: [{ w: 'חתול', e: '🐱' }, { w: 'בית', e: '🏠' }, { w: 'רכבת', e: '🚂' }] },
+          { target: { w: 'פרח', e: '🌻' }, match: { w: 'קרח', e: '🧊' }, distractors: [{ w: 'שמש', e: '☀️' }, { w: 'ספר', e: '📖' }, { w: 'מים', e: '💧' }] },
+          { target: { w: 'ברווז', e: '🦆' }, match: { w: 'ארגז', e: '📦' }, distractors: [{ w: 'אפרוח', e: '🐥' }, { w: 'תיק', e: '🎒' }, { w: 'מפתח', e: '🔑' }] },
+          { target: { w: 'בלון', e: '🎈' }, match: { w: 'חלון', e: '🪟' }, distractors: [{ w: 'דלת', e: '🚪' }, { w: 'עוגה', e: '🎂' }, { w: 'מתנה', e: '🎁' }] },
+          { target: { w: 'עכבר', e: '🐭' }, match: { w: 'פרפר', e: '🦋' }, distractors: [{ w: 'חתול', e: '🐱' }, { w: 'גבינה', e: '🧀' }, { w: 'ציפור', e: '🐦' }] },
+          { target: { w: 'צלחת', e: '🍽️' }, match: { w: 'מקלחת', e: '🚿' }, distractors: [{ w: 'כוס', e: '🥤' }, { w: 'סבון', e: '🧼' }, { w: 'מים', e: '💧' }] },
+          { target: { w: 'לב', e: '❤️' }, match: { w: 'זאב', e: '🐺' }, distractors: [{ w: 'אדום', e: '🔴' }, { w: 'חתול', e: '🐱' }, { w: 'יער', e: '🌲' }] },
+          { target: { w: 'תנין', e: '🐊' }, match: { w: 'סכין', e: '🔪' }, distractors: [{ w: 'נהר', e: '🏞️' }, { w: 'מזלג', e: '🍴' }, { w: 'שיניים', e: '🦷' }] },
+          { target: { w: 'חולצה', e: '👕' }, match: { w: 'ביצה', e: '🥚' }, distractors: [{ w: 'מכנסיים', e: '👖' }, { w: 'תרנגולת', e: '🐔' }, { w: 'כובע', e: '🧢' }] },
+          { target: { w: 'כוכב', e: '⭐' }, match: { w: 'צב', e: '🐢' }, distractors: [{ w: 'ירח', e: '🌙' }, { w: 'כלב', e: '🐶' }, { w: 'לילה', e: '🌃' }] },
+          { target: { w: 'פיל', e: '🐘' }, match: { w: 'טיל', e: '🚀' }, distractors: [{ w: 'אריה', e: '🦁' }, { w: 'ירח', e: '🌙' }, { w: 'כדור', e: '⚽' }] },
+          { target: { w: 'עץ', e: '🌳' }, match: { w: 'חץ', e: '🏹' }, distractors: [{ w: 'עלה', e: '🍃' }, { w: 'קשת', e: '🌈' }, { w: 'פרח', e: '🌻' }] },
+          { target: { w: 'עין', e: '👁️' }, match: { w: 'יין', e: '🍷' }, distractors: [{ w: 'משקפיים', e: '👓' }, { w: 'ענבים', e: '🍇' }, { w: 'כוס', e: '🥛' }] },
+          { target: { w: 'חילזון', e: '🐌' }, match: { w: 'פעמון', e: '🔔' }, distractors: [{ w: 'פרפר', e: '🦋' }, { w: 'עץ', e: '🌳' }, { w: 'כדור', e: '⚽' }] },
+          { target: { w: 'שמח', e: '😊' }, match: { w: 'ירח', e: '🌙' }, distractors: [{ w: 'שמש', e: '☀️' }, { w: 'כוכב', e: '⭐' }, { w: 'לב', e: '❤️' }] },
+          { target: { w: 'קוף', e: '🐵' }, match: { w: 'תוף', e: '🥁' }, distractors: [{ w: 'בננה', e: '🍌' }, { w: 'גיטרה', e: '🎸' }, { w: 'פיל', e: '🐘' }] },
+          { target: { w: 'ארמון', e: '🏰' }, match: { w: 'סבון', e: '🧼' }, distractors: [{ w: 'כתר', e: '👑' }, { w: 'בית', e: '🏠' }, { w: 'מברשת', e: '🪥' }] },
+          { target: { w: 'חג', e: '🎉' }, match: { w: 'דג', speak: 'דָּג', e: '🐟' }, distractors: [{ w: 'עוגה', e: '🎂' }, { w: 'פרח', e: '🌻' }, { w: 'שמש', e: '☀️' }] },
+          { target: { w: 'מכתב', e: '✉️' }, match: { w: 'צב', e: '🐢' }, distractors: [{ w: 'ספר', e: '📖' }, { w: 'חתול', e: '🐱' }, { w: 'תיק', e: '🎒' }] },
+          { target: { w: 'שמיים', e: '🌤️' }, match: { w: 'מספריים', e: '✂️' }, distractors: [{ w: 'ענן', e: '☁️' }, { w: 'עיפרון', e: '✏️' }, { w: 'שמש', e: '☀️' }] },
+          { target: { w: 'צמח', e: '🌱' }, match: { w: 'קרח', e: '🧊' }, distractors: [{ w: 'שמש', e: '☀️' }, { w: 'אבן', e: '🪨' }, { w: 'כדור', e: '⚽' }] },
+          { target: { w: 'פטיש', e: '🔨' }, match: { w: 'עכביש', e: '🕷️' }, distractors: [{ w: 'מסור', e: '🪚' }, { w: 'נמלה', e: '🐜' }, { w: 'דלת', e: '🚪' }] },
+          { target: { w: 'כחול', speak: 'כָּחוֹל', e: '🔵' }, match: { w: 'תרנגול', e: '🐓' }, distractors: [{ w: 'אדום', e: '🔴' }, { w: 'פרה', e: '🐮' }, { w: 'סוס', e: '🐴' }] },
+          { target: { w: 'פטריה', e: '🍄' }, match: { w: 'מטריה', e: '☂️' }, distractors: [{ w: 'עץ', e: '🌳' }, { w: 'מעיל', e: '🧥' }, { w: 'פרח', e: '🌻' }] },
+          { target: { w: 'מרק', e: '🥣' }, match: { w: 'ברק', e: '⚡' }, distractors: [{ w: 'לחם', e: '🍞' }, { w: 'ענן', e: '☁️' }, { w: 'כוס', e: '🥤' }] },
+          { target: { w: 'טלה', e: '🐑' }, match: { w: 'עלה', e: '🍃' }, distractors: [{ w: 'כלב', e: '🐶' }, { w: 'עץ', e: '🌳' }, { w: 'תפוח', e: '🍎' }] },
+          { target: { w: 'רוח', e: '🌬️' }, match: { w: 'תפוח', e: '🍎' }, distractors: [{ w: 'ענן', e: '☁️' }, { w: 'בננה', e: '🍌' }, { w: 'שמש', e: '☀️' }] },
+          { target: { w: 'חוף', speak: 'חוֹף', e: '🏖️' }, match: { w: 'קוף', e: '🐵' }, distractors: [{ w: 'דג', speak: 'דָּג', e: '🐟' }, { w: 'אריה', e: '🦁' }, { w: 'סירה', e: '⛵' }] },
+          { target: { w: 'ארנב', e: '🐰' }, match: { w: 'כוכב', e: '⭐' }, distractors: [{ w: 'גזר', e: '🥕' }, { w: 'ירח', e: '🌙' }, { w: 'פיל', e: '🐘' }] },
+          { target: { w: 'קרנף', e: '🦏' }, match: { w: 'אף', e: '👃' }, distractors: [{ w: 'פיל', e: '🐘' }, { w: 'עין', e: '👁️' }, { w: 'אוזן', e: '👂' }] },
+          { target: { w: 'שועל', e: '🦊' }, match: { w: 'גמל', e: '🐪' }, distractors: [{ w: 'אריה', e: '🦁' }, { w: 'סוס', e: '🐴' }, { w: 'דוב', e: '🐻' }] },
+          { target: { w: 'מסרק', e: '🪮' }, match: { w: 'אפרסק', e: '🍑' }, distractors: [{ w: 'מברשת', e: '🪥' }, { w: 'בננה', e: '🍌' }, { w: 'תפוח', e: '🍎' }] },
+          { target: { w: 'פיל', e: '🐘' }, match: { w: 'חציל', e: '🍆' }, distractors: [{ w: 'אריה', e: '🦁' }, { w: 'גזר', e: '🥕' }, { w: 'מלפפון', e: '🥒' }] },
+          { target: { w: 'מכחול', e: '🖌️' }, match: { w: 'תרנגול', e: '🐓' }, distractors: [{ w: 'עיפרון', e: '✏️' }, { w: 'ברווז', e: '🦆' }, { w: 'ספר', e: '📖' }] },
+          { target: { w: 'רגל', e: '🦶' }, match: { w: 'דגל', e: '🚩' }, distractors: [{ w: 'יד', e: '🖐️' }, { w: 'כדור', e: '⚽' }, { w: 'כובע', e: '🧢' }] },
+          { target: { w: 'ספינה', e: '🚢' }, match: { w: 'גבינה', e: '🧀' }, distractors: [{ w: 'אוטו', e: '🚗' }, { w: 'לחם', e: '🍞' }, { w: 'מטוס', e: '✈️' }] },
+          { target: { w: 'קולנוע', e: '🎬' }, match: { w: 'אופנוע', e: '🏍️' }, distractors: [{ w: 'אוטובוס', e: '🚌' }, { w: 'ספר', e: '📖' }, { w: 'רכבת', e: '🚂' }] },
+          { target: { w: 'מחברת', e: '📓' }, match: { w: 'סרט', e: '🎀' }, distractors: [{ w: 'עיפרון', e: '✏️' }, { w: 'כובע', e: '🧢' }, { w: 'תיק', e: '🎒' }] },
+          { target: { w: 'צבע', e: '🎨' }, match: { w: 'שבע', e: '7️⃣' }, distractors: [{ w: 'מכחול', e: '🖌️' }, { w: 'שלוש', e: '3️⃣' }, { w: 'ספר', e: '📖' }] },
+          { target: { w: 'בור', speak: 'בּוֹר', e: '🕳️' }, match: { w: 'ציפור', e: '🐦' }, distractors: [{ w: 'הר', e: '⛰️' }, { w: 'דג', speak: 'דָּג', e: '🐟' }, { w: 'פרפר', e: '🦋' }] },
+          { target: { w: 'כריש', e: '🦈' }, match: { w: 'פטיש', e: '🔨' }, distractors: [{ w: 'לוויתן', e: '🐋' }, { w: 'מפתח', e: '🔑' }, { w: 'סירה', e: '⛵' }] },
+          { target: { w: 'מקל', e: '🦯' }, match: { w: 'סרגל', e: '📏' }, distractors: [{ w: 'כדור', e: '⚽' }, { w: 'מחברת', e: '📓' }, { w: 'תיק', e: '🎒' }] },
+          { target: { w: 'חלום', e: '💭' }, match: { w: 'יהלום', e: '💎' }, distractors: [{ w: 'מיטה', e: '🛏️' }, { w: 'כתר', e: '👑' }, { w: 'כוכב', e: '⭐' }] },
+          { target: { w: 'שש', e: '6️⃣' }, match: { w: 'אש', e: '🔥' }, distractors: [{ w: 'ארבע', e: '4️⃣' }, { w: 'מים', e: '💧' }, { w: 'עץ', e: '🌳' }] }
+        ];
+
+        const STARTING_SOUNDS_DATA = [
+          { soundDisplay: 'בַּ', soundSpeak: 'בַּ', match: { w: 'בננה', e: '🍌' }, distractors: [{ w: 'תפוח', e: '🍎' }, { w: 'שמש', e: '☀️' }, { w: 'כלב', e: '🐶' }] },
+          { soundDisplay: 'כֶּ', soundSpeak: 'כֶּ', match: { w: 'כלב', e: '🐶' }, distractors: [{ w: 'חתול', e: '🐱' }, { w: 'סוס', e: '🐴' }, { w: 'פרה', e: '🐮' }] },
+          { soundDisplay: 'שֶׁ', soundSpeak: 'שֶׁ', match: { w: 'שמש', e: '☀️' }, distractors: [{ w: 'ירח', e: '🌙' }, { w: 'כוכב', e: '⭐' }, { w: 'ענן', e: '☁️' }] },
+          { soundDisplay: 'פִּ', soundSpeak: 'פִּ', match: { w: 'פיל', e: '🐘' }, distractors: [{ w: 'אריה', e: '🦁' }, { w: 'חתול', e: '🐱' }, { w: 'קוף', e: '🐵' }] },
+          { soundDisplay: 'פַּ', soundSpeak: 'פַּ', match: { w: 'פרה', e: '🐮' }, distractors: [{ w: 'כבשה', e: '🐑' }, { w: 'תרנגולת', e: '🐔' }, { w: 'ברווז', e: '🦆' }] },
+          { soundDisplay: 'חָ', soundSpeak: 'חָ', match: { w: 'חלב', e: '🥛' }, distractors: [{ w: 'מיץ', e: '🧃' }, { w: 'קפה', e: '☕' }, { w: 'תה', e: '🍵' }] },
+          { soundDisplay: 'לֶ', soundSpeak: 'לֶ', match: { w: 'לחם', e: '🍞' }, distractors: [{ w: 'גבינה', e: '🧀' }, { w: 'ביצה', e: '🥚' }, { w: 'חמאה', e: '🧈' }] },
+          { soundDisplay: 'סֵ', soundSpeak: 'סֵ', match: { w: 'ספר', e: '📖' }, distractors: [{ w: 'עט', e: '🖊️' }, { w: 'קלמר', e: '✏️' }, { w: 'תיק', e: '🎒' }] },
+          { soundDisplay: 'אַ', soundSpeak: 'אַ', match: { w: 'אריה', e: '🦁' }, distractors: [{ w: 'דוב', e: '🐻' }, { w: 'נמר', e: '🐯' }, { w: 'פיל', e: '🐘' }] },
+          { soundDisplay: 'אוֹ', soundSpeak: 'אוֹ', match: { w: 'אוטו', e: '🚗' }, distractors: [{ w: 'רכבת', e: '🚂' }, { w: 'מטוס', e: '✈️' }, { w: 'סירה', e: '⛵' }] },
+          { soundDisplay: 'גָ', soundSpeak: 'גָ', match: { w: 'גמל', e: '🐪' }, distractors: [{ w: 'סוס', e: '🐴' }, { w: 'פרה', e: '🐮' }, { w: 'כבשה', e: '🐑' }] },
+          { soundDisplay: 'דֶ', soundSpeak: 'דֶ', match: { w: 'דלת', e: '🚪' }, distractors: [{ w: 'חלון', e: '🪟' }, { w: 'קיר', e: '🧱' }, { w: 'גג', e: '🏠' }] },
+          { soundDisplay: 'חָ', soundSpeak: 'חָ', match: { w: 'חתול', e: '🐱' }, distractors: [{ w: 'כלב', e: '🐶' }, { w: 'עכבר', e: '🐭' }, { w: 'ארנב', e: '🐰' }] },
+          { soundDisplay: 'כַּ', soundSpeak: 'כַּ', match: { w: 'כדור', e: '⚽' }, distractors: [{ w: 'קובייה', e: '🎲' }, { w: 'בובה', e: '🪆' }, { w: 'רכבת', e: '🚂' }] },
+          { soundDisplay: 'לֵ', soundSpeak: 'לֵ', match: { w: 'ליצן', e: '🤡' }, distractors: [{ w: 'רופא', e: '👨‍⚕️' }, { w: 'שוטר', e: '👮' }, { w: 'מורה', e: '👨‍🏫' }] },
+          { soundDisplay: 'מִ', soundSpeak: 'מִ', match: { w: 'מכנסיים', e: '👖' }, distractors: [{ w: 'חולצה', e: '👕' }, { w: 'כובע', e: '🧢' }, { w: 'נעל', e: '👞' }] },
+          { soundDisplay: 'נָ', soundSpeak: 'נָ', match: { w: 'נחש', e: '🐍' }, distractors: [{ w: 'תנין', e: '🐊' }, { w: 'צפרדע', e: '🐸' }, { w: 'צב', e: '🐢' }] },
+          { soundDisplay: 'סִי', soundSpeak: 'סִי', match: { w: 'סירה', e: '⛵' }, distractors: [{ w: 'אוטו', e: '🚗' }, { w: 'מטוס', e: '✈️' }, { w: 'רכבת', e: '🚂' }] },
+          { soundDisplay: 'עֵ', soundSpeak: 'עֵ', match: { w: 'עץ', e: '🌳' }, distractors: [{ w: 'פרח', e: '🌻' }, { w: 'דשא', e: '🌱' }, { w: 'עלה', e: '🍃' }] },
+          { soundDisplay: 'צָ', soundSpeak: 'צָ', match: { w: 'צב', e: '🐢' }, distractors: [{ w: 'ארנב', e: '🐰' }, { w: 'חילזון', e: '🐌' }, { w: 'נחש', e: '🐍' }] },
+          { soundDisplay: 'צִי', soundSpeak: 'צִי', match: { w: 'ציפור', e: '🐦' }, distractors: [{ w: 'פרפר', e: '🦋' }, { w: 'עטלף', e: '🦇' }, { w: 'דבורה', e: '🐝' }] },
+          { soundDisplay: 'קִי', soundSpeak: 'קִי', match: { w: 'קיפוד', e: '🦔' }, distractors: [{ w: 'סנאי', e: '🐿️' }, { w: 'עכבר', e: '🐭' }, { w: 'חתול', e: '🐱' }] },
+          { soundDisplay: 'רַ', soundSpeak: 'רַ', match: { w: 'רכבת', e: '🚂' }, distractors: [{ w: 'אוטו', e: '🚗' }, { w: 'אוטובוס', e: '🚌' }, { w: 'משאית', e: '🚚' }] },
+          { soundDisplay: 'שָׁ', soundSpeak: 'שָׁ', match: { w: 'שעון', e: '⌚' }, distractors: [{ w: 'טלפון', e: '📱' }, { w: 'מחשב', e: '💻' }, { w: 'טלוויזיה', e: '📺' }] },
+          { soundDisplay: 'שׁוּ', soundSpeak: 'שׁוּ', match: { w: 'שועל', e: '🦊' }, distractors: [{ w: 'זאב', e: '🐺' }, { w: 'דוב', e: '🐻' }, { w: 'אריה', e: '🦁' }] },
+          { soundDisplay: 'תִּי', soundSpeak: 'תִּי', match: { w: 'תיק', e: '🎒' }, distractors: [{ w: 'קלמר', e: '✏️' }, { w: 'ספר', e: '📖' }, { w: 'מחברת', e: '📓' }] },
+          { soundDisplay: 'תּוּ', soundSpeak: 'תּוּ', match: { w: 'תות', e: '🍓' }, distractors: [{ w: 'בננה', e: '🍌' }, { w: 'תפוח', e: '🍎' }, { w: 'דובדבן', e: '🍒' }] },
+          { soundDisplay: 'דּוּ', soundSpeak: 'דּוּ', match: { w: 'דובדבן', e: '🍒' }, distractors: [{ w: 'ענבים', e: '🍇' }, { w: 'אבטיח', e: '🍉' }, { w: 'תפוז', e: '🍊' }] },
+          { soundDisplay: 'בּוּ', soundSpeak: 'בּוּ', match: { w: 'בובה', e: '🪆' }, distractors: [{ w: 'כדור', e: '⚽' }, { w: 'קובייה', e: '🎲' }, { w: 'אוטו', e: '🚗' }] },
+          { soundDisplay: 'גִ\'י', soundSpeak: 'גִ\'י', match: { w: 'ג\'ירפה', e: '🦒' }, distractors: [{ w: 'פיל', e: '🐘' }, { w: 'אריה', e: '🦁' }, { w: 'נמר', e: '🐯' }] },
+          { soundDisplay: 'אוֹ', soundSpeak: 'אוֹ', match: { w: 'אוזן', e: '👂' }, distractors: [{ w: 'עין', e: '👁️' }, { w: 'אף', e: '👃' }, { w: 'פה', e: '👄' }] },
+          { soundDisplay: 'חָ', soundSpeak: 'חָ', match: { w: 'חלון', e: '🪟' }, distractors: [{ w: 'דלת', e: '🚪' }, { w: 'קיר', e: '🧱' }, { w: 'גג', e: '🏠' }] },
+          { soundDisplay: 'מִי', soundSpeak: 'מִי', match: { w: 'מיטה', e: '🛏️' }, distractors: [{ w: 'ארון', e: '🚪' }, { w: 'כסא', e: '🪑' }, { w: 'שולחן', e: '🪵' }] },
+          { soundDisplay: 'קוֹ', soundSpeak: 'קוֹ', match: { w: 'קוף', e: '🐵' }, distractors: [{ w: 'כלב', e: '🐶' }, { w: 'פרה', e: '🐮' }, { w: 'סוס', e: '🐴' }] },
+          { soundDisplay: 'פַּ', soundSpeak: 'פַּ', match: { w: 'פרפר', e: '🦋' }, distractors: [{ w: 'זבוב', e: '🪰' }, { w: 'חיפושית', e: '🐞' }, { w: 'נמלה', e: '🐜' }] },
+          { soundDisplay: 'זֶ', soundSpeak: 'זֶ', match: { w: 'זברה', e: '🦓' }, distractors: [{ w: 'סוס', e: '🐴' }, { w: 'גמל', e: '🐪' }, { w: 'פיל', e: '🐘' }] },
+          { soundDisplay: 'חִי', soundSpeak: 'חִי', match: { w: 'חיפושית', e: '🐞' }, distractors: [{ w: 'פרפר', e: '🦋' }, { w: 'זחל', e: '🐛' }, { w: 'עכביש', e: '🕷️' }] },
+          { soundDisplay: 'טֶ', soundSpeak: 'טֶ', match: { w: 'טלוויזיה', e: '📺' }, distractors: [{ w: 'מחשב', e: '💻' }, { w: 'שעון', e: '⌚' }, { w: 'רדיו', e: '📻' }] },
+          { soundDisplay: 'עַ', soundSpeak: 'עַ', match: { w: 'עכבר', e: '🐭' }, distractors: [{ w: 'חתול', e: '🐱' }, { w: 'כלב', e: '🐶' }, { w: 'סוס', e: '🐴' }] },
+          { soundDisplay: 'רֶ', soundSpeak: 'רֶ', match: { w: 'רגל', e: '🦶' }, distractors: [{ w: 'יד', e: '🖐️' }, { w: 'בטן', e: '🤰' }, { w: 'ראש', e: '🗣️' }] },
+          { soundDisplay: 'בֵּ', soundSpeak: 'בֵּ', match: { w: 'ביצה', e: '🥚' }, distractors: [{ w: 'חלב', e: '🥛' }, { w: 'גבינה', e: '🧀' }, { w: 'לחם', e: '🍞' }] },
+          { soundDisplay: 'סָ', soundSpeak: 'סָ', match: { w: 'סלט', e: '🥗' }, distractors: [{ w: 'מרק', e: '🥣' }, { w: 'בשר', e: '🥩' }, { w: 'עוף', e: '🍗' }] },
+          { soundDisplay: 'פֶּ', soundSpeak: 'פֶּ', match: { w: 'פרח', e: '🌻' }, distractors: [{ w: 'עץ', e: '🌳' }, { w: 'דשא', e: '🌿' }, { w: 'אדמה', e: '🌱' }] },
+          { soundDisplay: 'גֶּ', soundSpeak: 'גֶּ', match: { w: 'גזר', e: '🥕' }, distractors: [{ w: 'מלפפון', e: '🥒' }, { w: 'עגבנייה', e: '🍅' }, { w: 'בצל', e: '🧅' }] },
+          { soundDisplay: 'מַ', soundSpeak: 'מַ', match: { w: 'מחשב', e: '💻' }, distractors: [{ w: 'טלוויזיה', e: '📺' }, { w: 'טלפון', e: '📱' }, { w: 'ספר', e: '📖' }] }
+        ];
+
+        // --- Helpers ---
+        const getThemeClasses = (theme) => {
+          switch (theme) {
+            case 'pink': return { border: 'border-pink-100', textMain: 'text-pink-600', textSub: 'text-pink-800', button: 'bg-pink-500', buttonHover: 'hover:bg-pink-600', text: 'text-pink-600' };
+            case 'blue': return { border: 'border-blue-100', textMain: 'text-blue-600', textSub: 'text-blue-800', button: 'bg-blue-500', buttonHover: 'hover:bg-blue-600', text: 'text-blue-600' };
+            case 'emerald': return { border: 'border-emerald-100', textMain: 'text-emerald-600', textSub: 'text-emerald-800', button: 'bg-emerald-500', buttonHover: 'hover:bg-emerald-600', text: 'text-emerald-600' };
+            case 'purple': return { border: 'border-purple-100', textMain: 'text-purple-600', textSub: 'text-purple-800', button: 'bg-purple-500', buttonHover: 'hover:bg-purple-600', text: 'text-purple-600' };
+            default: return { border: 'border-gray-100', textMain: 'text-gray-600', textSub: 'text-gray-800', button: 'bg-gray-500', buttonHover: 'hover:bg-gray-600', text: 'text-gray-600' };
+          }
+        };
+
+        // --- Render Items ---
+        const renderColorItem = (item, onClick, disabled) => (
+          <button
+            key={item.id}
+            onClick={onClick}
+            disabled={disabled}
+            style={{ background: item.bg, color: item.textColor }}
+            className={`
+              w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center p-2
+              shadow-md hover:shadow-xl hover:scale-105 transition-all
+              ${item.border ? 'border-4 border-gray-200' : 'border-4 border-transparent'}
+              ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+            `}
+          >
+            <span 
+              className="font-black text-base md:text-lg select-none text-center leading-tight px-1" 
+              style={{ textShadow: item.textColor === 'white' ? '0px 1px 3px rgba(0,0,0,0.6)' : 'none' }}
+            >
+              {item.text}
+            </span>
+          </button>
+        );
+
+        const renderAnimalItem = (themeColor) => {
+          const styles = getThemeClasses(themeColor);
+          return (item, onClick, disabled) => (
+            <button
+              key={item.id}
+              onClick={onClick}
+              disabled={disabled}
+              className={`
+                ${item.hint ? 'w-28 h-32 md:w-36 md:h-40' : 'w-24 h-24 md:w-32 md:h-32'} bg-white rounded-3xl flex flex-col items-center justify-center p-2
+                shadow-md hover:shadow-xl hover:-translate-y-2 transition-all border-b-4 ${styles.border}
+                ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+              `}
+            >
+              <div className="mb-1 flex items-center justify-center">
+                {item.svg ? item.svg : <span className="text-4xl md:text-5xl">{item.emoji}</span>}
+              </div>
+              <span className={`font-black text-sm md:text-lg ${styles.textSub} select-none text-center leading-tight px-1`}>
+                {item.text}
+              </span>
+              {item.hint && (
+                <span className="text-xs text-gray-400 font-semibold mt-0.5 select-none text-center leading-tight">
+                  {item.hint}
+                </span>
+              )}
+            </button>
+          );
+        };
+
+        const renderTextCardItem = (themeColor, sizeClass, mainTextSize) => {
+          const styles = getThemeClasses(themeColor);
+          return (item, onClick, disabled) => (
+            <button 
+              key={item.id} 
+              onClick={onClick} 
+              disabled={disabled}
+              className={`
+                ${sizeClass} bg-white rounded-3xl flex flex-col items-center justify-center 
+                shadow-md hover:shadow-xl hover:-translate-y-2 transition-all border-b-4 ${styles.border} 
+                ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+              `}
+            >
+              <span className={`${mainTextSize} font-black ${styles.textMain} ${item.sub ? 'mb-1' : ''}`}>{item.display || item.main}</span>
+              {item.sub && <span className={`font-bold text-xs md:text-sm ${styles.textSub} select-none text-center leading-tight px-1`}>{item.sub}</span>}
+            </button>
+          );
+        };
+
+        // --- Generic Interactive Module ---
+        const InteractiveModule = ({ items, lang, renderItem, themeClass }) => {
+          const [mode, setMode] = useState('learn');
+          const [targetItem, setTargetItem] = useState(null);
+          const [practiceOptions, setPracticeOptions] = useState([]);
+          const [feedback, setFeedback] = useState('');
+          const [preferredVoice, setPreferredVoice] = useState(null);
+          const [roundId, setRoundId] = useState(0); 
+
+          const theme = getThemeClasses(themeClass);
+
+          useEffect(() => {
+            const initVoice = () => {
+              const availableVoices = window.speechSynthesis.getVoices();
+              if (availableVoices.length > 0) {
+                const langPrefix = lang.split('-')[0];
+                
+                const langVoices = availableVoices.filter(v => 
+                  v.lang.startsWith(langPrefix) || 
+                  (langPrefix === 'he' && (v.lang.includes('iw') || v.name.includes('Hebrew') || v.name.includes('עברית')))
+                );
+                
+                // העדפת קולות אזוריים לערבית מדוברת במידה וקיימים במכשיר, או קול טבעי של גוגל
+                const bestVoice = (langPrefix === 'ar' && langVoices.find(v =>
+                  v.lang.includes('IL') || v.lang.includes('PS') || v.lang.includes('JO') || v.lang.includes('LB') || v.lang.includes('EG')
+                )) || langVoices.find(v => 
+                  v.name.includes('Google') || 
+                  v.name.includes('Natural') || 
+                  v.name.toLowerCase().includes('female')
+                ) || langVoices[0];
+                
+                if (bestVoice) setPreferredVoice(bestVoice);
+              }
+            };
+            initVoice();
+            if (window.speechSynthesis.onvoiceschanged !== undefined) {
+              window.speechSynthesis.onvoiceschanged = initVoice;
+            }
+          }, [lang]);
+
+          const speak = (text) => {
+            if ('speechSynthesis' in window) {
+              window.speechSynthesis.cancel();
+              
+              setTimeout(() => {
+                const utterance = new SpeechSynthesisUtterance(text);
+                if (lang === 'he-IL' && preferredVoice && preferredVoice.lang.includes('iw')) {
+                  utterance.lang = 'iw-IL';
+                } else if (preferredVoice && preferredVoice.lang) {
+                  utterance.lang = preferredVoice.lang;
+                } else {
+                  utterance.lang = lang; 
+                }
+                if (preferredVoice) utterance.voice = preferredVoice;
+                
+                utterance.pitch = 1.3;
+                utterance.rate = 0.85;
+                window.speechSynthesis.speak(utterance);
+              }, 150); 
+            }
+          };
+
+          const getPracticeOptions = (target) => {
+            const usedGroups = new Set();
+            if (target.conflictGroup) usedGroups.add(target.conflictGroup);
+            const others = items.filter(c => c.id !== target.id);
+            const shuffledOthers = [...others].sort(() => 0.5 - Math.random());
+            const distractors = [];
+            for (const candidate of shuffledOthers) {
+              if (distractors.length >= 3) break;
+              if (candidate.conflictGroup && usedGroups.has(candidate.conflictGroup)) continue;
+              if (candidate.conflictGroup) usedGroups.add(candidate.conflictGroup);
+              distractors.push(candidate);
+            }
+            return [...distractors, target].sort(() => 0.5 - Math.random());
+          };
+
+          const startPractice = () => {
+            let randomItem;
+            do {
+              randomItem = items[Math.floor(Math.random() * items.length)];
+            } while (targetItem && randomItem.id === targetItem.id && items.length > 1);
+            
+            setTargetItem(randomItem);
+            setPracticeOptions(getPracticeOptions(randomItem));
+            setFeedback('');
+            setRoundId(prev => prev + 1);
+            speak(randomItem.spoken || randomItem.speak);
+          };
+
+          const handleItemClick = (item) => {
+            if (mode === 'learn') {
+              speak(item.spoken || item.speak);
+            } else if (mode === 'practice' && targetItem) {
+              if (item.id === targetItem.id) {
+                setFeedback('correct');
+                setTimeout(() => setTargetItem(prev => prev ? (startPractice(), prev) : prev), 1500);
+              } else {
+                setFeedback('wrong');
+                const tryAgainMsgs = { 'he-IL': 'נַסּוּ שׁוּב', 'en-US': 'Try again', 'ar-SA': 'حَاوِلْ كَمَانْ مَرَّةْ' };
+                speak(tryAgainMsgs[lang] || 'Try again'); 
+              }
+            }
+          };
+
+          return (
+            <div className="flex flex-col items-center w-full">
+              <div className="flex space-x-4 space-x-reverse mb-8 bg-gray-100 p-2 rounded-2xl">
+                <button 
+                  onClick={() => { setMode('learn'); setFeedback(''); setTargetItem(null); }} 
+                  className={`px-6 py-2 rounded-xl font-bold transition-all ${mode === 'learn' ? `bg-white shadow-md ${theme.text}` : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  למידה
+                </button>
+                <button 
+                  onClick={() => { setMode('practice'); setFeedback(''); setTargetItem(null); }} 
+                  className={`px-6 py-2 rounded-xl font-bold transition-all ${mode === 'practice' ? `bg-white shadow-md ${theme.text}` : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  תרגול
+                </button>
+              </div>
+              
+              {mode === 'practice' && (
+                <div className="mb-8 flex flex-col items-center gap-4 min-h-[120px]">
+                  {!targetItem ? (
+                    <button 
+                      onClick={startPractice} 
+                      className={`${theme.button} text-white px-8 py-3 rounded-full font-black text-xl ${theme.buttonHover} transition-all shadow-lg hover:shadow-xl flex items-center gap-2`}
+                    >
+                      <PlayIcon /> התחל תרגול
+                    </button>
+                  ) : (
+                    <div className="flex flex-col items-center gap-3">
+                      <button 
+                        onClick={() => speak(targetItem.spoken || targetItem.speak)} 
+                        className="bg-sky-500 text-white px-6 py-2 rounded-full font-bold text-lg hover:bg-sky-600 transition-all shadow-md flex items-center gap-2"
+                      >
+                        <Volume2Icon /> שמע שוב
+                      </button>
+                      <div className="h-8 mt-2">
+                        {feedback === 'correct' && <div className="text-2xl font-black text-green-500 animate-bounce">כל הכבוד! 🎉</div>}
+                        {feedback === 'wrong' && <div className="text-xl font-bold text-red-500 animate-pulse">נסה שוב! 💪</div>}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              <div className="flex flex-wrap justify-center gap-3 md:gap-4 max-w-4xl">
+                {(mode === 'practice' && targetItem ? practiceOptions : items).map(item => {
+                   const isDisabled = mode === 'practice' && !targetItem;
+                   const element = renderItem(item, (e) => {
+                       if (e && e.currentTarget) e.currentTarget.blur();
+                       handleItemClick(item);
+                   }, isDisabled);
+                   return <React.Fragment key={`${mode}-${roundId}-${item.id}`}>{element}</React.Fragment>;
+                })}
+              </div>
+            </div>
+          );
+        };
+
+        // --- Word Combinations Module ---
+        const WordCombinationsModule = () => {
+          const [shuffledData] = useState(() => [...WORD_COMBINATIONS].sort(() => 0.5 - Math.random()));
+          const [currentIndex, setCurrentIndex] = useState(0);
+          const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
+          
+          const [preferredVoice, setPreferredVoice] = useState(null);
+          const preferredVoiceRef = React.useRef(null);
+          const timeoutRef = React.useRef(null);
+          const spokenRef = React.useRef(false);
+
+          useEffect(() => { preferredVoiceRef.current = preferredVoice; }, [preferredVoice]);
+
+          useEffect(() => {
+            const initVoice = () => {
+              const availableVoices = window.speechSynthesis.getVoices();
+              if (availableVoices.length > 0) {
+                const langVoices = availableVoices.filter(v => 
+                  v.lang.startsWith('he') || v.lang.includes('iw') || v.name.includes('Hebrew') || v.name.includes('עברית')
+                );
+                const bestVoice = langVoices.find(v => 
+                  v.name.includes('Google') || v.name.includes('Natural') || v.name.toLowerCase().includes('female')
+                ) || langVoices[0];
+                if (bestVoice) setPreferredVoice(bestVoice);
+              }
+            };
+            initVoice();
+            if (window.speechSynthesis.onvoiceschanged !== undefined) {
+              window.speechSynthesis.onvoiceschanged = initVoice;
+            }
+            return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); };
+          }, []);
+
+          const speak = (text) => {
+            if ('speechSynthesis' in window) {
+              window.speechSynthesis.cancel();
+              setTimeout(() => {
+                const utterance = new SpeechSynthesisUtterance(text);
+                const voice = preferredVoiceRef.current;
+                utterance.lang = (voice && voice.lang.includes('iw')) ? 'iw-IL' : 'he-IL';
+                if (voice) utterance.voice = voice;
+                utterance.pitch = 1.3;
+                utterance.rate = 0.85;
+                window.speechSynthesis.speak(utterance);
+              }, 150); 
+            }
+          };
+
+          useEffect(() => {
+             if (preferredVoice && !spokenRef.current) {
+                spokenRef.current = true;
+                setTimeout(() => speak('מָה יוֹצֵא מֵהַחִבּוּר שֶׁל שְׁתֵּי הַמִּילִים?'), 600);
+             }
+          }, [preferredVoice]);
+
+          const handleNext = () => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+            if (currentIndex < shuffledData.length - 1) {
+              setCurrentIndex(prev => prev + 1);
+              setIsAnswerRevealed(false);
+            }
+          };
+          
+          const handlePrev = () => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+            if (currentIndex > 0) {
+              setCurrentIndex(prev => prev - 1);
+              setIsAnswerRevealed(false);
+            }
+          };
+
+          const handleReveal = () => {
+            setIsAnswerRevealed(true);
+            speak(combo.resultSpeak || combo.result);
+            
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+            timeoutRef.current = setTimeout(() => {
+               setCurrentIndex(prev => {
+                  if (prev < shuffledData.length - 1) {
+                     setIsAnswerRevealed(false);
+                     return prev + 1;
+                  }
+                  return prev;
+               });
+            }, 2500);
+          };
+
+          const combo = shuffledData[currentIndex];
+
+          return (
+            <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
+              <div 
+                className="bg-pink-100 border-4 border-pink-300 rounded-full px-6 py-3 flex items-center shadow-md w-max justify-center mb-8 cursor-pointer transform hover:scale-105 transition-transform gap-3"
+                onClick={() => speak('מָה יוֹצֵא מֵהַחִבּוּר שֶׁל שְׁתֵּי הַמִּילִים?')}
+              >
+                <Volume2Icon />
+                <span className="text-xl md:text-2xl font-bold text-pink-600">מה יוצא מהחיבור של שתי המילים?</span>
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6 mb-12">
+                {/* Word 1 (Clickable to hear the word) */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    if (e && e.currentTarget) e.currentTarget.blur();
+                    speak(combo.w1Speak || combo.w1);
+                  }}
+                  className="bg-pink-50 border-4 border-pink-200 rounded-3xl p-4 md:p-8 flex flex-col items-center shadow-lg w-28 h-40 md:w-40 md:h-56 justify-center transform transition-transform hover:scale-105 cursor-pointer"
+                >
+                  <span className="text-5xl md:text-7xl mb-3 md:mb-6">{combo.e1}</span>
+                  <span className="text-xl md:text-3xl font-black text-pink-600 text-center">{combo.w1}</span>
+                </button>
+                
+                <div className="text-4xl md:text-6xl font-black text-pink-400 mt-4">+</div>
+
+                {/* Word 2 (Clickable to hear the word) */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    if (e && e.currentTarget) e.currentTarget.blur();
+                    speak(combo.w2Speak || combo.w2);
+                  }}
+                  className="bg-pink-50 border-4 border-pink-200 rounded-3xl p-4 md:p-8 flex flex-col items-center shadow-lg w-28 h-40 md:w-40 md:h-56 justify-center transform transition-transform hover:scale-105 cursor-pointer"
+                >
+                  <span className="text-5xl md:text-7xl mb-3 md:mb-6">{combo.e2}</span>
+                  <span className="text-xl md:text-3xl font-black text-pink-600 text-center">{combo.w2}</span>
+                </button>
+                
+                <div className="text-4xl md:text-6xl font-black text-pink-400 mt-4">=</div>
+                
+                {/* Guess / Answer Box */}
+                <button 
+                  onClick={(e) => {
+                      if (e && e.currentTarget) e.currentTarget.blur();
+                      if (!isAnswerRevealed) handleReveal(); else speak(combo.resultSpeak || combo.result);
+                  }}
+                  className={`border-4 rounded-3xl p-2 md:p-4 flex flex-col items-center justify-center w-28 h-40 md:w-40 md:h-56 transform transition-all hover:scale-105 cursor-pointer ${isAnswerRevealed ? 'bg-pink-100 border-pink-300 shadow-lg' : 'bg-gray-100 border-dashed border-gray-300 shadow-inner'}`}
+                >
+                  {!isAnswerRevealed ? (
+                    <>
+                      <span className="text-5xl md:text-7xl font-black text-gray-300">❓</span>
+                      <span className="mt-2 text-xs md:text-base font-bold text-gray-400 text-center">לחצו לתשובה!</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-5xl md:text-7xl mb-2 md:mb-4 animate-fade-in-up">{combo.resultEmoji}</span>
+                      <span className="text-base md:text-2xl font-black text-pink-600 text-center animate-fade-in-up leading-tight">{combo.result}</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              <div className="flex gap-4 md:gap-8 w-full justify-center">
+                <button 
+                  onClick={handlePrev} 
+                  disabled={currentIndex === 0}
+                  className={`px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md ${currentIndex === 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-pink-100 text-pink-700 hover:bg-pink-200 hover:shadow-lg'}`}
+                >
+                  הקודם
+                </button>
+                <button 
+                  onClick={handleNext} 
+                  disabled={currentIndex === shuffledData.length - 1}
+                  className={`px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md ${currentIndex === shuffledData.length - 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-pink-500 text-white hover:bg-pink-600 hover:shadow-lg'}`}
+                >
+                  הבא
+                </button>
+              </div>
+              
+              <div className="mt-8 text-pink-400 font-bold text-lg">
+                {currentIndex + 1} מתוך {shuffledData.length}
+              </div>
+            </div>
+          );
+        };
+
+        // --- Opposites Module (Text Only, No Images) ---
+        const OppositesModule = () => {
+          const [shuffledData] = useState(() => [...OPPOSITES_DATA].sort(() => 0.5 - Math.random()));
+          const [currentIndex, setCurrentIndex] = useState(0);
+          const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
+
+          const [preferredVoice, setPreferredVoice] = useState(null);
+          const preferredVoiceRef = React.useRef(null);
+          const timeoutRef = React.useRef(null);
+          const spokenIndexRef = React.useRef(-1);
+
+          useEffect(() => { preferredVoiceRef.current = preferredVoice; }, [preferredVoice]);
+
+          useEffect(() => {
+            const initVoice = () => {
+              const availableVoices = window.speechSynthesis.getVoices();
+              if (availableVoices.length > 0) {
+                const langVoices = availableVoices.filter(v =>
+                  v.lang.startsWith('he') || v.lang.includes('iw') || v.name.includes('Hebrew') || v.name.includes('עברית')
+                );
+                const bestVoice = langVoices.find(v =>
+                  v.name.includes('Google') || v.name.includes('Natural') || v.name.toLowerCase().includes('female')
+                ) || langVoices[0];
+                if (bestVoice) setPreferredVoice(bestVoice);
+              }
+            };
+            initVoice();
+            if (window.speechSynthesis.onvoiceschanged !== undefined) {
+              window.speechSynthesis.onvoiceschanged = initVoice;
+            }
+            return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); };
+          }, []);
+
+          const speak = (text) => {
+            if ('speechSynthesis' in window) {
+              window.speechSynthesis.cancel();
+              setTimeout(() => {
+                const utterance = new SpeechSynthesisUtterance(text);
+                const voice = preferredVoiceRef.current;
+                utterance.lang = (voice && voice.lang.includes('iw')) ? 'iw-IL' : 'he-IL';
+                if (voice) utterance.voice = voice;
+                utterance.pitch = 1.3;
+                utterance.rate = 0.85;
+                window.speechSynthesis.speak(utterance);
+              }, 150);
+            }
+          };
+
+          const current = shuffledData[currentIndex];
+
+          useEffect(() => {
+            if (spokenIndexRef.current !== currentIndex) {
+              spokenIndexRef.current = currentIndex;
+              setTimeout(() => {
+                speak(`מה ההפך של ${current.w1Speak || current.w1}?`);
+              }, 600);
+            }
+          }, [currentIndex, current]);
+
+          const handleNext = () => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+            if (currentIndex < shuffledData.length - 1) {
+              setCurrentIndex(prev => prev + 1);
+              setIsAnswerRevealed(false);
+            }
+          };
+
+          const handlePrev = () => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+            if (currentIndex > 0) {
+              setCurrentIndex(prev => prev - 1);
+              setIsAnswerRevealed(false);
+            }
+          };
+
+          const handleReveal = () => {
+            setIsAnswerRevealed(true);
+            speak(current.w2Speak || current.w2);
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+            timeoutRef.current = setTimeout(() => {
+              setCurrentIndex(prev => {
+                if (prev < shuffledData.length - 1) {
+                  setIsAnswerRevealed(false);
+                  return prev + 1;
+                }
+                return prev;
+              });
+            }, 2000);
+          };
+
+          return (
+            <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
+              <div
+                className="bg-pink-100 border-4 border-pink-300 rounded-full px-6 py-3 flex items-center shadow-md w-max justify-center mb-8 cursor-pointer transform hover:scale-105 transition-transform gap-3"
+                onClick={() => speak(`מה ההפך של ${current.w1Speak || current.w1}?`)}
+              >
+                <Volume2Icon />
+                <span className="text-xl md:text-2xl font-bold text-pink-600">מה ההפך של "{current.w1}"?</span>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 mb-12">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    if (e && e.currentTarget) e.currentTarget.blur();
+                    speak(current.w1Speak || current.w1);
+                  }}
+                  className="bg-pink-50 border-4 border-pink-200 rounded-3xl p-6 md:p-8 flex flex-col items-center shadow-lg w-40 h-40 md:w-52 md:h-48 justify-center transform transition-transform hover:scale-105 cursor-pointer"
+                >
+                  <span className="text-3xl md:text-5xl font-black text-pink-600 text-center leading-tight">{current.w1}</span>
+                </button>
+
+                <div className="text-4xl md:text-5xl font-black text-pink-400">↔️</div>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    if (e && e.currentTarget) e.currentTarget.blur();
+                    if (!isAnswerRevealed) handleReveal(); else speak(current.w2Speak || current.w2);
+                  }}
+                  className={`border-4 rounded-3xl p-6 md:p-8 flex flex-col items-center justify-center w-40 h-40 md:w-52 md:h-48 transform transition-all hover:scale-105 cursor-pointer ${isAnswerRevealed ? 'bg-pink-100 border-pink-300 shadow-lg' : 'bg-gray-100 border-dashed border-gray-300 shadow-inner'}`}
+                >
+                  {!isAnswerRevealed ? (
+                    <>
+                      <span className="text-5xl md:text-6xl font-black text-gray-300">❓</span>
+                      <span className="mt-2 text-sm md:text-base font-bold text-gray-400 text-center">לחצו לתשובה!</span>
+                    </>
+                  ) : (
+                    <span className="text-3xl md:text-5xl font-black text-pink-600 text-center animate-fade-in-up leading-tight">{current.w2}</span>
+                  )}
+                </button>
+              </div>
+
+              <div className="flex gap-4 md:gap-8 w-full justify-center">
+                <button
+                  onClick={handlePrev}
+                  disabled={currentIndex === 0}
+                  className={`px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md ${currentIndex === 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-pink-100 text-pink-700 hover:bg-pink-200 hover:shadow-lg'}`}
+                >
+                  הקודם
+                </button>
+                <button
+                  onClick={handleNext}
+                  disabled={currentIndex === shuffledData.length - 1}
+                  className={`px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md ${currentIndex === shuffledData.length - 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-pink-500 text-white hover:bg-pink-600 hover:shadow-lg'}`}
+                >
+                  הבא
+                </button>
+              </div>
+
+              <div className="mt-8 text-pink-400 font-bold text-lg">
+                {currentIndex + 1} מתוך {shuffledData.length}
+              </div>
+            </div>
+          );
+        };
+
+        // --- Math Counting & Comparison Data & Modules ---
+        const COUNTING_ITEMS = [
+          { id: 'car', emoji: '🚗' },
+          { id: 'ladybug', emoji: '🐞' },
+          { id: 'apple', emoji: '🍎' },
+          { id: 'star', emoji: '⭐' },
+          { id: 'balloon', emoji: '🎈' },
+          { id: 'butterfly', emoji: '🦋' },
+          { id: 'flower', emoji: '🌻' },
+          { id: 'fish', emoji: '🐟' },
+          { id: 'ball', emoji: '⚽' },
+          { id: 'strawberry', emoji: '🍓' }
+        ];
+
+        const CountingGame = () => {
+          const [question, setQuestion] = useState(null);
+          const [feedback, setFeedback] = useState(null);
+          const [roundId, setRoundId] = useState(0);
+
+          const [preferredVoice, setPreferredVoice] = useState(null);
+          const preferredVoiceRef = React.useRef(null);
+          const spokenOnceRef = React.useRef(false);
+
+          useEffect(() => { preferredVoiceRef.current = preferredVoice; }, [preferredVoice]);
+
+          useEffect(() => {
+            const initVoice = () => {
+              const availableVoices = window.speechSynthesis.getVoices();
+              if (availableVoices.length > 0) {
+                const langVoices = availableVoices.filter(v =>
+                  v.lang.startsWith('he') || v.lang.includes('iw') || v.name.includes('Hebrew') || v.name.includes('עברית')
+                );
+                const bestVoice = langVoices.find(v =>
+                  v.name.includes('Google') || v.name.includes('Natural') || v.name.toLowerCase().includes('female')
+                ) || langVoices[0];
+                if (bestVoice) setPreferredVoice(bestVoice);
+              }
+            };
+            initVoice();
+            if (window.speechSynthesis.onvoiceschanged !== undefined) {
+              window.speechSynthesis.onvoiceschanged = initVoice;
+            }
+          }, []);
+
+          const speak = (text) => {
+            if ('speechSynthesis' in window) {
+              window.speechSynthesis.cancel();
+              setTimeout(() => {
+                const utterance = new SpeechSynthesisUtterance(text);
+                const voice = preferredVoiceRef.current;
+                utterance.lang = (voice && voice.lang.includes('iw')) ? 'iw-IL' : 'he-IL';
+                if (voice) utterance.voice = voice;
+                utterance.pitch = 1.3;
+                utterance.rate = 0.85;
+                window.speechSynthesis.speak(utterance);
+              }, 150);
+            }
+          };
+
+          const generateQuestion = (prevCount = null) => {
+            let count;
+            do {
+              count = Math.floor(Math.random() * 10) + 1;
+            } while (count === prevCount);
+
+            const item = COUNTING_ITEMS[Math.floor(Math.random() * COUNTING_ITEMS.length)];
+            const distractors = [];
+            while (distractors.length < 3) {
+              const d = Math.floor(Math.random() * 10) + 1;
+              if (d !== count && !distractors.includes(d)) {
+                distractors.push(d);
+              }
+            }
+            const options = [count, ...distractors].sort(() => Math.random() - 0.5);
+            setQuestion({ count, item, options });
+            setFeedback(null);
+            setRoundId(prev => prev + 1);
+          };
+
+          useEffect(() => {
+            generateQuestion();
+          }, []);
+
+          useEffect(() => {
+            if (!spokenOnceRef.current) {
+              spokenOnceRef.current = true;
+              setTimeout(() => speak('כַּמָּה יֵשׁ כָּאן?'), 600);
+            }
+          }, []);
+
+          const handleGuess = (num) => {
+            if (feedback === 'correct' || !question) return;
+            speak(HEBREW_NUMBER_WORDS[num - 1]);
+            if (num === question.count) {
+              setFeedback('correct');
+              setTimeout(() => {
+                generateQuestion(question.count);
+              }, 1500);
+            } else {
+              setFeedback('wrong');
+              setTimeout(() => {
+                speak('נַסּוּ שׁוּב');
+              }, 900);
+            }
+          };
+
+          if (!question) return null;
+
+          return (
+            <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
+              <div
+                className="bg-purple-100 border-4 border-purple-300 rounded-full px-6 py-3 flex items-center shadow-md w-max justify-center mb-8 cursor-pointer transform hover:scale-105 transition-transform gap-3"
+                onClick={() => speak('כַּמָּה יֵשׁ כָּאן?')}
+              >
+                <Volume2Icon />
+                <span className="text-xl md:text-2xl font-bold text-purple-700">כמה יש כאן?</span>
+              </div>
+
+              <div className="bg-purple-50 border-4 border-purple-200 rounded-3xl p-6 md:p-10 flex flex-wrap items-center justify-center gap-4 min-h-[180px] w-full max-w-xl mb-10 shadow-inner">
+                {Array.from({ length: question.count }).map((_, idx) => (
+                  <span key={`${roundId}-item-${idx}`} className="text-5xl md:text-6xl select-none animate-fade-in-up">
+                    {question.item.emoji}
+                  </span>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-4 gap-3 md:gap-6 w-full max-w-lg">
+                {question.options.map((num) => {
+                  const isCorrect = feedback === 'correct' && num === question.count;
+                  return (
+                    <button
+                      key={`count-${roundId}-${num}`}
+                      onClick={(e) => {
+                        if (e && e.currentTarget) e.currentTarget.blur();
+                        handleGuess(num);
+                      }}
+                      className={`
+                        h-20 md:h-24 rounded-3xl font-black text-3xl md:text-4xl shadow-md hover:shadow-xl hover:-translate-y-1 transition-all border-b-4
+                        ${isCorrect ? 'bg-green-100 border-green-400 text-green-700 animate-bounce' : 'bg-white border-purple-200 text-purple-700'}
+                      `}
+                    >
+                      {num}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        };
+
+        const ComparisonGame = () => {
+          const [pair, setPair] = useState(null);
+          const [feedback, setFeedback] = useState(null);
+          const [roundId, setRoundId] = useState(0);
+
+          const [preferredVoice, setPreferredVoice] = useState(null);
+          const preferredVoiceRef = React.useRef(null);
+          const spokenOnceRef = React.useRef(false);
+
+          useEffect(() => { preferredVoiceRef.current = preferredVoice; }, [preferredVoice]);
+
+          useEffect(() => {
+            const initVoice = () => {
+              const availableVoices = window.speechSynthesis.getVoices();
+              if (availableVoices.length > 0) {
+                const langVoices = availableVoices.filter(v =>
+                  v.lang.startsWith('he') || v.lang.includes('iw') || v.name.includes('Hebrew') || v.name.includes('עברית')
+                );
+                const bestVoice = langVoices.find(v =>
+                  v.name.includes('Google') || v.name.includes('Natural') || v.name.toLowerCase().includes('female')
+                ) || langVoices[0];
+                if (bestVoice) setPreferredVoice(bestVoice);
+              }
+            };
+            initVoice();
+            if (window.speechSynthesis.onvoiceschanged !== undefined) {
+              window.speechSynthesis.onvoiceschanged = initVoice;
+            }
+          }, []);
+
+          const speak = (text) => {
+            if ('speechSynthesis' in window) {
+              window.speechSynthesis.cancel();
+              setTimeout(() => {
+                const utterance = new SpeechSynthesisUtterance(text);
+                const voice = preferredVoiceRef.current;
+                utterance.lang = (voice && voice.lang.includes('iw')) ? 'iw-IL' : 'he-IL';
+                if (voice) utterance.voice = voice;
+                utterance.pitch = 1.3;
+                utterance.rate = 0.85;
+                window.speechSynthesis.speak(utterance);
+              }, 150);
+            }
+          };
+
+          const generatePair = (prevKey = '') => {
+            let c1, c2, key;
+            do {
+              c1 = Math.floor(Math.random() * 9) + 1;
+              c2 = Math.floor(Math.random() * 9) + 1;
+              key = `${c1}-${c2}`;
+            } while (c1 === c2 || key === prevKey);
+
+            const shuffledItems = [...COUNTING_ITEMS].sort(() => 0.5 - Math.random());
+            const item1 = shuffledItems[0];
+            const item2 = shuffledItems[1];
+
+            setPair({ c1, c2, item1, item2, key });
+            setFeedback(null);
+            setRoundId(prev => prev + 1);
+          };
+
+          useEffect(() => {
+            generatePair();
+          }, []);
+
+          useEffect(() => {
+            if (!spokenOnceRef.current) {
+              spokenOnceRef.current = true;
+              setTimeout(() => speak('אֵיפֹה יֵשׁ יוֹתֵר?'), 600);
+            }
+          }, []);
+
+          const handleChoice = (side) => {
+            if (feedback === 'correct' || !pair) return;
+            const isRightAnswer = (side === 'right' && pair.c1 > pair.c2) || (side === 'left' && pair.c2 > pair.c1);
+            if (isRightAnswer) {
+              setFeedback('correct');
+              setTimeout(() => {
+                generatePair(pair.key);
+              }, 1300);
+            } else {
+              setFeedback('wrong');
+              speak('נַסּוּ שׁוּב');
+            }
+          };
+
+          if (!pair) return null;
+
+          const rightWins = feedback === 'correct' && pair.c1 > pair.c2;
+          const leftWins = feedback === 'correct' && pair.c2 > pair.c1;
+
+          return (
+            <div className="flex flex-col items-center w-full max-w-4xl mx-auto">
+              <div
+                className="bg-purple-100 border-4 border-purple-300 rounded-full px-6 py-3 flex items-center shadow-md w-max justify-center mb-8 cursor-pointer transform hover:scale-105 transition-transform gap-3"
+                onClick={() => speak('אֵיפֹה יֵשׁ יוֹתֵר?')}
+              >
+                <Volume2Icon />
+                <span className="text-xl md:text-2xl font-bold text-purple-700">איפה יש יותר?</span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 w-full">
+                <button
+                  key={`comp-right-${roundId}`}
+                  onClick={(e) => {
+                    if (e && e.currentTarget) e.currentTarget.blur();
+                    handleChoice('right');
+                  }}
+                  className={`
+                    min-h-[220px] p-6 rounded-3xl border-4 flex flex-wrap items-center justify-center gap-3 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all cursor-pointer
+                    ${rightWins ? 'bg-green-50 border-green-400 animate-bounce' : 'bg-white border-purple-200'}
+                  `}
+                >
+                  {Array.from({ length: pair.c1 }).map((_, i) => (
+                    <span key={i} className="text-4xl md:text-5xl select-none">{pair.item1.emoji}</span>
+                  ))}
+                </button>
+
+                <button
+                  key={`comp-left-${roundId}`}
+                  onClick={(e) => {
+                    if (e && e.currentTarget) e.currentTarget.blur();
+                    handleChoice('left');
+                  }}
+                  className={`
+                    min-h-[220px] p-6 rounded-3xl border-4 flex flex-wrap items-center justify-center gap-3 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all cursor-pointer
+                    ${leftWins ? 'bg-green-50 border-green-400 animate-bounce' : 'bg-white border-purple-200'}
+                  `}
+                >
+                  {Array.from({ length: pair.c2 }).map((_, i) => (
+                    <span key={i} className="text-4xl md:text-5xl select-none">{pair.item2.emoji}</span>
+                  ))}
+                </button>
+              </div>
+            </div>
+          );
+        };
+
+        // --- Rhymes Module ---
+        const RhymesGame = () => {
+          const [shuffledData] = useState(() => [...RHYMES_DATA].sort(() => 0.5 - Math.random()));
+          const [currentIndex, setCurrentIndex] = useState(0);
+          const [options, setOptions] = useState([]);
+          const [feedback, setFeedback] = useState(null);
+
+          const [preferredVoice, setPreferredVoice] = useState(null);
+          const preferredVoiceRef = React.useRef(null);
+          const spokenIndexRef = React.useRef(-1);
+
+          useEffect(() => { preferredVoiceRef.current = preferredVoice; }, [preferredVoice]);
+
+          useEffect(() => {
+            const initVoice = () => {
+              const availableVoices = window.speechSynthesis.getVoices();
+              if (availableVoices.length > 0) {
+                const langVoices = availableVoices.filter(v =>
+                  v.lang.startsWith('he') || v.lang.includes('iw') || v.name.includes('Hebrew') || v.name.includes('עברית')
+                );
+                const bestVoice = langVoices.find(v =>
+                  v.name.includes('Google') || v.name.includes('Natural') || v.name.toLowerCase().includes('female')
+                ) || langVoices[0];
+                if (bestVoice) setPreferredVoice(bestVoice);
+              }
+            };
+            initVoice();
+            if (window.speechSynthesis.onvoiceschanged !== undefined) {
+              window.speechSynthesis.onvoiceschanged = initVoice;
+            }
+          }, []);
+
+          const speak = (text) => {
+            if ('speechSynthesis' in window) {
+              window.speechSynthesis.cancel();
+              setTimeout(() => {
+                const utterance = new SpeechSynthesisUtterance(text);
+                const voice = preferredVoiceRef.current;
+                utterance.lang = (voice && voice.lang.includes('iw')) ? 'iw-IL' : 'he-IL';
+                if (voice) utterance.voice = voice;
+                utterance.pitch = 1.3;
+                utterance.rate = 0.85;
+                window.speechSynthesis.speak(utterance);
+              }, 150);
+            }
+          };
+
+          const handleNext = () => {
+            setCurrentIndex((prev) => (prev + 1) % shuffledData.length);
+          };
+
+          const handlePrev = () => {
+            setCurrentIndex((prev) => (prev - 1 + shuffledData.length) % shuffledData.length);
+          };
+
+          const current = shuffledData[currentIndex];
+
+          useEffect(() => {
+            const choices = [current.match, ...current.distractors].sort(() => Math.random() - 0.5);
+            setOptions(choices);
+            setFeedback(null);
+          }, [currentIndex, current]);
+
+          useEffect(() => {
+            if (spokenIndexRef.current !== currentIndex) {
+              spokenIndexRef.current = currentIndex;
+              setTimeout(() => {
+                speak(`מה מתחרז עם ${current.target.speak || current.target.w}?`);
+              }, 600);
+            }
+          }, [currentIndex, current]);
+
+          const handleGuess = (item) => {
+            if (feedback === 'correct') return;
+
+            speak(item.speak || item.w);
+
+            if (item.w === current.match.w) {
+              setFeedback('correct');
+              setTimeout(() => {
+                handleNext();
+              }, 1500);
+            } else {
+              setFeedback('wrong');
+              setTimeout(() => {
+                speak('נַסּוּ שׁוּב');
+              }, 800);
+            }
+          };
+
+          return (
+            <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
+              {/* Target Area */}
+              <div
+                className="bg-pink-100 border-4 border-pink-300 rounded-3xl p-6 flex flex-col items-center shadow-lg w-56 h-64 justify-center mb-10 cursor-pointer transform hover:scale-105 transition-transform"
+                onClick={() => speak(current.target.speak || current.target.w)}
+              >
+                <span className="text-xl md:text-2xl font-bold text-pink-500 mb-2 text-center">מה מתחרז עם...</span>
+                <span className="text-7xl md:text-8xl mb-4">{current.target.e}</span>
+                <span className="text-3xl md:text-4xl font-black text-pink-700">{current.target.w}</span>
+              </div>
+
+              {/* Options Grid */}
+              <div className="grid grid-cols-2 gap-4 md:gap-8 w-full max-w-lg mb-10">
+                {options.map((opt, i) => {
+                  const isCorrect = feedback === 'correct' && opt.w === current.match.w;
+                  const isWrong = feedback === 'wrong' && opt.w !== current.match.w;
+                  return (
+                    <button
+                      key={`rhyme-${currentIndex}-${i}-${opt.w}`}
+                      onClick={(e) => {
+                        if (e && e.currentTarget) e.currentTarget.blur();
+                        handleGuess(opt);
+                      }}
+                      className={`
+                        bg-white border-4 rounded-3xl p-4 flex flex-col items-center justify-center h-36 md:h-48 shadow-md hover:shadow-xl hover:scale-105 transition-all
+                        ${isCorrect ? 'border-green-400 bg-green-50 shadow-green-200' : 'border-gray-200'}
+                        ${isWrong ? 'opacity-50 scale-95 border-red-200' : ''}
+                      `}
+                    >
+                      <span className={`text-6xl md:text-7xl mb-3 ${isCorrect ? 'animate-bounce' : ''}`}>{opt.e}</span>
+                      <span className={`text-xl md:text-2xl font-bold ${isCorrect ? 'text-green-600' : 'text-gray-700'}`}>{opt.w}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="flex gap-4 md:gap-8 w-full justify-center">
+                <button
+                  onClick={handlePrev}
+                  className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md bg-pink-100 text-pink-700 hover:bg-pink-200 hover:shadow-lg"
+                >
+                  הקודם
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md bg-pink-500 text-white hover:bg-pink-600 hover:shadow-lg"
+                >
+                  הבא
+                </button>
+              </div>
+
+              <div className="mt-8 text-pink-400 font-bold text-lg">
+                {currentIndex + 1} מתוך {shuffledData.length}
+              </div>
+            </div>
+          );
+        };
+
+        // --- Starting Sounds Module ---
+        const StartingSoundsGame = () => {
+          const [shuffledData] = useState(() => [...STARTING_SOUNDS_DATA].sort(() => 0.5 - Math.random()));
+          const [currentIndex, setCurrentIndex] = useState(0);
+          const [options, setOptions] = useState([]);
+          const [feedback, setFeedback] = useState(null);
+
+          const [preferredVoice, setPreferredVoice] = useState(null);
+          const preferredVoiceRef = React.useRef(null);
+          const spokenIndexRef = React.useRef(-1);
+
+          useEffect(() => { preferredVoiceRef.current = preferredVoice; }, [preferredVoice]);
+
+          useEffect(() => {
+            const initVoice = () => {
+              const availableVoices = window.speechSynthesis.getVoices();
+              if (availableVoices.length > 0) {
+                const langVoices = availableVoices.filter(v =>
+                  v.lang.startsWith('he') || v.lang.includes('iw') || v.name.includes('Hebrew') || v.name.includes('עברית')
+                );
+                const bestVoice = langVoices.find(v =>
+                  v.name.includes('Google') || v.name.includes('Natural') || v.name.toLowerCase().includes('female')
+                ) || langVoices[0];
+                if (bestVoice) setPreferredVoice(bestVoice);
+              }
+            };
+            initVoice();
+            if (window.speechSynthesis.onvoiceschanged !== undefined) {
+              window.speechSynthesis.onvoiceschanged = initVoice;
+            }
+          }, []);
+
+          const speak = (text) => {
+            if ('speechSynthesis' in window) {
+              window.speechSynthesis.cancel();
+              setTimeout(() => {
+                const utterance = new SpeechSynthesisUtterance(text);
+                const voice = preferredVoiceRef.current;
+                utterance.lang = (voice && voice.lang.includes('iw')) ? 'iw-IL' : 'he-IL';
+                if (voice) utterance.voice = voice;
+                utterance.pitch = 1.3;
+                utterance.rate = 0.85;
+                window.speechSynthesis.speak(utterance);
+              }, 150);
+            }
+          };
+
+          const handleNext = () => {
+            setCurrentIndex((prev) => (prev + 1) % shuffledData.length);
+          };
+
+          const handlePrev = () => {
+            setCurrentIndex((prev) => (prev - 1 + shuffledData.length) % shuffledData.length);
+          };
+
+          const current = shuffledData[currentIndex];
+
+          useEffect(() => {
+            const choices = [current.match, ...current.distractors].sort(() => Math.random() - 0.5);
+            setOptions(choices);
+            setFeedback(null);
+          }, [currentIndex, current]);
+
+          useEffect(() => {
+            if (spokenIndexRef.current !== currentIndex) {
+              spokenIndexRef.current = currentIndex;
+              setTimeout(() => {
+                speak(`מה מתחיל בְּ... ${current.soundSpeak}?`);
+              }, 600);
+            }
+          }, [currentIndex, current]);
+
+          const handleGuess = (item) => {
+            if (feedback === 'correct') return;
+
+            speak(item.speak || item.w);
+
+            if (item.w === current.match.w) {
+              setFeedback('correct');
+              setTimeout(() => {
+                handleNext();
+              }, 1500);
+            } else {
+              setFeedback('wrong');
+              setTimeout(() => {
+                speak('נַסּוּ שׁוּב');
+              }, 800);
+            }
+          };
+
+          return (
+            <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
+              {/* Target Area */}
+              <div
+                className="bg-pink-100 border-4 border-pink-300 rounded-3xl p-6 flex flex-col items-center shadow-lg w-56 h-64 md:w-64 justify-center mb-10 cursor-pointer transform hover:scale-105 transition-transform"
+                onClick={() => speak(`מה מתחיל בְּ... ${current.soundSpeak}?`)}
+              >
+                <span className="text-xl md:text-2xl font-bold text-pink-500 mb-2 text-center">מה מתחיל ב-</span>
+                <span className="text-7xl md:text-8xl mb-4 font-black text-pink-700 leading-none">{current.soundDisplay}</span>
+                <div className="bg-pink-200 text-pink-600 px-4 py-2 rounded-full font-bold flex items-center gap-2 mt-2">
+                  <Volume2Icon /> שמע שוב
+                </div>
+              </div>
+
+              {/* Options Grid */}
+              <div className="grid grid-cols-2 gap-4 md:gap-8 w-full max-w-lg mb-10">
+                {options.map((opt, i) => {
+                  const isCorrect = feedback === 'correct' && opt.w === current.match.w;
+                  const isWrong = feedback === 'wrong' && opt.w !== current.match.w;
+                  return (
+                    <button
+                      key={`sound-${currentIndex}-${i}-${opt.w}`}
+                      onClick={(e) => {
+                        if (e && e.currentTarget) e.currentTarget.blur();
+                        handleGuess(opt);
+                      }}
+                      className={`
+                        bg-white border-4 rounded-3xl p-4 flex flex-col items-center justify-center h-36 md:h-48 shadow-md hover:shadow-xl hover:scale-105 transition-all
+                        ${isCorrect ? 'border-green-400 bg-green-50 shadow-green-200' : 'border-gray-200'}
+                        ${isWrong ? 'opacity-50 scale-95 border-red-200' : ''}
+                      `}
+                    >
+                      <span className={`text-6xl md:text-7xl mb-3 ${isCorrect ? 'animate-bounce' : ''}`}>{opt.e}</span>
+                      <span className={`text-xl md:text-2xl font-bold ${isCorrect ? 'text-green-600' : 'text-gray-700'}`}>{opt.w}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="flex gap-4 md:gap-8 w-full justify-center">
+                <button
+                  onClick={handlePrev}
+                  className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md bg-pink-100 text-pink-700 hover:bg-pink-200 hover:shadow-lg"
+                >
+                  הקודם
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md bg-pink-500 text-white hover:bg-pink-600 hover:shadow-lg"
+                >
+                  הבא
+                </button>
+              </div>
+
+              <div className="mt-8 text-pink-400 font-bold text-lg">
+                {currentIndex + 1} מתוך {shuffledData.length}
+              </div>
+            </div>
+          );
+        };
+
+        // --- Main App Component ---
+        const App = () => {
+          const [activeItem, setActiveItem] = useState(null);
+          const [activeCategoryTheme, setActiveCategoryTheme] = useState(null);
+          const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+          const handleSelectItem = (item, category) => {
+            setActiveItem(item);
+            setActiveCategoryTheme(category.theme);
+            setIsMobileMenuOpen(false);
+          };
+
+          const renderInteractiveContent = () => {
+            switch(activeItem.id) {
+              case 'ar-colors':
+                return <InteractiveModule key={activeItem.id} items={ARABIC_COLORS} lang="ar-SA" themeClass="emerald" renderItem={renderColorItem} />;
+              case 'ar-animals':
+                return <InteractiveModule key={activeItem.id} items={ARABIC_ANIMALS} lang="ar-SA" themeClass="emerald" renderItem={renderAnimalItem('emerald')} />;
+              case 'ar-body':
+                return <InteractiveModule key={activeItem.id} items={ARABIC_BODY_PARTS} lang="ar-SA" themeClass="emerald" renderItem={renderAnimalItem('emerald')} />;
+              case 'ar-family':
+                return <InteractiveModule key={activeItem.id} items={ARABIC_FAMILY} lang="ar-SA" themeClass="emerald" renderItem={renderAnimalItem('emerald')} />;
+              case 'ar-rosh-hashana':
+                return <InteractiveModule key={activeItem.id} items={ARABIC_ROSH_HASHANA} lang="ar-SA" themeClass="emerald" renderItem={renderAnimalItem('emerald')} />;
+              case 'ar-days':
+                return <InteractiveModule key={activeItem.id} items={ARABIC_DAYS} lang="ar-SA" themeClass="emerald" renderItem={renderTextCardItem('emerald', 'w-16 h-16 md:w-24 md:h-24', 'text-2xl md:text-4xl')} />;
+              case 'ar-numbers':
+                return <InteractiveModule key={activeItem.id} items={ARABIC_NUMBERS} lang="ar-SA" themeClass="emerald" renderItem={renderTextCardItem('emerald', 'w-16 h-16 md:w-24 md:h-24', 'text-2xl md:text-4xl')} />;
+              case 'en-colors':
+                return <InteractiveModule key={activeItem.id} items={ENGLISH_COLORS} lang="en-US" themeClass="blue" renderItem={renderColorItem} />;
+              case 'en-animals':
+                return <InteractiveModule key={activeItem.id} items={ENGLISH_ANIMALS} lang="en-US" themeClass="blue" renderItem={renderAnimalItem('blue')} />;
+              case 'heb-letters':
+                return <InteractiveModule key={activeItem.id} items={HEBREW_LETTERS} lang="he-IL" themeClass="pink" renderItem={renderTextCardItem('pink', 'w-16 h-16 md:w-24 md:h-24', 'text-2xl md:text-4xl')} />;
+              case 'heb-rhymes':
+                return <RhymesGame key={activeItem.id} />;
+              case 'heb-sounds':
+                return <StartingSoundsGame key={activeItem.id} />;
+              case 'en-numbers':
+                return <InteractiveModule key={activeItem.id} items={ENGLISH_NUMBERS} lang="en-US" themeClass="blue" renderItem={renderTextCardItem('blue', 'w-16 h-16 md:w-24 md:h-24', 'text-2xl md:text-4xl')} />;
+              case 'math-30':
+                return <InteractiveModule key={activeItem.id} items={MATH_NUMBERS} lang="he-IL" themeClass="purple" renderItem={renderTextCardItem('purple', 'w-14 h-14 md:w-20 md:h-20', 'text-xl md:text-2xl')} />;
+              case 'math-count':
+                return <CountingGame key={activeItem.id} />;
+              case 'math-compare':
+                return <ComparisonGame key={activeItem.id} />;
+              case 'heb-combinations':
+                return <WordCombinationsModule key={activeItem.id} />;
+              case 'heb-opposites':
+                return <OppositesModule key={activeItem.id} />;
+              default:
+                return (
+                  <div className="flex flex-col items-center">
+                    <div className="w-24 h-2 bg-amber-400 rounded-full mb-8"></div>
+                    <p className="text-xl md:text-2xl leading-relaxed text-gray-600 font-medium bg-amber-50/50 p-6 rounded-2xl border-2 border-dashed border-amber-200">
+                      {activeItem.content}
+                    </p>
+                    <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {['🌟','🎈','🎨','🧸'].map((emoji, i) => (
+                        <div key={i} className="aspect-square w-20 h-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200 flex items-center justify-center text-4xl hover:scale-110 transition-transform cursor-pointer hover:bg-white hover:shadow-md">
+                           {emoji}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+            }
+          };
+
+          const isInteractive = ['ar-colors', 'ar-animals', 'ar-body', 'ar-family', 'ar-rosh-hashana', 'ar-days', 'ar-numbers', 'en-colors', 'en-animals', 'heb-letters', 'en-numbers', 'math-30', 'math-count', 'math-compare', 'heb-combinations', 'heb-rhymes', 'heb-sounds', 'heb-opposites'].includes(activeItem?.id);
+          const themeStyles = activeCategoryTheme ? getThemeClasses(activeCategoryTheme) : null;
+
+          return (
+            <div className="min-h-screen flex flex-col md:flex-row bg-amber-50 h-screen overflow-hidden">
+              
+              {/* Header (Mobile) */}
+              <div className="md:hidden bg-white shadow-sm p-4 flex justify-between items-center z-20 shrink-0">
+                <div className="flex items-center text-amber-600 font-bold text-xl">
+                  <span className="text-2xl ml-2">🌸</span> גן יסמין
+                </div>
+                <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 bg-amber-100 text-amber-700 rounded-full hover:bg-amber-200 transition-colors">
+                  {isMobileMenuOpen ? <XIcon /> : <MenuIcon />}
+                </button>
+              </div>
+
+              {/* Sidebar */}
+              <nav className={`
+                ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'} 
+                md:translate-x-0 transition-transform duration-300 ease-in-out
+                absolute md:relative top-0 right-0 w-72 h-full bg-white shadow-xl md:shadow-lg z-30 overflow-y-auto shrink-0
+              `}>
+                <div className="hidden md:flex items-center p-6 text-amber-600 font-black text-3xl border-b border-amber-100 sticky top-0 bg-white z-10">
+                  <span className="text-4xl ml-3 animate-spin-slow">🌸</span> גן יסמין
+                </div>
+                <div className="p-4 pt-6 space-y-6">
+                  {MENU_DATA.map((section, idx) => (
+                    <div key={idx} className="space-y-2">
+                      <h2 className={`flex items-center font-bold text-lg p-2 rounded-xl ${section.color}`}>
+                        <span className="ml-2 text-xl">{section.icon}</span> {section.category}
+                      </h2>
+                      <ul className="space-y-1 pr-2">
+                        {section.items.map((item) => (
+                          <li key={item.id}>
+                            <button
+                              onClick={() => handleSelectItem(item, section)}
+                              className={`
+                                w-full text-right flex items-center px-4 py-3 rounded-xl transition-all
+                                ${activeItem?.id === item.id 
+                                  ? `${section.color} font-bold shadow-sm scale-[1.02]` 
+                                  : `hover:bg-gray-50 text-gray-600 ${section.hover}`
+                                }
+                              `}
+                            >
+                              <span className="ml-3 text-xl inline-flex">{item.icon}</span> {item.title}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </nav>
+
+              {/* Mobile Overlay */}
+              {isMobileMenuOpen && (
+                <div className="absolute inset-0 bg-black/20 z-20 md:hidden backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
+              )}
+
+              {/* Main Content */}
+              <main className="flex-1 p-4 md:p-8 overflow-y-auto relative h-full">
+                <div className="max-w-5xl mx-auto pb-20">
+                  {activeItem ? (
+                    <div className="bg-white rounded-3xl shadow-xl p-6 md:p-12 border-4 border-white transform transition-all animate-fade-in-up flex flex-col items-center">
+                      <div className={`inline-flex items-center px-4 py-1 rounded-full text-sm font-bold mb-6 bg-${activeCategoryTheme}-100 ${themeStyles?.text}`}>
+                        {activeItem.title} {isInteractive && "- אינטראקטיבי"}
+                      </div>
+                      <h1 className="text-3xl md:text-5xl font-black text-gray-800 mb-8 flex items-center">
+                        <span className="ml-4 text-4xl md:text-5xl">{activeItem.icon}</span> {activeItem.title}
+                      </h1>
+                      {renderInteractiveContent()}
+                    </div>
+                  ) : (
+                    <div className="bg-white rounded-3xl shadow-xl p-8 md:p-16 text-center border-4 border-amber-100 flex flex-col items-center justify-center min-h-[60vh]">
+                      <div className="w-24 h-24 md:w-32 md:h-32 bg-amber-100 rounded-full flex items-center justify-center mb-8 shadow-inner">
+                        <span className="text-5xl md:text-7xl">🌸</span>
+                      </div>
+                      <h1 className="text-3xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-400 mb-6">
+                        ברוכים הבאים לגן יסמין!
+                      </h1>
+                      <p className="text-lg md:text-2xl text-gray-500 max-w-lg mx-auto">
+                        בחרו נושא מהתפריט בצד ימין כדי להתחיל ללמוד, לשחק ולגלות דברים חדשים.
+                      </p>
+                      <div className="mt-12 flex space-x-3 space-x-reverse justify-center">
+                        <div className="w-3 h-3 rounded-full bg-pink-400 animate-bounce" style={{animationDelay: '0ms'}}></div>
+                        <div className="w-3 h-3 rounded-full bg-emerald-400 animate-bounce" style={{animationDelay: '150ms'}}></div>
+                        <div className="w-3 h-3 rounded-full bg-blue-400 animate-bounce" style={{animationDelay: '300ms'}}></div>
+                        <div className="w-3 h-3 rounded-full bg-purple-400 animate-bounce" style={{animationDelay: '450ms'}}></div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </main>
+            </div>
+          );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
