@@ -23,7 +23,7 @@ export default function ShippingPage() {
                 <strong>דמי משלוח:</strong> איסוף מנקודת חלוקה ₪{SHIPPING_COSTS['pickup-point']},{' '}
                 <strong>חינם ברכישה מעל {FREE_SHIPPING_FROM['pickup-point']} ש&quot;ח</strong>. משלוח עד הבית
                 ₪{SHIPPING_COSTS.delivery}, <strong>חינם ברכישה מעל {FREE_SHIPPING_FROM.delivery} ש&quot;ח</strong>{' '}
-                (ובמקרה כזה גם נקודת החלוקה בחינם). סכום הרכישה נקבע לפי מחיר המוצרים בסל, לפני קופון הנחה.
+                (ובמקרה כזה גם נקודת החלוקה בחינם). סכום הרכישה נקבע לפי מחיר המוצרים בסל לאחר כל ההנחות, כולל קופון הנחה.
               </li>
               <li>
                 <strong>זמני אספקה:</strong> המשלוחים מגיעים <strong>עד 7 ימי עסקים</strong> מיום אישור ההזמנה.

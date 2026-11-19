@@ -51,8 +51,14 @@ export default function CheckoutPage() {
   // cart and shipping still produce the total it answered.
   const [serverQuote, setServerQuote] = useState<{ shown: number; total: number } | null>(null);
 
-  // Measured on the cart before the coupon, exactly as the checkout API does.
-  const shippingCost = shippingCostFor(shippingMethod, total);
+  // Free shipping is earned by the products after every discount, coupon
+  // included, exactly as the checkout API measures it.
+  const productsAfterCoupon = total - couponDiscount;
+  const shippingCost = shippingCostFor(shippingMethod, productsAfterCoupon);
+  // The coupon is what put the order under the threshold; say so, or the
+  // total going up when a coupon is applied looks like a mistake.
+  const couponCostFreeShipping =
+    couponDiscount > 0 && shippingCost > 0 && shippingCostFor(shippingMethod, total) === 0;
   const hasCouponExcludedItem = items.some((item) => {
     const product = getProductById(item.productId);
     return product ? isCouponExcluded(product, moment) : false;
@@ -270,7 +276,7 @@ export default function CheckoutPage() {
                 {(Object.entries(SHIPPING_OPTIONS) as [ShippingOption, typeof SHIPPING_OPTIONS['pickup-point']][]).map(([key, option]) => {
                   const Icon = option.icon;
                   const isSelected = shippingMethod === key;
-                  const isFree = shippingCostFor(key, total) === 0;
+                  const isFree = shippingCostFor(key, productsAfterCoupon) === 0;
                   return (
                     <button
                       key={key}
@@ -530,6 +536,11 @@ export default function CheckoutPage() {
                   </span>
                   <span className="font-bold">{shippingCost === 0 ? 'חינם' : `₪${shippingCost}`}</span>
                 </div>
+                {couponCostFreeShipping && (
+                  <p className="text-xs font-bold text-[#767676]">
+                    אחרי הקופון סכום הרכישה נמוך מ-₪{FREE_SHIPPING_FROM[shippingMethod]}, ולכן המשלוח בתשלום.
+                  </p>
+                )}
 
                 {/* Total */}
                 <div className="flex justify-between items-center pt-2 border-t border-gray-200">

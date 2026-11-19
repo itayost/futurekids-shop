@@ -19,9 +19,10 @@ export function isShippingMethod(value: unknown): value is ShippingMethod {
   return value === 'pickup-point' || value === 'delivery';
 }
 
-// `productsTotal` is the cart after the bundle discount and before any coupon
-// (priceCart's `total`). Measuring before the coupon means applying one can
-// never push the order under the threshold and make it cost more.
+// `productsTotal` is what the products cost after every discount: the bundle
+// discount and the coupon. The client's rule: a coupon that takes the cart
+// under a threshold loses that free shipping, even though the order can then
+// cost more than it would without the coupon. Checkout says so when it happens.
 export function shippingCostFor(method: ShippingMethod, productsTotal: number): number {
   return productsTotal >= FREE_SHIPPING_FROM[method] ? 0 : SHIPPING_COSTS[method];
 }
