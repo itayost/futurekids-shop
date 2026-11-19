@@ -1,6 +1,6 @@
 import { computeBundleDiscount } from './bundle-discount';
 import { getProductById } from './products';
-import { isSaleActive, priceOf } from './sale';
+import { priceOf } from './promo';
 
 interface CartLine {
   productId: string;
@@ -17,7 +17,7 @@ export interface PricedCart<T extends CartLine> {
   bundleName: string | null;
   // Products after the bundle discount, before coupon and shipping.
   total: number;
-  // What the sale takes off the price the same cart costs on a regular day.
+  // What product promos (such as a launch price) take off the list prices.
   saleSavings: number;
 }
 
@@ -26,7 +26,7 @@ const lineSum = (lines: { quantity: number }[], price: (i: number) => number) =>
 
 // The one definition of what a cart costs at a given moment, shared by the
 // storefront and the checkout server so they cannot disagree. Prices always come
-// from the catalog: a price stored in the cart goes stale the moment a sale
+// from the catalog: a price stored in the cart goes stale the moment a promo
 // starts or ends, and showing less than checkout charges is the damaging
 // direction. A stored price is only a fallback for a product no longer listed.
 export function priceCart<T extends CartLine>(items: T[], now: number): PricedCart<T> {
@@ -41,15 +41,15 @@ export function priceCart<T extends CartLine>(items: T[], now: number): PricedCa
 
   const units = lines.map(({ productId, quantity }) => ({ productId, quantity }));
   const subtotal = lineSum(lines, (i) => lines[i].price);
-  const { bundleDiscount, bundleName } = computeBundleDiscount(units, { sale: isSaleActive(now) });
+  const { bundleDiscount, bundleName } = computeBundleDiscount(units);
   const total = subtotal - bundleDiscount;
-  const regularTotal = lineSum(lines, (i) => lines[i].regularPrice) - computeBundleDiscount(units).bundleDiscount;
+  const regularSubtotal = lineSum(lines, (i) => lines[i].regularPrice);
 
-  return { lines, subtotal, bundleDiscount, bundleName, total, saleSavings: regularTotal - total };
+  return { lines, subtotal, bundleDiscount, bundleName, total, saleSavings: regularSubtotal - subtotal };
 }
 
 // A reminder email quotes an order that may have been priced on the other side
-// of the sale window. Re-quote it at today's prices when they moved; otherwise
+// of a promo window. Re-quote it at today's prices when they moved; otherwise
 // keep the stored total, which may legitimately include a coupon.
 export function repriceForReminder<T extends CartLine>(
   items: T[],

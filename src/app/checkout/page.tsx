@@ -14,7 +14,6 @@ import { SHIPPING_COSTS } from '@/lib/shipping';
 import { getProductById } from '@/lib/products';
 import { preorderShippingNote } from '@/lib/preorder';
 import { usePriceMoment } from '@/components/sale/usePriceMoment';
-import { isSaleActive } from '@/lib/sale';
 import { isCouponExcluded } from '@/lib/promo';
 import { SalePrice } from '@/components/sale/SalePrice';
 import { SaleSavings } from '@/components/sale/SaleSavings';
@@ -30,7 +29,6 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, bundleDiscount, bundleName, hasBundle, total, saleSavings } = useCart();
   const moment = usePriceMoment();
-  const saleActive = isSaleActive(moment);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [shippingMethod, setShippingMethod] = useState<ShippingOption>('pickup-point');
@@ -59,9 +57,7 @@ export default function CheckoutPage() {
     return product ? isCouponExcluded(product, moment) : false;
   });
   const shippingNote = preorderShippingNote(items.map((item) => item.productId));
-  // A coupon applied before the sale started no longer counts once it is on.
-  const activeCoupon = saleActive ? 0 : couponDiscount;
-  const shownTotal = total + shippingCost - activeCoupon;
+  const shownTotal = total + shippingCost - couponDiscount;
   const finalTotal = serverQuote?.shown === shownTotal ? serverQuote.total : shownTotal;
 
   // Track InitiateCheckout on page load
@@ -153,7 +149,7 @@ export default function CheckoutPage() {
             price: item.price,
             quantity: item.quantity,
           })),
-          couponCode: couponApplied && !saleActive ? couponInput : undefined,
+          couponCode: couponApplied ? couponInput : undefined,
           expectedTotal: finalTotal,
           shippingMethod,
           fbc,
@@ -175,7 +171,7 @@ export default function CheckoutPage() {
       }
 
       // The shown price is out of date (a tab open across the start or end of a
-      // sale, or a wrong device clock). Say so before charging a different amount.
+      // promo, or a wrong device clock). Say so before charging a different amount.
       if (result.priceChanged) {
         setServerQuote({ shown: shownTotal, total: result.total });
         setError(`הסכום לתשלום עודכן ל-₪${result.total}. לחיצה נוספת תמשיך לתשלום בסכום הזה.`);
@@ -495,25 +491,19 @@ export default function CheckoutPage() {
                   </div>
                 )}
 
-                {saleActive ? (
-                  <p className="my-2.5 rounded-lg border-2 border-dashed border-[#545454] px-3 py-2.5 text-[13px] font-bold leading-relaxed text-[#3a3a3a]">
-                    בימי שופינג IL המחירים כבר כוללים 15% הנחה, ולכן אין שימוש בקופונים. המשלוח במחיר רגיל.
-                  </p>
-                ) : (
-                  <CouponField
-                    value={couponInput}
-                    onChange={setCouponInput}
-                    onApply={applyCoupon}
-                    applied={couponApplied}
-                    discount={couponDiscount}
-                    message={couponMsg}
-                    hasExcludedItem={hasCouponExcludedItem}
-                  />
-                )}
-                {activeCoupon > 0 && (
+                <CouponField
+                  value={couponInput}
+                  onChange={setCouponInput}
+                  onApply={applyCoupon}
+                  applied={couponApplied}
+                  discount={couponDiscount}
+                  message={couponMsg}
+                  hasExcludedItem={hasCouponExcludedItem}
+                />
+                {couponDiscount > 0 && (
                   <div className="flex justify-between items-center text-emerald-600">
                     <span>הנחת קופון:</span>
-                    <span className="font-bold">-₪{activeCoupon}</span>
+                    <span className="font-bold">-₪{couponDiscount}</span>
                   </div>
                 )}
 
@@ -531,7 +521,7 @@ export default function CheckoutPage() {
                   <span className="text-lg font-bold">סה&quot;כ:</span>
                   <span className="text-3xl font-black">₪{finalTotal}</span>
                 </div>
-                <SaleSavings amount={saleSavings} sitewideSale={saleActive} />
+                <SaleSavings amount={saleSavings} />
               </div>
             </div>
 

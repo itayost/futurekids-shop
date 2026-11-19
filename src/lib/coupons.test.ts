@@ -191,31 +191,3 @@ describe('parseCouponCartItems', () => {
   it('rejects a non-object entry', () =>
     expect(parseCouponCartItems(['ai-book'], getProductById, now.getTime())).toBeNull());
 });
-
-describe('coupons during the Shopping IL sale', () => {
-  const during = new Date('2026-11-04T12:00:00+02:00');
-  const club = {
-    id: '1', code: 'CLUB10', discount_type: 'percent' as const, discount_value: 10,
-    min_subtotal: null, max_uses: null, used_count: 0, active: true, expires_at: null,
-  };
-  const lines = [{ productId: 'ai-book', price: 63, quantity: 1 }];
-
-  it('rejects a valid coupon, so discounts never stack', () => {
-    const result = validateCouponForCart(club, lines, during);
-    expect(result.valid).toBe(false);
-    expect(result.discount).toBe(0);
-    expect(result.message).toContain('שופינג IL');
-  });
-
-  it('accepts the same coupon once the sale is over', () => {
-    const result = validateCouponForCart(club, lines, new Date('2026-11-06T00:00:00+02:00'));
-    expect(result.valid).toBe(true);
-  });
-
-  it('takes coupons on the riddles book from midnight, not before', () => {
-    const riddles = [{ productId: 'riddles-book-1', price: 120, quantity: 1 }];
-    expect(validateCouponForCart(club, riddles, new Date('2026-11-05T23:59:59+02:00')).valid).toBe(false);
-    expect(validateCouponForCart(club, riddles, new Date('2026-11-06T00:00:00+02:00')))
-      .toEqual({ valid: true, discount: 12, code: 'CLUB10', message: 'הקופון הוחל' });
-  });
-});

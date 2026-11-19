@@ -1,5 +1,5 @@
 // A time-boxed price on one product, e.g. a launch price. It turns itself on
-// and off by date with no deploy at either end, like the sitewide sale.
+// and off by date with no deploy at either end.
 export interface ProductPromo {
   percent: number;
   // Window in epoch ms: on from startsAt, off from endsAt.
@@ -24,6 +24,13 @@ export function discountedPrice(price: number, percent: number): number {
 export function activePromo(product: Promotable, now: number): ProductPromo | null {
   const { promo } = product;
   return promo && now >= promo.startsAt && now < promo.endsAt ? promo : null;
+}
+
+// What a product costs at a given moment: its promo price while the promo
+// runs, its list price otherwise.
+export function priceOf(product: Promotable & { price: number }, now: number): number {
+  const promo = activePromo(product, now);
+  return promo ? discountedPrice(product.price, promo.percent) : product.price;
 }
 
 export function isCouponExcluded(product: Promotable & { excludeFromCoupons?: boolean }, now: number): boolean {

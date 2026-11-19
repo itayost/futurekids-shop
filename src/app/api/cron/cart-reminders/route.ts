@@ -6,7 +6,6 @@ import {
   CART_REMINDER_SUBJECT,
 } from '@/lib/cart-reminder-email';
 import { repriceForReminder } from '@/lib/cart-pricing';
-import { isSaleActive } from '@/lib/sale';
 import { buildUnsubscribeUrl } from '@/lib/unsubscribe';
 import { parseMemberCartRow, recomputeSnapshotTotal } from '@/lib/cart-snapshot';
 import { isQuietHours } from '@/lib/quiet-hours';
@@ -148,7 +147,6 @@ export async function GET(request: NextRequest) {
           items: quote.items,
           total: quote.total,
           unsubscribeUrl: buildUnsubscribeUrl(email),
-          hideClubTip: isSaleActive(Date.now()),
         }),
         unsubscribeUrl: buildUnsubscribeUrl(email),
       });
@@ -213,7 +211,6 @@ export async function GET(request: NextRequest) {
           items: quote.items,
           total: quote.total,
           unsubscribeUrl: buildUnsubscribeUrl(email),
-          hideClubTip: isSaleActive(Date.now()),
         }),
         unsubscribeUrl: buildUnsubscribeUrl(email),
       });
