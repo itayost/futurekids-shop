@@ -117,7 +117,6 @@ export async function POST(request: NextRequest) {
     // Server-authoritative amounts — never trust client-sent totals.
     const { lines: lineItems, bundleDiscount, bundleName, total: productsTotal } = priceCart(orderLines, now);
 
-    const shippingCost = shippingCostFor(body.shippingMethod, productsTotal);
 
     let couponCode: string | null = null;
     let couponDiscount = 0;
@@ -133,12 +132,19 @@ export async function POST(request: NextRequest) {
         // Coupon was applied by the client but is no longer valid — do not silently
         // charge full price. Return the updated total for the customer to confirm.
         return NextResponse.json(
-          { couponRejected: true, message: check.message, total: productsTotal + shippingCost },
+          {
+            couponRejected: true,
+            message: check.message,
+            total: productsTotal + shippingCostFor(body.shippingMethod, productsTotal),
+          },
           { status: 409 }
         );
       }
     }
 
+    // Free shipping is earned by what the products cost after every discount,
+    // the coupon included.
+    const shippingCost = shippingCostFor(body.shippingMethod, productsTotal - couponDiscount);
     const total = productsTotal - couponDiscount + shippingCost;
 
     // The browser's clock decides what the page shows, so a tab left open across

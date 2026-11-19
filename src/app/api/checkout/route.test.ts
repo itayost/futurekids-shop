@@ -183,17 +183,34 @@ describe('POST /api/checkout free shipping', () => {
     expect(icountSum()).toBe(300);
   });
 
-  // The threshold is the products total before the coupon, so applying a
-  // coupon can never make the order cost more than it did without one.
-  it('keeps free shipping when a coupon takes the products under ₪100', async () => {
-    db.coupon = {
-      id: '1', code: 'CLUB10', discount_type: 'percent', discount_value: 10,
-      min_subtotal: null, max_uses: null, used_count: 0, active: true, expires_at: null,
-    };
+  // The threshold is what the products cost after every discount, coupon
+  // included: a coupon that takes the cart under it loses the free shipping.
+  const CLUB10 = {
+    id: '1', code: 'CLUB10', discount_type: 'percent', discount_value: 10,
+    min_subtotal: null, max_uses: null, used_count: 0, active: true, expires_at: null,
+  };
+
+  it('charges for a pickup point when a coupon takes the products under ₪100', async () => {
+    db.coupon = CLUB10;
     const res = await checkout([unit('ai-book'), unit('ai-workbook')], { couponCode: 'CLUB10' });
     expect(res.status).toBe(200);
-    expect(orderTotal()).toBe(105 - 11);
-    expect(icountSum()).toBe(105 - 11);
+    expect(orderTotal()).toBe(105 - 11 + 20);
+    expect(orderShippingCost()).toBe(20);
+    expect(icountSum()).toBe(105 - 11 + 20);
+  });
+
+  it('keeps the pickup point free when the products are still ₪100 or more after the coupon', async () => {
+    db.coupon = CLUB10;
+    await checkout([unit('ai-book'), unit('ai-workbook', 2)], { couponCode: 'CLUB10' });
+    expect(orderTotal()).toBe(135 - 14);
+    expect(orderShippingCost()).toBe(0);
+  });
+
+  it('charges for home delivery when a coupon takes the products under ₪300', async () => {
+    db.coupon = CLUB10;
+    await checkout([unit('ai-book', 4)], { ...DELIVERY, couponCode: 'CLUB10' });
+    expect(orderTotal()).toBe(300 - 30 + 40);
+    expect(icountSum()).toBe(300 - 30 + 40);
   });
 
   it('stops before charging when the page still showed paid shipping', async () => {
