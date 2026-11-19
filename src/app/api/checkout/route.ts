@@ -5,7 +5,7 @@ import { priceCart } from '@/lib/cart-pricing';
 import { normalizeCode, parseCouponRow, validateCouponForCart } from '@/lib/coupons';
 import { getProductById } from '@/lib/products';
 import { isCouponExcluded } from '@/lib/promo';
-import { SHIPPING_COSTS } from '@/lib/shipping';
+import { isShippingMethod, shippingCostFor } from '@/lib/shipping';
 import type { Product } from '@/types';
 
 interface OrderItem {
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     const body: CheckoutRequest = await request.json();
 
     // Whitelist the shipping method so it can't be omitted (free) or forged (NaN total).
-    if (body.shippingMethod !== 'pickup-point' && body.shippingMethod !== 'delivery') {
+    if (!isShippingMethod(body.shippingMethod)) {
       return NextResponse.json({ error: 'Invalid shipping method' }, { status: 400 });
     }
 
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
     // Server-authoritative amounts — never trust client-sent totals.
     const { lines: lineItems, bundleDiscount, bundleName, total: productsTotal } = priceCart(orderLines, now);
 
-    const shippingCost = SHIPPING_COSTS[body.shippingMethod];
+    const shippingCost = shippingCostFor(body.shippingMethod, productsTotal);
 
     let couponCode: string | null = null;
     let couponDiscount = 0;
@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
     // Step 1: Create order in database with PENDING status
     const orderResult = await sql`
       INSERT INTO orders (email, first_name, last_name, phone, address, city, street, house_number, apartment, total, status, shipping_method, shipping_cost, pickup_point_code, pickup_point_name, bundle_discount, bundle_name, coupon_code, coupon_discount, fb_click_id, fb_browser_id, client_ip, client_ua)
-      VALUES (${body.email}, ${body.firstName}, ${body.lastName}, ${body.phone}, ${address}, ${body.city}, ${street}, ${houseNumber}, ${apartment}, ${total}, 'PENDING', ${body.shippingMethod || null}, ${shippingCost || null}, ${body.pickupPointCode || null}, ${body.pickupPointName || null}, ${bundleDiscount}, ${bundleName}, ${couponCode}, ${couponDiscount}, ${body.fbc || null}, ${body.fbp || null}, ${clientIp}, ${clientUa})
+      VALUES (${body.email}, ${body.firstName}, ${body.lastName}, ${body.phone}, ${address}, ${body.city}, ${street}, ${houseNumber}, ${apartment}, ${total}, 'PENDING', ${body.shippingMethod || null}, ${shippingCost},${body.pickupPointCode || null}, ${body.pickupPointName || null}, ${bundleDiscount}, ${bundleName}, ${couponCode}, ${couponDiscount}, ${body.fbc || null}, ${body.fbp || null}, ${clientIp}, ${clientUa})
       RETURNING id, created_at
     `;
 

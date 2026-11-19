@@ -207,6 +207,15 @@ export default function AdminPage() {
     return null;
   };
 
+  // "₪20", "חינם" for an order that shipped free, or null for an old order
+  // with no shipping cost on record. The column can arrive as a string.
+  const formatShippingCost = (order: Order) => {
+    if (order.shipping_cost === null || order.shipping_cost === undefined) return null;
+    const cost = Number(order.shipping_cost);
+    if (!Number.isFinite(cost)) return null;
+    return cost > 0 ? `₪${cost}` : 'חינם';
+  };
+
   // Filter orders based on search and status
   const filteredOrders = useMemo(() => {
     return orders.filter(order => {
@@ -502,8 +511,8 @@ export default function AdminPage() {
                             <div className="flex items-center gap-2 pt-2 border-t border-gray-200">
                               <Truck className="w-4 h-4 text-purple-500" />
                               <span className="font-bold text-purple-600">{getShippingLabel(order)}</span>
-                              {order.shipping_cost && (
-                                <span className="text-gray-500">(₪{order.shipping_cost})</span>
+                              {formatShippingCost(order) && (
+                                <span className="text-gray-500">({formatShippingCost(order)})</span>
                               )}
                             </div>
                           )}
@@ -527,7 +536,7 @@ export default function AdminPage() {
                           </div>
 
                           {/* Bundle & Shipping Summary */}
-                          {(order.bundle_discount || order.shipping_cost) && (
+                          {(Number(order.bundle_discount) > 0 || formatShippingCost(order)) && (
                             <div className="mt-4 pt-3 border-t border-gray-200 space-y-2">
                               {order.bundle_name && order.bundle_discount && order.bundle_discount > 0 && (
                                 <div className="flex justify-between items-center text-sm">
@@ -538,13 +547,13 @@ export default function AdminPage() {
                                   <span className="text-green-600 font-bold">-₪{order.bundle_discount}</span>
                                 </div>
                               )}
-                              {order.shipping_cost && order.shipping_cost > 0 && (
+                              {formatShippingCost(order) && (
                                 <div className="flex justify-between items-center text-sm">
                                   <div className="flex items-center gap-2">
                                     <Truck className="w-4 h-4 text-purple-500" />
                                     <span className="text-purple-600 font-medium">{getShippingLabel(order)}</span>
                                   </div>
-                                  <span className="font-bold">₪{order.shipping_cost}</span>
+                                  <span className="font-bold">{formatShippingCost(order)}</span>
                                 </div>
                               )}
                             </div>

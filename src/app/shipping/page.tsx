@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { FREE_SHIPPING_FROM, SHIPPING_COSTS } from '@/lib/shipping';
 
 export const metadata: Metadata = {
   title: 'משלוחים והחזרות | KidCode',
@@ -18,6 +19,12 @@ export default function ShippingPage() {
               אנחנו עושים את מירב המאמצים כדי שההזמנה שלכם תצא לדרך במהירות האפשרית ותגיע אליכם בצורה בטוחה ונוחה.
             </p>
             <ul className="space-y-3 me-4">
+              <li>
+                <strong>דמי משלוח:</strong> איסוף מנקודת חלוקה ₪{SHIPPING_COSTS['pickup-point']},{' '}
+                <strong>חינם ברכישה מעל {FREE_SHIPPING_FROM['pickup-point']} ש&quot;ח</strong>. משלוח עד הבית
+                ₪{SHIPPING_COSTS.delivery}, <strong>חינם ברכישה מעל {FREE_SHIPPING_FROM.delivery} ש&quot;ח</strong>{' '}
+                (ובמקרה כזה גם נקודת החלוקה בחינם). סכום הרכישה נקבע לפי מחיר המוצרים בסל, לפני קופון הנחה.
+              </li>
               <li>
                 <strong>זמני אספקה:</strong> המשלוחים מגיעים <strong>עד 7 ימי עסקים</strong> מיום אישור ההזמנה.
               </li>
