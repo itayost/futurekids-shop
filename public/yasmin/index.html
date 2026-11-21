@@ -662,17 +662,28 @@
         // Shared speech hook for consistent multi-language TTS
         const useSpeech = (lang = 'he-IL') => {
           const preferredVoiceRef = React.useRef(null);
+          const pendingTimerRef = React.useRef(null);
+          const activeUtteranceRef = React.useRef(null);
 
           useEffect(() => {
+            // איפוס הקול השמור בכל החלפת שפה כדי שקול עברי לא יישאר נעול במעבר לערבית/אנגלית
+            preferredVoiceRef.current = null;
+
             const initVoice = () => {
               if (!('speechSynthesis' in window)) return;
+              preferredVoiceRef.current = null;
               const availableVoices = window.speechSynthesis.getVoices();
               if (availableVoices.length > 0) {
-                const langPrefix = lang.split('-')[0];
-                const langVoices = availableVoices.filter(v =>
-                  v.lang.startsWith(langPrefix) ||
-                  (langPrefix === 'he' && (v.lang.includes('iw') || v.name.includes('Hebrew') || v.name.includes('עברית')))
-                );
+                const langPrefix = lang.split('-')[0].toLowerCase();
+                const langVoices = availableVoices.filter(v => {
+                  const vLang = (v.lang || '').toLowerCase().replace('_', '-');
+                  const vName = (v.name || '').toLowerCase();
+                  return (
+                    vLang.startsWith(langPrefix) ||
+                    (langPrefix === 'he' && (vLang.includes('iw') || vName.includes('hebrew') || (v.name || '').includes('עברית'))) ||
+                    (langPrefix === 'ar' && (vName.includes('arabic') || (v.name || '').includes('العربية')))
+                  );
+                });
                 const bestVoice = (langPrefix === 'ar' && langVoices.find(v =>
                   v.lang.includes('IL') || v.lang.includes('PS') || v.lang.includes('JO') || v.lang.includes('LB') || v.lang.includes('EG')
                 )) || langVoices.find(v =>
@@ -682,33 +693,88 @@
                 if (bestVoice) preferredVoiceRef.current = bestVoice;
               }
             };
+
             initVoice();
-            if ('speechSynthesis' in window && window.speechSynthesis.onvoiceschanged !== undefined) {
-              window.speechSynthesis.onvoiceschanged = initVoice;
+            if ('speechSynthesis' in window && window.speechSynthesis.addEventListener) {
+              window.speechSynthesis.addEventListener('voiceschanged', initVoice);
             }
             return () => {
-              if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+              if (pendingTimerRef.current) {
+                clearTimeout(pendingTimerRef.current);
+                pendingTimerRef.current = null;
+              }
+              if ('speechSynthesis' in window) {
+                if (window.speechSynthesis.removeEventListener) {
+                  window.speechSynthesis.removeEventListener('voiceschanged', initVoice);
+                }
+                window.speechSynthesis.cancel();
+              }
             };
           }, [lang]);
 
-          const speak = React.useCallback((text) => {
-            if (!('speechSynthesis' in window) || !text) return;
-            window.speechSynthesis.cancel();
-            setTimeout(() => {
+          const speak = React.useCallback((text, options = {}) => {
+            const { cancelPrevious = true, onEnd = null } = options;
+            if (!('speechSynthesis' in window) || !text) {
+              if (onEnd) setTimeout(onEnd, 300);
+              return;
+            }
+
+            if (pendingTimerRef.current) {
+              clearTimeout(pendingTimerRef.current);
+              pendingTimerRef.current = null;
+            }
+
+            if (cancelPrevious) {
+              window.speechSynthesis.cancel();
+            }
+
+            const delay = cancelPrevious ? 110 : 30;
+            pendingTimerRef.current = setTimeout(() => {
+              pendingTimerRef.current = null;
               const utterance = new SpeechSynthesisUtterance(text);
+              activeUtteranceRef.current = utterance;
+
               const voice = preferredVoiceRef.current;
-              if (lang === 'he-IL' && voice && voice.lang.includes('iw')) {
+              const langPrefix = lang.split('-')[0].toLowerCase();
+              const normalizedVoiceLang = voice && voice.lang ? voice.lang.toLowerCase().replace('_', '-') : '';
+              const voiceMatchesLang = Boolean(
+                voice && (
+                  normalizedVoiceLang.startsWith(langPrefix) ||
+                  (langPrefix === 'he' && normalizedVoiceLang.includes('iw'))
+                )
+              );
+
+              if (lang === 'he-IL' && voiceMatchesLang && voice.lang.includes('iw')) {
                 utterance.lang = 'iw-IL';
-              } else if (voice && voice.lang) {
-                utterance.lang = voice.lang;
+              } else if (voiceMatchesLang && voice.lang) {
+                utterance.lang = voice.lang.replace('_', '-');
               } else {
                 utterance.lang = lang;
               }
-              if (voice) utterance.voice = voice;
+
+              if (voiceMatchesLang) {
+                utterance.voice = voice;
+              }
+
               utterance.pitch = 1.3;
               utterance.rate = 0.85;
+
+              if (onEnd) {
+                let finished = false;
+                const finishOnce = () => {
+                  if (finished) return;
+                  finished = true;
+                  clearTimeout(safetyTimer);
+                  onEnd();
+                };
+                const safetyMs = Math.min(7500, Math.max(1800, text.length * 115));
+                const safetyTimer = setTimeout(finishOnce, safetyMs);
+                utterance.onend = finishOnce;
+                utterance.onerror = finishOnce;
+              }
+
               window.speechSynthesis.speak(utterance);
-            }, 120);
+            }, delay);
           }, [lang]);
 
           return speak;
@@ -1700,7 +1766,7 @@
         const MemoryGame = () => {
           const [topic, setTopic] = useState('animals'); // 'letters' | 'numbers' | 'animals' | 'colors'
           const [langKey, setLangKey] = useState('he'); // 'he' | 'ar' | 'en'
-          const [boardSize, setBoardSize] = useState(12); // 12 | 16
+          const [boardSize, setBoardSize] = useState(12); // 12 | 18
           const [cards, setCards] = useState([]);
           const [flippedIndices, setFlippedIndices] = useState([]);
           const [matchedIds, setMatchedIds] = useState([]);
@@ -1841,7 +1907,7 @@
                 )}
 
                 <div className="flex gap-1.5 bg-gray-100 p-1 rounded-xl">
-                  {[12, 16].map(sz => (
+                  {[12, 18].map(sz => (
                     <button
                       key={sz}
                       type="button"
@@ -1872,7 +1938,7 @@
                 </div>
               )}
 
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 md:gap-4 w-full max-w-xl">
+              <div className={`grid gap-3 md:gap-4 w-full ${boardSize === 18 ? 'grid-cols-3 sm:grid-cols-6 max-w-3xl' : 'grid-cols-3 sm:grid-cols-4 max-w-xl'}`}>
                 {cards.map((card, idx) => {
                   const isOpen = flippedIndices.includes(idx) || matchedIds.includes(card.id);
                   const isMatched = matchedIds.includes(card.id);
@@ -1898,18 +1964,18 @@
                         <div className="flex flex-col items-center justify-center gap-1.5">
                           <div
                             style={{ background: card.bg }}
-                            className={`w-10 h-10 md:w-14 md:h-14 rounded-full shadow-inner ${card.border ? 'border-2 border-gray-300' : ''}`}
+                            className={`${boardSize === 18 ? 'w-9 h-9 md:w-11 md:h-11' : 'w-10 h-10 md:w-14 md:h-14'} rounded-full shadow-inner ${card.border ? 'border-2 border-gray-300' : ''}`}
                           />
                           <span className="text-xs md:text-sm font-black text-gray-700 text-center leading-tight">{card.label}</span>
                         </div>
                       ) : card.type === 'animal' ? (
                         <div className="flex flex-col items-center justify-center">
-                          <span className="text-3xl md:text-5xl mb-1">{card.emoji}</span>
+                          <span className={`${boardSize === 18 ? 'text-3xl md:text-4xl mb-0.5' : 'text-3xl md:text-5xl mb-1'}`}>{card.emoji}</span>
                           <span className="text-xs md:text-sm font-black text-gray-700 text-center leading-tight">{card.label}</span>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center justify-center">
-                          <span className="text-3xl md:text-5xl font-black text-orange-600">{card.display}</span>
+                          <span className={`${boardSize === 18 ? 'text-3xl md:text-4xl' : 'text-3xl md:text-5xl'} font-black text-orange-600`}>{card.display}</span>
                           {card.sub && <span className="text-[11px] md:text-xs font-bold text-gray-500 mt-1">{card.sub}</span>}
                         </div>
                       )}
@@ -2411,6 +2477,10 @@
           const speak = useSpeech('he-IL');
           const timersRef = React.useRef([]);
           const voiceEnabledRef = React.useRef(voiceEnabled);
+          const speechQueueRef = React.useRef([]);
+          const isSpeakingRef = React.useRef(false);
+          const speechPauseTimerRef = React.useRef(null);
+          const speechGenRef = React.useRef(0);
 
           useEffect(() => {
             voiceEnabledRef.current = voiceEnabled;
@@ -2419,11 +2489,75 @@
             }
           }, [voiceEnabled]);
 
-          const say = React.useCallback((text) => {
-            if (voiceEnabledRef.current) {
-              speak(text);
+          // תור הקראה סדרתי שמונע מהנחיות קוליות לקטוע זו את זו במהלך התור
+          const clearSpeechQueue = React.useCallback(() => {
+            speechGenRef.current += 1;
+            speechQueueRef.current = [];
+            isSpeakingRef.current = false;
+            if (speechPauseTimerRef.current) {
+              clearTimeout(speechPauseTimerRef.current);
+              speechPauseTimerRef.current = null;
             }
+            if ('speechSynthesis' in window) {
+              window.speechSynthesis.cancel();
+            }
+          }, []);
+
+          const processSpeechQueue = React.useCallback(() => {
+            if (isSpeakingRef.current) return;
+            const nextItem = speechQueueRef.current.shift();
+            if (!nextItem) return;
+
+            const myGen = speechGenRef.current;
+
+            if (!voiceEnabledRef.current) {
+              if (nextItem.onDone) {
+                speechPauseTimerRef.current = setTimeout(() => {
+                  if (myGen !== speechGenRef.current) return;
+                  speechPauseTimerRef.current = null;
+                  nextItem.onDone();
+                  processSpeechQueue();
+                }, 600);
+              } else {
+                processSpeechQueue();
+              }
+              return;
+            }
+
+            isSpeakingRef.current = true;
+            speak(nextItem.text, {
+              cancelPrevious: nextItem.cancelPrevious,
+              onEnd: () => {
+                if (myGen !== speechGenRef.current) return;
+                speechPauseTimerRef.current = setTimeout(() => {
+                  if (myGen !== speechGenRef.current) return;
+                  speechPauseTimerRef.current = null;
+                  isSpeakingRef.current = false;
+                  if (nextItem.onDone) nextItem.onDone();
+                  processSpeechQueue();
+                }, 260);
+              }
+            });
           }, [speak]);
+
+          const say = React.useCallback((text, options = {}) => {
+            const { interrupt = false, onDone = null } = options;
+            if (interrupt) {
+              speechGenRef.current += 1;
+              speechQueueRef.current = [];
+              isSpeakingRef.current = false;
+              if (speechPauseTimerRef.current) {
+                clearTimeout(speechPauseTimerRef.current);
+                speechPauseTimerRef.current = null;
+              }
+            }
+            speechQueueRef.current.push({
+              text,
+              cancelPrevious: interrupt,
+              onDone
+            });
+            processSpeechQueue();
+          }, [processSpeechQueue]);
 
           const clearAllTimers = () => {
             timersRef.current.forEach(id => clearTimeout(id));
@@ -2437,8 +2571,11 @@
           };
 
           useEffect(() => {
-            return () => clearAllTimers();
-          }, []);
+            return () => {
+              clearAllTimers();
+              clearSpeechQueue();
+            };
+          }, [clearSpeechQueue]);
 
           const refreshChoicesForCircle = (circleCards) => {
             const items = circleCards.map(c => c.item).sort(() => Math.random() - 0.5);
@@ -2453,8 +2590,8 @@
 
           const initGame = () => {
             clearAllTimers();
+            clearSpeechQueue();
             clearActiveFocus();
-            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
 
             const fullDeck = createSherlockDeck();
             const initialCircle = fullDeck.slice(0, 8).map(c => ({
@@ -2475,7 +2612,7 @@
             setTurnId(prev => prev + 1);
             setPhase('memorize');
             setPromptText('הביטו היטב ב-8 החפצים במעגל ונסו לזכור איפה כל אחד מסתתר! כשאתם מוכנים לחצו על "התחלה".');
-            say('נסו לזכור איפה כל חפץ מסתתר, וכשאתם מוכנים לחצו על התחלה');
+            say('נַסּוּ לִזְכּוֹר אֵיפֹה כָּל חֵפֶץ מִסְתַּתֵּר, וּכְשֶׁאַתֶּם מוּכָנִים לִחְצוּ עַל הַתְחָלָה', { interrupt: true });
           };
 
           useEffect(() => {
@@ -2498,14 +2635,14 @@
                 ? 'הקלף החדש התהפך! איזה חפץ מסתתר כעת בקלף שליד שרלוק?'
                 : 'הקלפים התהפכו! איזה חפץ מסתתר בקלף שליד שרלוק?'
             );
-            say('איזה חפץ מסתתר כאן?');
+            say('אֵיזֶה חֵפֶץ מִסְתַּתֵּר כָּאן?', { interrupt: true });
           };
 
           const finishGame = (finalWonCards) => {
             clearAllTimers();
             clearActiveFocus();
             setPromptText(`החקירה הסתיימה! סיימתם את כל הקופה ואספתם ${finalWonCards.length} קלפים!`);
-            say('כל הכבוד! סיימתם את כל הקופה!');
+            say('כָּל הַכָּבוֹד! סִיַּמְתֶּם אֶת כָּל הַקּוּפָּה!', { interrupt: false });
             setPhase('game_over');
           };
 
@@ -2533,7 +2670,7 @@
                       setTurnId(prev => prev + 1);
                       setPhase('guessing');
                       setPromptText('איזה חפץ מסתתר בקלף שליד שרלוק?');
-                      say('איזה חפץ מסתתר כאן?');
+                      say('אֵיזֶה חֵפֶץ מִסְתַּתֵּר כָּאן?', { interrupt: false });
                     }
                   }, 320);
                 }
@@ -2548,35 +2685,41 @@
 
             if (currentDeck.length === 0) {
               setPromptText('בינגו! שרלוק עצר ליד קלף גלוי – זכיתם בקלף והקופה הסתיימה!');
-              say('בינגו! זכית בקלף!');
-              schedule(() => {
-                finishGame(nextWon);
-              }, 1500);
+              say('בִּינְגוֹ! זְכִיתֶם בַּקְּלָף!', {
+                interrupt: false,
+                onDone: () => {
+                  schedule(() => finishGame(nextWon), 400);
+                }
+              });
               return;
             }
 
             setPromptText('בינגו! שרלוק עצר ליד קלף גלוי – זכיתם בקלף! מיד נניח קלף חדש מהקופה.');
-            say('בינגו! זכית בקלף!');
+            say('בִּינְגוֹ! זְכִיתֶם בַּקְּלָף!', {
+              interrupt: false,
+              onDone: () => {
+                schedule(() => {
+                  // מציגים את הקלף החדש גלוי במקומו במעגל כדי שהילד ישנן אותו וילחץ על התחלה כמו בסבב הראשון
+                  const replacementCard = { ...currentDeck[0], isRevealed: true };
+                  const updatedDeck = currentDeck.slice(1);
+                  const updatedCircle = currentCircle.map((c, idx) =>
+                    idx === pos ? replacementCard : { ...c, isRevealed: false }
+                  );
+                  const nextStartPos = (pos + 1) % 8;
 
-            schedule(() => {
-              // מציגים את הקלף החדש גלוי במקומו במעגל כדי שהילד ישנן אותו וילחץ על התחלה כמו בסבב הראשון
-              const replacementCard = { ...currentDeck[0], isRevealed: true };
-              const updatedDeck = currentDeck.slice(1);
-              const updatedCircle = currentCircle.map((c, idx) =>
-                idx === pos ? replacementCard : { ...c, isRevealed: false }
-              );
-              const nextStartPos = (pos + 1) % 8;
-
-              setCircle(updatedCircle);
-              setDeck(updatedDeck);
-              refreshChoicesForCircle(updatedCircle);
-              setSherlockPos(nextStartPos);
-              setNewCardPos(pos);
-              setTurnId(prev => prev + 1);
-              setPhase('memorize');
-              setPromptText(`קלף חדש הונח במעגל: ${replacementCard.item.name}! שננו את מיקומו וכשאתם מוכנים לחצו על "התחלה".`);
-              say(`קלף חדש במעגל: ${replacementCard.item.speak}. זכרו איפה הוא נמצא ולחצו על התחלה`);
-            }, 1500);
+                  clearActiveFocus();
+                  setCircle(updatedCircle);
+                  setDeck(updatedDeck);
+                  refreshChoicesForCircle(updatedCircle);
+                  setSherlockPos(nextStartPos);
+                  setNewCardPos(pos);
+                  setTurnId(prev => prev + 1);
+                  setPhase('memorize');
+                  setPromptText(`קלף חדש הונח במעגל: ${replacementCard.item.name}! שננו את מיקומו וכשאתם מוכנים לחצו על "התחלה".`);
+                  say(`קְלָף חָדָשׁ בַּמַּעְגָּל: ${replacementCard.item.speak}. זִכְרוּ אֵיפֹה הוּא נִמְצָא וְלִחְצוּ עַל הַתְחָלָה`, { interrupt: false });
+                }, 400);
+              }
+            });
           };
 
           const handleGuessObject = (guessedItem, e) => {
@@ -2610,14 +2753,17 @@
               setTurnId(prev => prev + 1);
               setPhase('pick_target');
               setPromptText(`פגיעה מדויקת! בקלף מופיע המספר ${nextSteps} (${dirText}) – לחצו על הקלף במעגל שאליו שרלוק צריך להגיע!`);
-              say(`פגיעה מדויקת! ספרו ${stepSpokenMap[nextSteps]} בכיוון החץ ולחצו על הקלף הנכון`);
+              say(`פְּגִיעָה מְדֻיֶּקֶת! סִפְרוּ ${stepSpokenMap[nextSteps]} בְּכִיוּן הַחֵץ וְלִחְצוּ עַל הַקְּלָף הַנָּכוֹן`, { interrupt: true });
             } else {
+              clearAllTimers();
               setWrongGuessChoiceId(guessedItem.id);
               setPhase('wrong_reveal');
               setPromptText(`לא הפעם! זכרו שכאן מסתתר ${targetCard.item.name} להמשך.`);
-              say(`לא הפעם, כאן מסתתר ${targetCard.item.speak}`);
 
-              schedule(() => {
+              let minDelayDone = false;
+              let speechDone = false;
+              const advanceAfterWrong = () => {
+                if (!minDelayDone || !speechDone) return;
                 const flippedBackCircle = revealedCircle.map(c => ({ ...c, isRevealed: false }));
                 const nextPos = (sherlockPos + 1) % 8;
                 clearActiveFocus();
@@ -2627,7 +2773,21 @@
                 setTurnId(prev => prev + 1);
                 setPhase('guessing');
                 setPromptText('הקלפים התהפכו חזרה ושרלוק עבר לקלף הבא – איזה חפץ מסתתר כאן?');
-              }, 2400);
+                say('אֵיזֶה חֵפֶץ מִסְתַּתֵּר כָּאן?', { interrupt: false });
+              };
+
+              schedule(() => {
+                minDelayDone = true;
+                advanceAfterWrong();
+              }, 1900);
+
+              say(`לֹא הַפַּעַם, כָּאן מִסְתַּתֵּר ${targetCard.item.speak}`, {
+                interrupt: true,
+                onDone: () => {
+                  speechDone = true;
+                  advanceAfterWrong();
+                }
+              });
             }
           };
 
@@ -2643,13 +2803,13 @@
             if (clickedIdx === expectedTargetPos) {
               setWrongTargetPos(null);
               setExpectedTargetPos(null);
-              say('מצוין!');
+              say('מְצֻיָּן!', { interrupt: true });
               walkSherlock(sherlockPos, currentCard.steps, currentCard.dir, circle, deck, wonCards);
             } else {
               setWrongTargetPos(clickedIdx);
               const dirText = currentCard.dir === 1 ? 'עם כיוון השעון' : 'נגד כיוון השעון';
               setPromptText(`לא הקלף הזה... ספרו שוב ${currentCard.steps} צעדים ${dirText} מהקלף של שרלוק ולחצו על הקלף הנכון!`);
-              say('נסו לספור שוב בכיוון החץ');
+              say('נַסּוּ לִסְפּוֹר שׁוּב בְּכִיוּן הַחֵץ', { interrupt: true });
             }
           };
 
