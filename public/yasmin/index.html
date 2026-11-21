@@ -130,6 +130,9 @@
             theme: "orange",
             items: [
               { id: "game-memory", title: "משחק זיכרון", icon: "🃏", content: "הפכו את הקלפים ומצאו את כל הזוגות!" },
+              { id: "game-clack", title: "קלאק קלאק", icon: "🧲", content: "הטילו את קוביות הצבע והצורה ואספו את כל הדיסקיות המתאימות!" },
+              { id: "game-dobble", title: "דאבל", icon: "🎯", content: "מצאו את הצורה היחידה שמשותפת לשני הכרטיסים!" },
+              { id: "game-set-junior", title: "סט ג'וניור", icon: "💠", content: "מצאו שלישיות קלפים שבהן כל מאפיין זהה בכולם או שונה בכולם!" },
               { id: "game-war", title: "מלחמה בקלפים", icon: "🎴", content: "שני קלפים נשלפים – איזה קלף חזק יותר ומנצח?" },
               { id: "game-sherlock", title: "שרלוק הבלש", icon: "🕵️‍♂️", content: "עזרו לבלש שרלוק לזכור את החפצים המסתתרים במעגל!" }
             ]
@@ -3299,6 +3302,1178 @@
           );
         };
 
+        // ============================================================================
+        // 1. CLACK! GAME (קלאק קלאק - דיסקיות מגנטיות + קוביית צבע וקוביית צורה עם ג'וקר לבן)
+        // ============================================================================
+        const CLACK_COLORS = [
+          { id: 'red', label: 'אדום', speak: 'אָדוֹם', hex: '#EF4444', stroke: '#B91C1C' },
+          { id: 'blue', label: 'כחול', speak: 'כָּחוֹל', hex: '#2563EB', stroke: '#1D4ED8' },
+          { id: 'green', label: 'ירוק', speak: 'יָרוֹק', hex: '#16A34A', stroke: '#15803D' },
+          { id: 'yellow', label: 'צהוב', speak: 'צָהֹב', hex: '#FACC15', stroke: '#CA8A04' },
+          { id: 'purple', label: 'סגול', speak: 'סָגֹל', hex: '#9333EA', stroke: '#6B21A8' }
+        ];
+
+        const CLACK_SHAPES = [
+          { id: 'star', label: 'כוכב', speak: 'כּוֹכָב' },
+          { id: 'flower', label: 'פרח', speak: 'פֶּרַח' },
+          { id: 'arrow', label: 'חץ', speak: 'חֵץ' },
+          { id: 'heart', label: 'לב', speak: 'לֵב' },
+          { id: 'bolt', label: 'ברק', speak: 'בָּרָק' }
+        ];
+
+        const ClackShapeSVG = ({ shapeId, fillHex = '#334155', strokeHex = '#1E293B', className = 'w-6 h-6' }) => {
+          switch (shapeId) {
+            case 'star':
+              return (
+                <svg viewBox="0 0 48 48" className={className}>
+                  <polygon
+                    points="24,3 30.5,16.5 45,18.5 34.5,29 37,43.5 24,36.5 11,43.5 13.5,29 3,18.5 17.5,16.5"
+                    fill={fillHex}
+                    stroke={strokeHex}
+                    strokeWidth="2.5"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              );
+            case 'flower':
+              return (
+                <svg viewBox="0 0 48 48" className={className}>
+                  <g fill={fillHex} stroke={strokeHex} strokeWidth="2.2">
+                    <circle cx="24" cy="11" r="8" />
+                    <circle cx="36" cy="20" r="8" />
+                    <circle cx="32" cy="34" r="8" />
+                    <circle cx="16" cy="34" r="8" />
+                    <circle cx="12" cy="20" r="8" />
+                  </g>
+                  <circle cx="24" cy="24" r="6.5" fill="#FEF9C3" stroke={strokeHex} strokeWidth="2" />
+                </svg>
+              );
+            case 'arrow':
+              return (
+                <svg viewBox="0 0 48 48" className={className}>
+                  <polygon
+                    points="6,18 26,18 26,8 44,24 26,40 26,30 6,30"
+                    fill={fillHex}
+                    stroke={strokeHex}
+                    strokeWidth="2.5"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              );
+            case 'heart':
+              return (
+                <svg viewBox="0 0 48 48" className={className}>
+                  <path
+                    d="M24,42 C24,42 5,29 5,16 C5,9.5 10,5 16,5 C19.8,5 22.8,7 24,9.8 C25.2,7 28.2,5 32,5 C38,5 43,9.5 43,16 C43,29 24,42 24,42 Z"
+                    fill={fillHex}
+                    stroke={strokeHex}
+                    strokeWidth="2.5"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              );
+            case 'bolt':
+            default:
+              return (
+                <svg viewBox="0 0 48 48" className={className}>
+                  <polygon
+                    points="27,3 10,26 22,26 18,45 38,20 25,20"
+                    fill={fillHex}
+                    stroke={strokeHex}
+                    strokeWidth="2.5"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              );
+          }
+        };
+
+        // צליל מגנטי קצר ונעים ("קלאק!") באמצעות Web Audio API ללא קבצים חיצוניים
+        const playMagneticClackSound = () => {
+          try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return;
+            const ctx = new AudioCtx();
+            const now = ctx.currentTime;
+
+            const makeClick = (offset, freqStart, freqEnd) => {
+              const osc = ctx.createOscillator();
+              const gain = ctx.createGain();
+              osc.type = 'triangle';
+              osc.frequency.setValueAtTime(freqStart, now + offset);
+              osc.frequency.exponentialRampToValueAtTime(freqEnd, now + offset + 0.055);
+              gain.gain.setValueAtTime(0.28, now + offset);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.06);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start(now + offset);
+              osc.stop(now + offset + 0.065);
+            };
+
+            makeClick(0, 720, 190);
+            makeClick(0.05, 920, 260);
+            setTimeout(() => ctx.close && ctx.close(), 250);
+          } catch (err) {
+            // Ignore audio errors on restricted devices
+          }
+        };
+
+        const TOTAL_CLACK_DISCS = 18;
+
+        const createSingleClackDisc = () => {
+          const allCombos = [];
+          CLACK_COLORS.forEach(c => {
+            CLACK_SHAPES.forEach(s => {
+              allCombos.push({ colorId: c.id, shapeId: s.id });
+            });
+          });
+
+          const shuffled = [...allCombos].sort(() => Math.random() - 0.5);
+          const chosen = shuffled.slice(0, 3);
+
+          return {
+            id: `clack-disc-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+            figures: chosen.map(fig => ({
+              ...fig,
+              rot: Math.round((Math.random() - 0.5) * 30)
+            })),
+            discRot: Math.round((Math.random() - 0.5) * 24),
+            collected: false
+          };
+        };
+
+        const generateClackDiscs = () =>
+          Array.from({ length: TOTAL_CLACK_DISCS }, () => createSingleClackDisc());
+
+        const doesDiscMatchDice = (disc, colorDie, shapeDie) => {
+          if (!disc || disc.collected || !colorDie || !shapeDie) return false;
+          return disc.figures.some(fig => {
+            const colorMatch = colorDie === 'joker' || fig.colorId === colorDie;
+            const shapeMatch = shapeDie === 'joker' || fig.shapeId === shapeDie;
+            return colorMatch && shapeMatch;
+          });
+        };
+
+        const ClackGame = () => {
+          const [discs, setDiscs] = useState(() => generateClackDiscs());
+          const [colorDie, setColorDie] = useState(null); // null | 'red' | ... | 'joker'
+          const [shapeDie, setShapeDie] = useState(null); // null | 'star' | ... | 'joker'
+          const [isRolling, setIsRolling] = useState(false);
+          const [collectedStack, setCollectedStack] = useState([]);
+          const [wrongDiscId, setWrongDiscId] = useState(null);
+          const [statusMsg, setStatusMsg] = useState('לחצו על "הטל קוביות" כדי להתחיל!');
+          const [showRules, setShowRules] = useState(false);
+
+          const speak = useSpeech('he-IL');
+          const rollTimerRef = React.useRef(null);
+          const refillTimerRef = React.useRef(null);
+
+          useEffect(() => {
+            return () => {
+              if (rollTimerRef.current) clearTimeout(rollTimerRef.current);
+              if (refillTimerRef.current) clearTimeout(refillTimerRef.current);
+            };
+          }, []);
+
+          const colorFaces = [...CLACK_COLORS.map(c => c.id), 'joker'];
+          const shapeFaces = [...CLACK_SHAPES.map(s => s.id), 'joker'];
+
+          const remainingMatchingDiscs = discs.filter(d => !d.collected && doesDiscMatchDice(d, colorDie, shapeDie));
+
+          const startNewGame = () => {
+            if (rollTimerRef.current) clearTimeout(rollTimerRef.current);
+            if (refillTimerRef.current) clearTimeout(refillTimerRef.current);
+            setDiscs(generateClackDiscs());
+            setColorDie(null);
+            setShapeDie(null);
+            setIsRolling(false);
+            setCollectedStack([]);
+            setWrongDiscId(null);
+            setStatusMsg('לחצו על "הטל קוביות" כדי להתחיל!');
+          };
+
+          const describeDiceSpeak = (cDie, sDie) => {
+            if (cDie === 'joker' && sDie === 'joker') return 'פַּעֲמַיִם לָבָן! כּוֹל הַדִּיסְקִיּוֹת מַתְאִימוֹת!';
+            const colorObj = CLACK_COLORS.find(c => c.id === cDie);
+            const shapeObj = CLACK_SHAPES.find(s => s.id === sDie);
+            if (cDie === 'joker' && shapeObj) return `${shapeObj.speak} בְּכָל צֶבַע`;
+            if (sDie === 'joker' && colorObj) return `כּוֹל צוּרָה בְּצֶבַע ${colorObj.speak}`;
+            if (colorObj && shapeObj) return `${shapeObj.speak} ${colorObj.speak}`;
+            return '';
+          };
+
+          const describeDiceLabel = (cDie, sDie) => {
+            if (!cDie || !sDie) return '';
+            if (cDie === 'joker' && sDie === 'joker') return 'פעמיים לבן! אספו את כל הדיסקיות!';
+            const colorObj = CLACK_COLORS.find(c => c.id === cDie);
+            const shapeObj = CLACK_SHAPES.find(s => s.id === sDie);
+            if (cDie === 'joker' && shapeObj) return `אספו את כל הדיסקיות שיש עליהן ${shapeObj.label} (בכל צבע)!`;
+            if (sDie === 'joker' && colorObj) return `אספו את כל הדיסקיות שיש עליהן צורה בצבע ${colorObj.label}!`;
+            return `אספו את כל הדיסקיות שיש עליהן ${shapeObj.label} בצבע ${colorObj.label}!`;
+          };
+
+          const handleRollDice = (e) => {
+            if (e && e.currentTarget) e.currentTarget.blur();
+            if (isRolling) return;
+
+            // אם עדיין נותרו דיסקיות מתאימות להטלה הנוכחית – מזכירים לילד לאסוף את כולן
+            if (colorDie && shapeDie && remainingMatchingDiscs.length > 0) {
+              setStatusMsg('רגע! עדיין מסתתרות על הלוח דיסקיות שמתאימות לקוביות האלו – מצאו את כולן!');
+              speak('יֵשׁ עוֹד דִּיסְקִיּוֹת מַתְאִימוֹת עַל הַלּוּחַ, חַפְּשׂוּ אוֹתָן!');
+              return;
+            }
+
+            if (refillTimerRef.current) {
+              clearTimeout(refillTimerRef.current);
+              refillTimerRef.current = null;
+            }
+
+            // השלמת דיסקיות חדשות בכל המקומות שנאספו לפני ההטלה החדשה
+            const replenishedDiscs = discs.map(d => (d.collected ? createSingleClackDisc() : d));
+            setDiscs(replenishedDiscs);
+
+            setIsRolling(true);
+            setWrongDiscId(null);
+            setStatusMsg('הקוביות מתגלגלות...');
+
+            let ticks = 0;
+            const animateRoll = () => {
+              ticks += 1;
+              const randC = colorFaces[Math.floor(Math.random() * colorFaces.length)];
+              const randS = shapeFaces[Math.floor(Math.random() * shapeFaces.length)];
+              setColorDie(randC);
+              setShapeDie(randS);
+
+              if (ticks < 7) {
+                rollTimerRef.current = setTimeout(animateRoll, 75);
+              } else {
+                // בחירה הוגנת של קוביות שמוודאת שיש לפחות דיסקית מתאימה אחת על הלוח
+                let finalC = colorFaces[Math.floor(Math.random() * colorFaces.length)];
+                let finalS = shapeFaces[Math.floor(Math.random() * shapeFaces.length)];
+
+                if (!replenishedDiscs.some(d => doesDiscMatchDice(d, finalC, finalS))) {
+                  const validPairs = [];
+                  colorFaces.forEach(cf => {
+                    shapeFaces.forEach(sf => {
+                      if (replenishedDiscs.some(d => doesDiscMatchDice(d, cf, sf))) {
+                        validPairs.push([cf, sf]);
+                      }
+                    });
+                  });
+                  if (validPairs.length > 0) {
+                    const picked = validPairs[Math.floor(Math.random() * validPairs.length)];
+                    finalC = picked[0];
+                    finalS = picked[1];
+                  }
+                }
+
+                setColorDie(finalC);
+                setShapeDie(finalS);
+                setIsRolling(false);
+                setStatusMsg(describeDiceLabel(finalC, finalS));
+                speak(describeDiceSpeak(finalC, finalS));
+              }
+            };
+
+            animateRoll();
+          };
+
+          const handleDiscClick = (disc, e) => {
+            if (e && e.currentTarget) e.currentTarget.blur();
+            if (isRolling || disc.collected) return;
+
+            if (!colorDie || !shapeDie) {
+              setStatusMsg('הטילו קודם את שתי הקוביות!');
+              speak('הָטִילוּ קוֹדֶם אֶת הַקּוּבִּיּוֹת');
+              return;
+            }
+
+            if (doesDiscMatchDice(disc, colorDie, shapeDie)) {
+              playMagneticClackSound();
+              setWrongDiscId(null);
+
+              const updatedDiscs = discs.map(d => (d.id === disc.id ? { ...d, collected: true } : d));
+              const nextStack = [...collectedStack, disc.id];
+              setDiscs(updatedDiscs);
+              setCollectedStack(nextStack);
+
+              const stillRemainingForRoll = updatedDiscs.filter(
+                d => !d.collected && doesDiscMatchDice(d, colorDie, shapeDie)
+              );
+
+              if (stillRemainingForRoll.length === 0) {
+                setStatusMsg('קלאק! אספתם את כל הדיסקיות המתאימות – מיד מצטרפות דיסקיות חדשות!');
+                speak('מְעוּלֶּה! הָטִילוּ שׁוּב קוּבִּיּוֹת');
+
+                if (refillTimerRef.current) clearTimeout(refillTimerRef.current);
+                refillTimerRef.current = setTimeout(() => {
+                  refillTimerRef.current = null;
+                  setDiscs(prev => prev.map(d => (d.collected ? createSingleClackDisc() : d)));
+                  setColorDie(null);
+                  setShapeDie(null);
+                  setStatusMsg('דיסקיות חדשות הצטרפו ללוח! הטילו שוב את הקוביות 🎲');
+                }, 650);
+              } else {
+                setStatusMsg('קלאק! יש עוד דיסקיות מתאימות על הלוח – המשיכו לאסוף!');
+              }
+            } else {
+              setWrongDiscId(disc.id);
+              setStatusMsg('בדיסקית הזו אין את הצירוף של שתי הקוביות יחד – בדקו שוב!');
+              speak('בִּדְקוּ שׁוּב אֶת הַקּוּבִּיּוֹת');
+              setTimeout(() => {
+                setWrongDiscId(prev => (prev === disc.id ? null : prev));
+              }, 700);
+            }
+          };
+
+          // מיקומי 3 התמונות במשולש סביב מרכז הדיסקית
+          const TRIANGLE_SLOTS = [
+            { left: '50%', top: '24%' },
+            { left: '26%', top: '68%' },
+            { left: '74%', top: '68%' }
+          ];
+
+          const activeColorObj = CLACK_COLORS.find(c => c.id === colorDie);
+
+          return (
+            <div className="flex flex-col items-center w-full max-w-4xl mx-auto select-none">
+              {/* סרגל עליון */}
+              <div className="flex flex-wrap items-center justify-center gap-3 mb-4 w-full">
+                <button
+                  type="button"
+                  onClick={() => setShowRules(r => !r)}
+                  className="px-4 py-2 rounded-2xl bg-sky-50 border-2 border-sky-200 text-sky-700 font-bold text-sm hover:bg-sky-100 transition-all"
+                >
+                  ❓ הוראות
+                </button>
+                <button
+                  type="button"
+                  onClick={startNewGame}
+                  className="px-4 py-2 rounded-2xl bg-orange-100 text-orange-700 font-bold text-sm hover:bg-orange-200 transition-all"
+                >
+                  🔄 איפוס משחק
+                </button>
+              </div>
+
+              {showRules && (
+                <div className="w-full max-w-2xl mb-4 bg-sky-50 border-2 border-sky-200 rounded-3xl p-4 text-sm md:text-base text-gray-700 leading-relaxed shadow-sm">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-black text-sky-800 text-lg">🧲 איך משחקים בקלאק קלאק?</span>
+                    <button type="button" onClick={() => setShowRules(false)} className="text-sky-600 font-bold px-2 py-0.5 rounded-lg hover:bg-sky-100">סגור ✕</button>
+                  </div>
+                  <ul className="list-disc pr-5 space-y-1">
+                    <li>על כל דיסקית מופיעות <strong>3 תמונות</strong> בעלות צבע וצורה.</li>
+                    <li>מטילים 2 קוביות: <strong>קוביית צבע</strong> ו-<strong>קוביית צורה</strong>.</li>
+                    <li>אוספים את כל הדיסקיות שיש עליהן תמונה שמתאימה <strong>גם לצבע וגם לצורה</strong> שיצאו בקוביות יחד!</li>
+                    <li><strong>פאה לבנה בקובייה:</strong> לבן בקוביית הצבע אומר שכל צבע מתאים, ולבן בקוביית הצורה אומר שכל צורה מתאימה!</li>
+                  </ul>
+                </div>
+              )}
+
+              {/* אזור הקוביות + כפתור ההטלה + מגדל הדיסקיות שנאספו */}
+              <div className="w-full bg-amber-50/80 border-4 border-amber-200 rounded-3xl p-4 md:p-5 mb-5 flex flex-wrap items-center justify-around gap-4 shadow-sm">
+                {/* שתי הקוביות */}
+                <div className="flex items-center gap-4">
+                  {/* קוביית צבע */}
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-xs font-black text-gray-500">קוביית צבע</span>
+                    <div
+                      className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border-4 border-slate-300 shadow-md flex items-center justify-center transition-transform ${
+                        isRolling ? 'animate-spin' : ''
+                      }`}
+                    >
+                      {!colorDie ? (
+                        <span className="text-2xl text-gray-300">🎲</span>
+                      ) : colorDie === 'joker' ? (
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white border-2 border-slate-300 shadow-inner" />
+                      ) : (
+                        <div
+                          style={{ backgroundColor: activeColorObj?.hex }}
+                          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-black/15 shadow-sm"
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  <span className="text-2xl font-black text-amber-500 mt-4">+</span>
+
+                  {/* קוביית צורה */}
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-xs font-black text-gray-500">קוביית צורה</span>
+                    <div
+                      className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border-4 border-slate-300 shadow-md flex items-center justify-center transition-transform ${
+                        isRolling ? 'animate-spin' : ''
+                      }`}
+                    >
+                      {!shapeDie ? (
+                        <span className="text-2xl text-gray-300">🎲</span>
+                      ) : shapeDie === 'joker' ? (
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white border-2 border-slate-300 shadow-inner" />
+                      ) : (
+                        <ClackShapeSVG shapeId={shapeDie} fillHex="#334155" strokeHex="#0F172A" className="w-10 h-10 sm:w-12 sm:h-12" />
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* כפתור הטלת קוביות */}
+                <button
+                  type="button"
+                  disabled={isRolling}
+                  onClick={handleRollDice}
+                  className={`px-6 py-3.5 sm:px-8 sm:py-4 rounded-full font-black text-lg sm:text-xl shadow-lg transition-all flex items-center gap-2 focus:outline-none ${
+                    !colorDie || remainingMatchingDiscs.length === 0
+                      ? 'bg-orange-500 hover:bg-orange-600 text-white hover:scale-105 ring-4 ring-orange-200 animate-pulse cursor-pointer'
+                      : 'bg-white border-2 border-orange-300 text-orange-700 hover:bg-orange-50 cursor-pointer'
+                  } ${isRolling ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  <span>🎲</span>
+                  <span>הטל קוביות!</span>
+                </button>
+
+                {/* מגדל הדיסקיות המגנטי */}
+                <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-2xl border-2 border-amber-200 shadow-sm">
+                  <div className="flex flex-col-reverse items-center justify-start h-14 w-9 bg-amber-50 rounded-lg p-1 overflow-hidden border border-amber-100">
+                    {collectedStack.slice(-10).map((id) => (
+                      <div
+                        key={id}
+                        className="w-7 h-1.5 rounded-full bg-gradient-to-r from-slate-500 via-orange-400 to-slate-500 mb-[1px] shrink-0"
+                      />
+                    ))}
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-black text-orange-600 leading-none">
+                      {collectedStack.length}
+                    </div>
+                    <div className="text-xs font-bold text-gray-500 mt-0.5">מגדל דיסקיות 🧲</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* הודעת הנחיה */}
+              <div className="w-full max-w-2xl mb-5 px-5 py-2.5 rounded-2xl bg-indigo-50 border-2 border-indigo-200 text-indigo-900 font-bold text-center text-sm sm:text-base shadow-sm">
+                {statusMsg}
+              </div>
+
+              {/* לוח הדיסקיות המפוזרות – מתמלא בדיסקיות חדשות אחרי כל סבב */}
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 sm:gap-4 md:gap-5 w-full place-items-center p-3 sm:p-5 bg-amber-50/40 rounded-3xl border-2 border-dashed border-amber-200">
+                {discs.map((disc) => {
+                  if (disc.collected) {
+                    return (
+                      <div
+                        key={disc.id}
+                        className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-2 border-dashed border-amber-200/70 bg-amber-50/30 flex items-center justify-center"
+                      >
+                        <span className="text-xs font-bold text-amber-300">קלאק!</span>
+                      </div>
+                    );
+                  }
+
+                  const isWrong = wrongDiscId === disc.id;
+
+                  return (
+                    <button
+                      key={disc.id}
+                      type="button"
+                      onClick={(e) => handleDiscClick(disc, e)}
+                      style={{ transform: `rotate(${disc.discRot}deg)` }}
+                      className={`
+                        relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white border-4
+                        shadow-md transition-all duration-200 focus:outline-none cursor-pointer
+                        active:scale-90 [@media(hover:hover)]:hover:scale-105 [@media(hover:hover)]:hover:shadow-xl
+                        ${isWrong
+                          ? 'border-red-400 bg-red-50 ring-4 ring-red-200 scale-95'
+                          : 'border-slate-300 [@media(hover:hover)]:hover:border-orange-400'
+                        }
+                      `}
+                    >
+                      {/* נקודת המגנט במרכז הדיסקית */}
+                      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-gradient-to-br from-slate-300 to-slate-500 border border-slate-400 shadow-inner" />
+
+                      {/* 3 התמונות על הדיסקית */}
+                      {disc.figures.map((fig, fIdx) => {
+                        const cObj = CLACK_COLORS.find(c => c.id === fig.colorId) || CLACK_COLORS[0];
+                        const slot = TRIANGLE_SLOTS[fIdx];
+                        return (
+                          <div
+                            key={fIdx}
+                            style={{
+                              left: slot.left,
+                              top: slot.top,
+                              transform: `translate(-50%, -50%) rotate(${fig.rot}deg)`
+                            }}
+                            className="absolute pointer-events-none"
+                          >
+                            <ClackShapeSVG
+                              shapeId={fig.shapeId}
+                              fillHex={cObj.hex}
+                              strokeHex={cObj.stroke}
+                              className="w-7 h-7 sm:w-8 sm:h-8"
+                            />
+                          </div>
+                        );
+                      })}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        };
+
+        // ============================================================================
+        // 2. DOBBLE GAME (דאבל - מישור פרויקטיבי מסדר 7: 57 כרטיסים, 8 צורות בכרטיס, צורה משותפת אחת בדיוק!)
+        // ============================================================================
+        const DOBBLE_SYMBOLS = [
+          { id: 0, emoji: '🍎', name: 'תפוח', speak: 'תַּפּוּחַ' },
+          { id: 1, emoji: '🍌', name: 'בננה', speak: 'בָּנָנָה' },
+          { id: 2, emoji: '🍓', name: 'תות', speak: 'תּוּת' },
+          { id: 3, emoji: '🍇', name: 'ענבים', speak: 'עֲנָבִים' },
+          { id: 4, emoji: '🍉', name: 'אבטיח', speak: 'אֲבַטִּיחַ' },
+          { id: 5, emoji: '🥕', name: 'גזר', speak: 'גֶּזֶר' },
+          { id: 6, emoji: '🌽', name: 'תירס', speak: 'תִּירָס' },
+          { id: 7, emoji: '🍕', name: 'פיצה', speak: 'פִּיצָה' },
+          { id: 8, emoji: '🍦', name: 'גלידה', speak: 'גְּלִידָה' },
+          { id: 9, emoji: '🎂', name: 'עוגה', speak: 'עוּגָה' },
+          { id: 10, emoji: '🧀', name: 'גבינה', speak: 'גְּבִינָה' },
+          { id: 11, emoji: '🍭', name: 'סוכרייה', speak: 'סֻכָּרִיָּה' },
+          { id: 12, emoji: '🐶', name: 'כלב', speak: 'כֶּלֶב' },
+          { id: 13, emoji: '🐱', name: 'חתול', speak: 'חָתוּל' },
+          { id: 14, emoji: '🦁', name: 'אריה', speak: 'אַרְיֵה' },
+          { id: 15, emoji: '🐘', name: 'פיל', speak: 'פִּיל' },
+          { id: 16, emoji: '🐸', name: 'צפרדע', speak: 'צְפַרְדֵּעַ' },
+          { id: 17, emoji: '🐢', name: 'צב', speak: 'צָב' },
+          { id: 18, emoji: '🦋', name: 'פרפר', speak: 'פַּרְפַּר' },
+          { id: 19, emoji: '🐟', name: 'דג', speak: 'דָּג' },
+          { id: 20, emoji: '🐧', name: 'פינגווין', speak: 'פִּינְגְוִין' },
+          { id: 21, emoji: '🐞', name: 'חיפושית', speak: 'חִפּוּשִׁית' },
+          { id: 22, emoji: '🐙', name: 'תמנון', speak: 'תְּמָנוּן' },
+          { id: 23, emoji: '🦄', name: 'חד קרן', speak: 'חַד קֶרֶן' },
+          { id: 24, emoji: '🚗', name: 'מכונית', speak: 'מְכוֹנִית' },
+          { id: 25, emoji: '✈️', name: 'מטוס', speak: 'מָטוֹס' },
+          { id: 26, emoji: '🚂', name: 'רכבת', speak: 'רַכֶּבֶת' },
+          { id: 27, emoji: '⛵', name: 'סירה', speak: 'סִירָה' },
+          { id: 28, emoji: '🚀', name: 'טיל', speak: 'טִיל' },
+          { id: 29, emoji: '🚲', name: 'אופניים', speak: 'אוֹפַנַּיִם' },
+          { id: 30, emoji: '☀️', name: 'שמש', speak: 'שֶׁמֶשׁ' },
+          { id: 31, emoji: '🌙', name: 'ירח', speak: 'יָרֵחַ' },
+          { id: 32, emoji: '⭐', name: 'כוכב', speak: 'כּוֹכָב' },
+          { id: 33, emoji: '🌈', name: 'קשת', speak: 'קֶשֶׁת' },
+          { id: 34, emoji: '⛄', name: 'איש שלג', speak: 'אִישׁ שֶׁלֶג' },
+          { id: 35, emoji: '🔥', name: 'אש', speak: 'אֵשׁ' },
+          { id: 36, emoji: '🌻', name: 'פרח', speak: 'פֶּרַח' },
+          { id: 37, emoji: '🌳', name: 'עץ', speak: 'עֵץ' },
+          { id: 38, emoji: '🌵', name: 'קקטוס', speak: 'קַקְטוֹס' },
+          { id: 39, emoji: '🍄', name: 'פטריה', speak: 'פִּטְרִיָּה' },
+          { id: 40, emoji: '⚽', name: 'כדור', speak: 'כַּדּוּר' },
+          { id: 41, emoji: '🎈', name: 'בלון', speak: 'בָּלוֹן' },
+          { id: 42, emoji: '🎁', name: 'מתנה', speak: 'מַתָּנָה' },
+          { id: 43, emoji: '👑', name: 'כתר', speak: 'כֶּתֶר' },
+          { id: 44, emoji: '🎩', name: 'כובע', speak: 'כּוֹבַע' },
+          { id: 45, emoji: '👓', name: 'משקפיים', speak: 'מִשְׁקָפַיִם' },
+          { id: 46, emoji: '🔑', name: 'מפתח', speak: 'מַפְתֵּחַ' },
+          { id: 47, emoji: '🔒', name: 'מנעול', speak: 'מַנְעוּל' },
+          { id: 48, emoji: '🔔', name: 'פעמון', speak: 'פַּעֲמוֹן' },
+          { id: 49, emoji: '🎸', name: 'גיטרה', speak: 'גִּיטָרָה' },
+          { id: 50, emoji: '🥁', name: 'תוף', speak: 'תֹּף' },
+          { id: 51, emoji: '✂️', name: 'מספריים', speak: 'מִסְפָּרַיִם' },
+          { id: 52, emoji: '✏️', name: 'עיפרון', speak: 'עִפָּרוֹן' },
+          { id: 53, emoji: '☂️', name: 'מטריה', speak: 'מִטְרִיָּה' },
+          { id: 54, emoji: '⌚', name: 'שעון', speak: 'שָׁעוֹן' },
+          { id: 55, emoji: '💎', name: 'יהלום', speak: 'יַהֲלוֹם' },
+          { id: 56, emoji: '🏠', name: 'בית', speak: 'בַּיִת' }
+        ];
+
+        // בנייה מתמטית של חפיסת דאבל אמיתית (57 כרטיסים – לכל זוג כרטיסים יש בדיוק סמל משותף אחד!)
+        const generateDobbleDeck = () => {
+          const p = 7;
+          const rawCards = [];
+
+          // Card 0
+          const firstCard = [];
+          for (let i = 0; i <= p; i++) firstCard.push(i);
+          rawCards.push(firstCard);
+
+          // p cards passing through 0
+          for (let i = 0; i < p; i++) {
+            const card = [0];
+            for (let k = 0; k < p; k++) {
+              card.push(p + 1 + i * p + k);
+            }
+            rawCards.push(card);
+          }
+
+          // p^2 remaining cards
+          for (let i = 0; i < p; i++) {
+            for (let j = 0; j < p; j++) {
+              const card = [1 + i];
+              for (let k = 0; k < p; k++) {
+                card.push(p + 1 + k * p + ((j + i * k) % p));
+              }
+              rawCards.push(card);
+            }
+          }
+
+          const scales = [0.9, 1.15, 0.95, 1.2, 0.88, 1.1, 1.0, 1.18];
+
+          return rawCards
+            .sort(() => Math.random() - 0.5)
+            .map((symIds, cIdx) => {
+              const shuffledSyms = [...symIds].sort(() => Math.random() - 0.5);
+              const ringOffsetDeg = Math.floor(Math.random() * 360);
+              return {
+                uid: `dobble-card-${cIdx}-${Math.random().toString(36).slice(2, 6)}`,
+                ringOffsetDeg,
+                entries: shuffledSyms.map((sid, sIdx) => ({
+                  symbol: DOBBLE_SYMBOLS[sid],
+                  rot: Math.round((Math.random() - 0.5) * 50),
+                  scale: scales[(cIdx + sIdx) % scales.length]
+                }))
+              };
+            });
+        };
+
+        const DobbleGame = () => {
+          const [deck, setDeck] = useState(() => generateDobbleDeck());
+          const [pairIndex, setPairIndex] = useState(0);
+          const [score, setScore] = useState(0);
+          const [matchedSymbolId, setMatchedSymbolId] = useState(null);
+          const [wrongPickKey, setWrongPickKey] = useState(null);
+          const [isFinished, setIsFinished] = useState(false);
+
+          const speak = useSpeech('he-IL');
+          const nextTimerRef = React.useRef(null);
+          const hasSpokenIntroRef = React.useRef(false);
+
+          const totalPairs = Math.floor(deck.length / 2); // 28 זוגות בחפיסה
+
+          useEffect(() => {
+            if (!hasSpokenIntroRef.current) {
+              hasSpokenIntroRef.current = true;
+              const t = setTimeout(() => speak('מִצְאוּ אֶת הַצּוּרָה הַמְּשׁוּתֶּפֶת לִשְׁנֵי הַכַּרְטִיסִים!'), 450);
+              return () => clearTimeout(t);
+            }
+          }, [speak]);
+
+          useEffect(() => {
+            return () => {
+              if (nextTimerRef.current) clearTimeout(nextTimerRef.current);
+            };
+          }, []);
+
+          const restartDobble = () => {
+            if (nextTimerRef.current) clearTimeout(nextTimerRef.current);
+            setDeck(generateDobbleDeck());
+            setPairIndex(0);
+            setScore(0);
+            setMatchedSymbolId(null);
+            setWrongPickKey(null);
+            setIsFinished(false);
+          };
+
+          const cardRight = deck[pairIndex * 2];
+          const cardLeft = deck[pairIndex * 2 + 1];
+
+          const sharedSymbol = React.useMemo(() => {
+            if (!cardRight || !cardLeft) return null;
+            const rightIds = new Set(cardRight.entries.map(e => e.symbol.id));
+            const found = cardLeft.entries.find(e => rightIds.has(e.symbol.id));
+            return found ? found.symbol : null;
+          }, [cardRight, cardLeft]);
+
+          const handleSymbolTap = (symbol, cardSide, e) => {
+            if (e && e.currentTarget) e.currentTarget.blur();
+            if (matchedSymbolId !== null || isFinished || !sharedSymbol) return;
+
+            if (symbol.id === sharedSymbol.id) {
+              setWrongPickKey(null);
+              setMatchedSymbolId(symbol.id);
+              setScore(s => s + 1);
+              speak(symbol.speak);
+
+              nextTimerRef.current = setTimeout(() => {
+                if (pairIndex + 1 >= totalPairs) {
+                  setIsFinished(true);
+                  speak('כּוֹל הַכָּבוֹד! מְצָאתֶם אֶת כּוֹל הַזּוּגוֹת בְּדָאבֶּל!');
+                } else {
+                  setPairIndex(p => p + 1);
+                  setMatchedSymbolId(null);
+                }
+              }, 1050);
+            } else {
+              const key = `${cardSide}-${symbol.id}`;
+              setWrongPickKey(key);
+              speak('נַסּוּ שׁוּב');
+              setTimeout(() => {
+                setWrongPickKey(prev => (prev === key ? null : prev));
+              }, 650);
+            }
+          };
+
+          const renderDobbleCircleCard = (card, side, borderClass) => {
+            if (!card) return null;
+            return (
+              <div
+                className={`relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 rounded-full bg-white border-8 ${borderClass} shadow-xl shrink-0 transition-all`}
+              >
+                {card.entries.map((entry, idx) => {
+                  // idx 0 במרכז, idx 1..7 במעגל מסביב כדי למנוע חפיפה לחלוטין
+                  let leftPct = 50;
+                  let topPct = 50;
+                  if (idx > 0) {
+                    const angleRad = ((card.ringOffsetDeg + ((idx - 1) * 360) / 7) * Math.PI) / 180;
+                    const radius = 33.5;
+                    leftPct = 50 + radius * Math.cos(angleRad);
+                    topPct = 50 + radius * Math.sin(angleRad);
+                  }
+
+                  const isMatched = matchedSymbolId === entry.symbol.id;
+                  const isWrong = wrongPickKey === `${side}-${entry.symbol.id}`;
+
+                  return (
+                    <button
+                      key={entry.symbol.id}
+                      type="button"
+                      onClick={(e) => handleSymbolTap(entry.symbol, side, e)}
+                      style={{
+                        left: `${leftPct}%`,
+                        top: `${topPct}%`,
+                        transform: `translate(-50%, -50%) rotate(${entry.rot}deg) scale(${isMatched ? 1.3 : entry.scale})`
+                      }}
+                      className={`
+                        absolute w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center
+                        transition-all duration-200 focus:outline-none cursor-pointer
+                        ${isMatched
+                          ? 'bg-green-100 ring-4 ring-green-400 shadow-lg z-20'
+                          : isWrong
+                            ? 'bg-red-100 ring-4 ring-red-300 opacity-70'
+                            : 'hover:bg-amber-50/80 active:scale-90'
+                        }
+                      `}
+                    >
+                      <span className="text-3xl sm:text-4xl md:text-[40px] leading-none select-none">
+                        {entry.symbol.emoji}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            );
+          };
+
+          return (
+            <div className="flex flex-col items-center w-full max-w-4xl mx-auto select-none">
+              <div className="flex flex-wrap items-center justify-center gap-3 mb-5">
+                <button
+                  type="button"
+                  onClick={() => speak('מִצְאוּ אֶת הַצּוּרָה הַמְּשׁוּתֶּפֶת לִשְׁנֵי הַכַּרְטִיסִים!')}
+                  className="bg-orange-100 hover:bg-orange-200 text-orange-800 px-5 py-2.5 rounded-full font-bold text-base md:text-lg flex items-center gap-2 shadow-sm transition-all"
+                >
+                  <Volume2Icon /> מצאו את הצורה המשותפת!
+                </button>
+
+                <div className="bg-amber-50 border-2 border-amber-200 px-4 py-2 rounded-full font-black text-amber-800 text-sm md:text-base flex items-center gap-2">
+                  <span>🎯 זוגות שמצאתם:</span>
+                  <span className="text-orange-600 text-lg">{score}</span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={restartDobble}
+                  className="px-4 py-2.5 rounded-full bg-gray-100 text-gray-700 font-bold text-sm hover:bg-gray-200 transition-all"
+                >
+                  🔄 חפיסה חדשה
+                </button>
+              </div>
+
+              <div className="h-8 mb-3 flex items-center justify-center">
+                {matchedSymbolId !== null && sharedSymbol && (
+                  <div className="text-xl sm:text-2xl font-black text-green-600 animate-bounce">
+                    מצוין! {sharedSymbol.emoji} {sharedSymbol.name}! 🎉
+                  </div>
+                )}
+              </div>
+
+              {isFinished ? (
+                <div className="flex flex-col items-center gap-4 bg-amber-50 border-4 border-amber-300 rounded-3xl px-8 py-8 shadow-md animate-fade-in-up">
+                  <div className="text-5xl">🎯🏆🎉</div>
+                  <div className="text-2xl md:text-3xl font-black text-amber-800 text-center">
+                    כל הכבוד! מצאתם את כל {score} הזוגות בחפיסה!
+                  </div>
+                  <button
+                    type="button"
+                    onClick={restartDobble}
+                    className="bg-orange-500 hover:bg-orange-600 text-white font-black text-xl px-8 py-3.5 rounded-full shadow-lg transition-all"
+                  >
+                    שחקו שוב 🔄
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div
+                    key={cardRight?.uid}
+                    className="flex flex-col sm:flex-row items-center justify-center gap-6 md:gap-10 my-2 animate-fade-in-up"
+                  >
+                    {renderDobbleCircleCard(cardRight, 'right', 'border-purple-300')}
+                    {renderDobbleCircleCard(cardLeft, 'left', 'border-amber-300')}
+                  </div>
+
+                  <div className="mt-6 text-orange-400 font-bold text-base">
+                    זוג {pairIndex + 1} מתוך {totalPairs}
+                  </div>
+                </>
+              )}
+            </div>
+          );
+        };
+
+        // ============================================================================
+        // 3. SET JUNIOR GAME (סט ג'וניור - 27 קלפים, מיחזור סטים לקופה ופתיחת קלפים חדשים תמיד)
+        // ============================================================================
+        const SET_JR_COLORS = [
+          { id: 'red', label: 'אדום', hex: '#EF4444' },
+          { id: 'green', label: 'ירוק', hex: '#16A34A' },
+          { id: 'purple', label: 'סגול', hex: '#9333EA' }
+        ];
+        const SET_JR_SHAPES = ['diamond', 'oval', 'squiggle'];
+        const SET_JR_COUNTS = [1, 2, 3];
+
+        const SetJuniorShapeSVG = ({ shape, hex, className = 'w-12 h-7 sm:w-14 sm:h-8' }) => {
+          if (shape === 'diamond') {
+            return (
+              <svg viewBox="0 0 60 36" className={className}>
+                <polygon points="30,3 57,18 30,33 3,18" fill={hex} />
+              </svg>
+            );
+          }
+          if (shape === 'oval') {
+            return (
+              <svg viewBox="0 0 60 36" className={className}>
+                <rect x="4" y="4" width="52" height="28" rx="14" fill={hex} />
+              </svg>
+            );
+          }
+          return (
+            <svg viewBox="0 0 60 36" className={className}>
+              <path
+                d="M7,24 C4,12 16,4 27,10 C35,14 43,12 48,6 C54,2 58,10 55,20 C52,30 41,34 31,28 C23,24 15,26 11,31 C6,34 3,29 7,24 Z"
+                fill={hex}
+              />
+            </svg>
+          );
+        };
+
+        const buildFullSetJuniorDeck = () => {
+          const cards = [];
+          SET_JR_COLORS.forEach(c => {
+            SET_JR_SHAPES.forEach(s => {
+              SET_JR_COUNTS.forEach(n => {
+                cards.push({
+                  id: `setjr-${c.id}-${s}-${n}`,
+                  color: c.id,
+                  colorHex: c.hex,
+                  shape: s,
+                  count: n
+                });
+              });
+            });
+          });
+          return cards;
+        };
+
+        const isAttributeValid = (v1, v2, v3) =>
+          (v1 === v2 && v2 === v3) || (v1 !== v2 && v2 !== v3 && v1 !== v3);
+
+        const isSetJuniorValid = (c1, c2, c3) =>
+          isAttributeValid(c1.color, c2.color, c3.color) &&
+          isAttributeValid(c1.shape, c2.shape, c3.shape) &&
+          isAttributeValid(c1.count, c2.count, c3.count);
+
+        const findFirstValidSetIndices = (boardCards) => {
+          const len = boardCards.length;
+          for (let i = 0; i < len - 2; i++) {
+            for (let j = i + 1; j < len - 1; j++) {
+              for (let k = j + 1; k < len; k++) {
+                if (
+                  boardCards[i] &&
+                  boardCards[j] &&
+                  boardCards[k] &&
+                  isSetJuniorValid(boardCards[i], boardCards[j], boardCards[k])
+                ) {
+                  return [i, j, k];
+                }
+              }
+            }
+          }
+          return null;
+        };
+
+        const createInitialSetJuniorState = () => {
+          const all27 = buildFullSetJuniorDeck();
+          for (let attempt = 0; attempt < 60; attempt++) {
+            const shuffled = [...all27].sort(() => Math.random() - 0.5);
+            const board = shuffled.slice(0, 9);
+            const deck = shuffled.slice(9);
+            if (findFirstValidSetIndices(board)) {
+              return { board, deck };
+            }
+          }
+          const shuffled = [...all27].sort(() => Math.random() - 0.5);
+          return { board: shuffled.slice(0, 9), deck: shuffled.slice(9) };
+        };
+
+        const SetJuniorGame = () => {
+          const [gameState, setGameState] = useState(() => createInitialSetJuniorState());
+          const [selectedIds, setSelectedIds] = useState([]);
+          const [evalStatus, setEvalStatus] = useState(null); // null | 'valid' | 'invalid'
+          const [statusText, setStatusText] = useState('בחרו 3 קלפים שיוצרים סט!');
+          const [setsFound, setSetsFound] = useState(0);
+          const [hintIds, setHintIds] = useState([]);
+          const [showRules, setShowRules] = useState(false);
+
+          const speak = useSpeech('he-IL');
+          const actionTimerRef = React.useRef(null);
+
+          useEffect(() => {
+            return () => {
+              if (actionTimerRef.current) clearTimeout(actionTimerRef.current);
+            };
+          }, []);
+
+          const resetSetGame = () => {
+            if (actionTimerRef.current) clearTimeout(actionTimerRef.current);
+            setGameState(createInitialSetJuniorState());
+            setSelectedIds([]);
+            setEvalStatus(null);
+            setSetsFound(0);
+            setHintIds([]);
+            setStatusText('בחרו 3 קלפים שיוצרים סט!');
+          };
+
+          const explainInvalidSet = (c1, c2, c3) => {
+            if (!isAttributeValid(c1.color, c2.color, c3.color)) {
+              return 'לא סט – בצבע יש 2 זהים ו-1 שונה (צריך או כולם באותו צבע או כולם בצבעים שונים).';
+            }
+            if (!isAttributeValid(c1.shape, c2.shape, c3.shape)) {
+              return 'לא סט – בצורה יש 2 זהות ו-1 שונה (צריך או כולן אותה צורה או כולן צורות שונות).';
+            }
+            return 'לא סט – בכמות יש 2 קלפים עם אותו מספר צורות ו-1 שונה.';
+          };
+
+          const handleCardSelect = (card, e) => {
+            if (e && e.currentTarget) e.currentTarget.blur();
+            if (evalStatus !== null) return;
+
+            setHintIds([]);
+
+            if (selectedIds.includes(card.id)) {
+              setSelectedIds(prev => prev.filter(id => id !== card.id));
+              return;
+            }
+
+            if (selectedIds.length >= 3) return;
+
+            const nextSelected = [...selectedIds, card.id];
+            setSelectedIds(nextSelected);
+
+            if (nextSelected.length === 3) {
+              const pickedCards = nextSelected
+                .map(id => gameState.board.find(c => c.id === id))
+                .filter(Boolean);
+
+              if (pickedCards.length === 3 && isSetJuniorValid(pickedCards[0], pickedCards[1], pickedCards[2])) {
+                setEvalStatus('valid');
+                setSetsFound(s => s + 1);
+                setStatusText('סט! כל הכבוד! קלפים חדשים נפתחים מהקופה...');
+                speak('סֶט! כּוֹל הַכָּבוֹד!');
+
+                actionTimerRef.current = setTimeout(() => {
+                  setGameState(prev => {
+                    const replacedPositions = prev.board
+                      .map((c, idx) => (nextSelected.includes(c.id) ? idx : -1))
+                      .filter(idx => idx !== -1);
+                    const removedCards = prev.board.filter(c => nextSelected.includes(c.id));
+
+                    // שולפים 3 קלפים חדשים מהקופה (18 הקלפים שבחוץ) כך שתמיד יהיה סט על הלוח,
+                    // ואת 3 הקלפים של הסט שנמצא מחזירים חזרה ומערבבים לתוך הקופה!
+                    let chosenThree = null;
+                    let remainingInDeck = null;
+
+                    for (let attempt = 0; attempt < 60; attempt++) {
+                      const shuffledDeck = [...prev.deck].sort(() => Math.random() - 0.5);
+                      const candidateThree = shuffledDeck.slice(0, 3);
+                      const candidateBoard = prev.board.map(c =>
+                        nextSelected.includes(c.id) ? null : c
+                      );
+                      replacedPositions.forEach((pos, i) => {
+                        candidateBoard[pos] = candidateThree[i];
+                      });
+
+                      if (findFirstValidSetIndices(candidateBoard)) {
+                        chosenThree = candidateThree;
+                        remainingInDeck = shuffledDeck.slice(3);
+                        break;
+                      }
+                    }
+
+                    if (!chosenThree) {
+                      const shuffledDeck = [...prev.deck].sort(() => Math.random() - 0.5);
+                      chosenThree = shuffledDeck.slice(0, 3);
+                      remainingInDeck = shuffledDeck.slice(3);
+                    }
+
+                    const nextBoard = [...prev.board];
+                    replacedPositions.forEach((pos, i) => {
+                      nextBoard[pos] = chosenThree[i];
+                    });
+
+                    // הקלפים של הסט שנמצא חוזרים חזרה לקופה ומעורבבים בה
+                    const recycledDeck = [...remainingInDeck, ...removedCards].sort(() => Math.random() - 0.5);
+
+                    return { board: nextBoard, deck: recycledDeck };
+                  });
+
+                  setSelectedIds([]);
+                  setEvalStatus(null);
+                  setStatusText('מעולה! מצאו עוד סט על הלוח!');
+                }, 1150);
+              } else if (pickedCards.length === 3) {
+                setEvalStatus('invalid');
+                setStatusText(explainInvalidSet(pickedCards[0], pickedCards[1], pickedCards[2]));
+                speak('לֹא סֶט, נַסּוּ שׁוּב');
+
+                actionTimerRef.current = setTimeout(() => {
+                  setSelectedIds([]);
+                  setEvalStatus(null);
+                }, 1450);
+              }
+            }
+          };
+
+          const handleHint = () => {
+            if (evalStatus !== null) return;
+            const setIndices = findFirstValidSetIndices(gameState.board);
+            if (setIndices) {
+              const twoCardIds = [
+                gameState.board[setIndices[0]].id,
+                gameState.board[setIndices[1]].id
+              ];
+              setHintIds(twoCardIds);
+              setSelectedIds(twoCardIds);
+              setStatusText('רמז: שני הקלפים המסומנים שייכים לסט – מצאו את הקלף השלישי שמשלים אותם!');
+              speak('הִנֵּה שְׁנֵי קְלָפִים מֵהַסֶּט, מִצְאוּ אֶת הַשְּׁלִישִׁי!');
+            }
+          };
+
+          return (
+            <div className="flex flex-col items-center w-full max-w-3xl mx-auto select-none">
+              {/* סרגל פעולות עליון */}
+              <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-4">
+                <div className="bg-amber-50 border-2 border-amber-200 px-4 py-2 rounded-full font-black text-amber-800 text-sm md:text-base flex items-center gap-2">
+                  <span>💠 סטים שמצאתם:</span>
+                  <span className="text-orange-600 text-lg">{setsFound}</span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleHint}
+                  className="px-4 py-2 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-sm transition-all shadow-sm"
+                >
+                  💡 רמז
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowRules(r => !r)}
+                  className="px-4 py-2 rounded-full bg-sky-50 border-2 border-sky-200 text-sky-700 font-bold text-sm hover:bg-sky-100 transition-all"
+                >
+                  ❓ מה זה סט?
+                </button>
+
+                <button
+                  type="button"
+                  onClick={resetSetGame}
+                  className="px-4 py-2 rounded-full bg-gray-100 text-gray-700 font-bold text-sm hover:bg-gray-200 transition-all"
+                >
+                  🔄 ערבב מחדש
+                </button>
+              </div>
+
+              {showRules && (
+                <div className="w-full max-w-2xl mb-4 bg-sky-50 border-2 border-sky-200 rounded-3xl p-4 text-sm md:text-base text-gray-700 leading-relaxed shadow-sm">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-black text-sky-800 text-lg">💠 איך מוצאים סט בסט ג'וניור?</span>
+                    <button type="button" onClick={() => setShowRules(false)} className="text-sky-600 font-bold px-2 py-0.5 rounded-lg hover:bg-sky-100">סגור ✕</button>
+                  </div>
+                  <p className="mb-1">
+                    <strong>סט</strong> הוא שלישייה של 3 קלפים שבהם בכל אחד משלושת המאפיינים – <strong>צבע</strong>, <strong>צורה</strong> ו-<strong>כמות</strong> – מתקיים:
+                  </p>
+                  <ul className="list-disc pr-5 space-y-1">
+                    <li>או שכל 3 הקלפים <strong>זהים לגמרי</strong> באותו מאפיין,</li>
+                    <li>או שכל 3 הקלפים <strong>שונים לגמרי</strong> זה מזה באותו מאפיין!</li>
+                    <li>אם יש 2 זהים ו-1 יוצא דופן – זה לא סט. בכל פעם שמוצאים סט נפתחים 3 קלפים חדשים מהקופה!</li>
+                  </ul>
+                </div>
+              )}
+
+              {/* הודעת חיווי */}
+              <div
+                className={`w-full max-w-xl mb-5 px-4 py-2.5 rounded-2xl border-2 text-center font-bold text-sm sm:text-base transition-all ${
+                  evalStatus === 'valid'
+                    ? 'bg-green-50 border-green-300 text-green-800'
+                    : evalStatus === 'invalid'
+                      ? 'bg-red-50 border-red-300 text-red-700'
+                      : 'bg-indigo-50 border-indigo-200 text-indigo-900'
+                }`}
+              >
+                {statusText}
+              </div>
+
+              {/* לוח 9 קלפים (3x3) */}
+              <div className="grid grid-cols-3 gap-3 sm:gap-4 md:gap-5 w-full max-w-xl">
+                {gameState.board.map((card) => {
+                  const isSelected = selectedIds.includes(card.id);
+                  const isHinted = hintIds.includes(card.id);
+
+                  let cardBorderClasses = 'bg-white border-slate-200 hover:border-orange-300 shadow-md hover:shadow-xl';
+                  if (isSelected && evalStatus === 'valid') {
+                    cardBorderClasses = 'bg-green-50 border-green-500 ring-4 ring-green-200 scale-105 shadow-xl';
+                  } else if (isSelected && evalStatus === 'invalid') {
+                    cardBorderClasses = 'bg-red-50 border-red-400 ring-4 ring-red-200 scale-95';
+                  } else if (isSelected) {
+                    cardBorderClasses = 'bg-orange-50/70 border-orange-500 ring-4 ring-orange-200 -translate-y-1 shadow-xl';
+                  } else if (isHinted) {
+                    cardBorderClasses = 'bg-amber-50 border-amber-400 ring-4 ring-amber-200';
+                  }
+
+                  return (
+                    <button
+                      key={card.id}
+                      type="button"
+                      onClick={(e) => handleCardSelect(card, e)}
+                      className={`
+                        h-28 sm:h-36 md:h-40 rounded-2xl sm:rounded-3xl border-4 p-2 sm:p-3
+                        flex flex-col items-center justify-center gap-1.5 sm:gap-2
+                        transition-all duration-200 focus:outline-none cursor-pointer
+                        ${cardBorderClasses}
+                      `}
+                    >
+                      {Array.from({ length: card.count }).map((_, i) => (
+                        <SetJuniorShapeSVG
+                          key={i}
+                          shape={card.shape}
+                          hex={card.colorHex}
+                          className="w-12 h-6 sm:w-16 sm:h-8 md:w-20 md:h-9 shrink-0"
+                        />
+                      ))}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        };
+
         // --- Main App Component ---
         const App = () => {
           const [activeItem, setActiveItem] = useState(null);
@@ -3355,6 +4530,12 @@
                 return <SongsModule key={activeItem.id} videos={MATH_NUMBERS_SONGS} themeClass="amber" />;
               case 'game-memory':
                 return <MemoryGame key={activeItem.id} />;
+              case 'game-clack':
+                return <ClackGame key={activeItem.id} />;
+              case 'game-dobble':
+                return <DobbleGame key={activeItem.id} />;
+              case 'game-set-junior':
+                return <SetJuniorGame key={activeItem.id} />;
               case 'game-war':
                 return <WarCardGame key={activeItem.id} />;
               case 'game-sherlock':
