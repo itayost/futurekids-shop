@@ -660,6 +660,25 @@
         };
 
         // Shared speech hook for consistent multi-language TTS
+        const pickBestVoiceForLang = (targetLang, availableVoices) => {
+          if (!availableVoices || availableVoices.length === 0) return null;
+          const langPrefix = targetLang.split('-')[0].toLowerCase();
+          const langVoices = availableVoices.filter(v => {
+            const vLang = (v.lang || '').toLowerCase().replace('_', '-');
+            const vName = (v.name || '').toLowerCase();
+            return (
+              vLang.startsWith(langPrefix) ||
+              (langPrefix === 'he' && (vLang.includes('iw') || vName.includes('hebrew') || (v.name || '').includes('עברית'))) ||
+              (langPrefix === 'ar' && (vName.includes('arabic') || (v.name || '').includes('العربية')))
+            );
+          });
+          return (langPrefix === 'ar' && langVoices.find(v =>
+            v.lang.includes('IL') || v.lang.includes('PS') || v.lang.includes('JO') || v.lang.includes('LB') || v.lang.includes('EG')
+          )) || langVoices.find(v =>
+            v.name.includes('Google') || v.name.includes('Natural') || v.name.toLowerCase().includes('female')
+          ) || langVoices[0] || null;
+        };
+
         const useSpeech = (lang = 'he-IL') => {
           const preferredVoiceRef = React.useRef(null);
           const pendingTimerRef = React.useRef(null);
@@ -671,27 +690,7 @@
 
             const initVoice = () => {
               if (!('speechSynthesis' in window)) return;
-              preferredVoiceRef.current = null;
-              const availableVoices = window.speechSynthesis.getVoices();
-              if (availableVoices.length > 0) {
-                const langPrefix = lang.split('-')[0].toLowerCase();
-                const langVoices = availableVoices.filter(v => {
-                  const vLang = (v.lang || '').toLowerCase().replace('_', '-');
-                  const vName = (v.name || '').toLowerCase();
-                  return (
-                    vLang.startsWith(langPrefix) ||
-                    (langPrefix === 'he' && (vLang.includes('iw') || vName.includes('hebrew') || (v.name || '').includes('עברית'))) ||
-                    (langPrefix === 'ar' && (vName.includes('arabic') || (v.name || '').includes('العربية')))
-                  );
-                });
-                const bestVoice = (langPrefix === 'ar' && langVoices.find(v =>
-                  v.lang.includes('IL') || v.lang.includes('PS') || v.lang.includes('JO') || v.lang.includes('LB') || v.lang.includes('EG')
-                )) || langVoices.find(v =>
-                  v.name.includes('Google') || v.name.includes('Natural') || v.name.toLowerCase().includes('female')
-                ) || langVoices[0];
-
-                if (bestVoice) preferredVoiceRef.current = bestVoice;
-              }
+              preferredVoiceRef.current = pickBestVoiceForLang(lang, window.speechSynthesis.getVoices());
             };
 
             initVoice();
@@ -713,7 +712,9 @@
           }, [lang]);
 
           const speak = React.useCallback((text, options = {}) => {
-            const { cancelPrevious = true, onEnd = null } = options;
+            const { cancelPrevious = true, onEnd = null, langOverride = null } = options;
+            const targetLang = langOverride || lang;
+
             if (!('speechSynthesis' in window) || !text) {
               if (onEnd) setTimeout(onEnd, 300);
               return;
@@ -734,8 +735,11 @@
               const utterance = new SpeechSynthesisUtterance(text);
               activeUtteranceRef.current = utterance;
 
-              const voice = preferredVoiceRef.current;
-              const langPrefix = lang.split('-')[0].toLowerCase();
+              const availableVoices = window.speechSynthesis.getVoices();
+              const voice = targetLang === lang && preferredVoiceRef.current
+                ? preferredVoiceRef.current
+                : pickBestVoiceForLang(targetLang, availableVoices);
+              const langPrefix = targetLang.split('-')[0].toLowerCase();
               const normalizedVoiceLang = voice && voice.lang ? voice.lang.toLowerCase().replace('_', '-') : '';
               const voiceMatchesLang = Boolean(
                 voice && (
@@ -744,12 +748,12 @@
                 )
               );
 
-              if (lang === 'he-IL' && voiceMatchesLang && voice.lang.includes('iw')) {
+              if (targetLang === 'he-IL' && voiceMatchesLang && voice.lang.includes('iw')) {
                 utterance.lang = 'iw-IL';
               } else if (voiceMatchesLang && voice.lang) {
                 utterance.lang = voice.lang.replace('_', '-');
               } else {
-                utterance.lang = lang;
+                utterance.lang = targetLang;
               }
 
               if (voiceMatchesLang) {
@@ -1612,7 +1616,7 @@
             if (chosenCount > otherCount) {
               setFeedback('correct');
               setWinnerGroup(side);
-              speak('כָּל הַכָּבוֹד!');
+              speak('כל הכבוד!');
               setTimeout(() => generateRound(difficulty), 1350);
             } else {
               setFeedback('wrong');
@@ -2365,7 +2369,7 @@
         );
 
         const SHERLOCK_ITEMS = [
-          { id: 'magnifier', name: 'זכוכית מגדלת', speak: 'זְכוּכִית מַגְדֶּלֶת', emoji: '🔍' },
+          { id: 'ring', name: 'טבעת', speak: 'טַבַּעַת', emoji: '💍' },
           { id: 'pipe', name: 'מקטרת', speak: 'מִקְטֶרֶת', isPipe: true },
           { id: 'hat', name: 'כובע', speak: 'כּוֹבַע', emoji: '🎩' },
           { id: 'book', name: 'ספר', speak: 'סֵפֶר', emoji: '📖' },
@@ -2433,6 +2437,26 @@
         );
 
         const renderSherlockItemIcon = (item, size = 'md') => {
+          if (item.kind === 'color') {
+            const swatchSize = size === 'sm'
+              ? 'w-5 h-5'
+              : size === 'lg'
+                ? 'w-11 h-11 md:w-12 md:h-12'
+                : 'w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9';
+            return (
+              <div
+                style={{ background: item.bg }}
+                className={`${swatchSize} rounded-full shadow-inner shrink-0 ${item.border ? 'border-2 border-gray-300' : 'border border-black/10'}`}
+              />
+            );
+          }
+          if (item.kind === 'number') {
+            if (size === 'sm') {
+              return <span className="text-xs font-black text-orange-600 px-1 leading-none select-none">{item.display}</span>;
+            }
+            const numSize = size === 'lg' ? 'text-4xl md:text-5xl' : 'text-xl sm:text-2xl md:text-3xl';
+            return <span className={`${numSize} font-black text-orange-600 leading-none select-none`}>{item.display}</span>;
+          }
           if (item.isPipe) {
             const cls = size === 'sm' ? 'w-6 h-6' : size === 'lg' ? 'w-11 h-11 md:w-12 md:h-12' : 'w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9';
             return <PipeIconSVG className={cls} />;
@@ -2441,14 +2465,119 @@
           return <span className={`${textCls} leading-none select-none`}>{item.emoji}</span>;
         };
 
-        const createSherlockDeck = () => {
-          // 49 unique cards: each item appears once (no duplicates anywhere in the deck)
-          const shuffledItems = [...SHERLOCK_ITEMS].sort(() => Math.random() - 0.5);
+        const getSherlockPool = (topic, langKey) => {
+          if (topic === 'colors') {
+            const src = langKey === 'ar' ? ARABIC_COLORS : langKey === 'en' ? ENGLISH_COLORS : HEBREW_COLORS;
+            return src.map(c => ({
+              id: `sh-col-${langKey}-${c.id}`,
+              kind: 'color',
+              name: c.text,
+              speak: c.speak,
+              bg: c.bg,
+              border: c.border
+            }));
+          }
+          if (topic === 'animals') {
+            const src = langKey === 'ar' ? ARABIC_ANIMALS : langKey === 'en' ? ENGLISH_ANIMALS : HEBREW_ANIMALS;
+            return src.map(a => ({
+              id: `sh-ani-${langKey}-${a.id}`,
+              kind: 'animal',
+              name: a.text,
+              speak: a.speak,
+              emoji: a.emoji
+            }));
+          }
+          if (topic === 'numbers') {
+            if (langKey === 'ar') {
+              return ARABIC_NUMBERS.map(n => ({
+                id: `sh-num-ar-${n.id}`,
+                kind: 'number',
+                display: n.display,
+                name: n.sub,
+                speak: n.spoken
+              }));
+            }
+            if (langKey === 'en') {
+              return ENGLISH_NUMBERS.map(n => ({
+                id: `sh-num-en-${n.id}`,
+                kind: 'number',
+                display: n.display,
+                name: n.sub,
+                speak: n.spoken
+              }));
+            }
+            return MATH_NUMBERS.slice(0, 20).map(n => ({
+              id: `sh-num-he-${n.id}`,
+              kind: 'number',
+              display: n.display,
+              name: n.spoken,
+              speak: n.spoken
+            }));
+          }
+          return SHERLOCK_ITEMS.map(item => ({
+            ...item,
+            kind: 'object'
+          }));
+        };
+
+        const getSherlockTopicPrompts = (topic) => {
+          if (topic === 'colors') {
+            return {
+              memorizeText: 'הביטו היטב ב-8 הצבעים במעגל ונסו לזכור איפה כל אחד מסתתר! כשאתם מוכנים לחצו על "התחלה".',
+              memorizeSpeak: 'נַסּוּ לזכור איפה כּוֹל צֶבַע מסתתר. כשאתם מוכנים, לִחְצוּ על התחלה',
+              questionText: 'איזה צבע מסתתר בקלף שליד שרלוק?',
+              questionAfterFlipSingle: 'הקלף החדש התהפך! איזה צבע מסתתר כעת בקלף שליד שרלוק?',
+              questionAfterFlipAll: 'הקלפים התהפכו! איזה צבע מסתתר בקלף שליד שרלוק?',
+              questionAfterWrong: 'הקלפים התהפכו חזרה ושרלוק עבר לקלף הבא – איזה צבע מסתתר כאן?',
+              questionSpeak: 'אֵיזֶה צֶבַע מִסְתַּתֵּר כָּאן?',
+              chooseLabel: 'בחרו איזה צבע מסתתר מתחת לקלף שליד שרלוק:'
+            };
+          }
+          if (topic === 'animals') {
+            return {
+              memorizeText: 'הביטו היטב ב-8 החיות במעגל ונסו לזכור איפה כל אחת מסתתרת! כשאתם מוכנים לחצו על "התחלה".',
+              memorizeSpeak: 'נַסּוּ לזכור איפה כּוֹל חַיָּה מסתתרת. כשאתם מוכנים, לִחְצוּ על התחלה',
+              questionText: 'איזו חיה מסתתרת בקלף שליד שרלוק?',
+              questionAfterFlipSingle: 'הקלף החדש התהפך! איזו חיה מסתתרת כעת בקלף שליד שרלוק?',
+              questionAfterFlipAll: 'הקלפים התהפכו! איזו חיה מסתתרת בקלף שליד שרלוק?',
+              questionAfterWrong: 'הקלפים התהפכו חזרה ושרלוק עבר לקלף הבא – איזו חיה מסתתרת כאן?',
+              questionSpeak: 'אֵיזוֹ חַיָּה מִסְתַּתֶּרֶת כָּאן?',
+              chooseLabel: 'בחרו איזו חיה מסתתרת מתחת לקלף שליד שרלוק:'
+            };
+          }
+          if (topic === 'numbers') {
+            return {
+              memorizeText: 'הביטו היטב ב-8 המספרים במעגל ונסו לזכור איפה כל אחד מסתתר! כשאתם מוכנים לחצו על "התחלה".',
+              memorizeSpeak: 'נַסּוּ לזכור איפה כּוֹל מִסְפָּר מסתתר. כשאתם מוכנים, לִחְצוּ על התחלה',
+              questionText: 'איזה מספר מסתתר בקלף שליד שרלוק?',
+              questionAfterFlipSingle: 'הקלף החדש התהפך! איזה מספר מסתתר כעת בקלף שליד שרלוק?',
+              questionAfterFlipAll: 'הקלפים התהפכו! איזה מספר מסתתר בקלף שליד שרלוק?',
+              questionAfterWrong: 'הקלפים התהפכו חזרה ושרלוק עבר לקלף הבא – איזה מספר מסתתר כאן?',
+              questionSpeak: 'אֵיזֶה מִסְפָּר מִסְתַּתֵּר כָּאן?',
+              chooseLabel: 'בחרו איזה מספר מסתתר מתחת לקלף שליד שרלוק:'
+            };
+          }
+          return {
+            memorizeText: 'הביטו היטב ב-8 החפצים במעגל ונסו לזכור איפה כל אחד מסתתר! כשאתם מוכנים לחצו על "התחלה".',
+            memorizeSpeak: 'נַסּוּ לזכור איפה כּוֹל חֵפֶץ מסתתר. כשאתם מוכנים, לִחְצוּ על התחלה',
+            questionText: 'איזה חפץ מסתתר בקלף שליד שרלוק?',
+            questionAfterFlipSingle: 'הקלף החדש התהפך! איזה חפץ מסתתר כעת בקלף שליד שרלוק?',
+            questionAfterFlipAll: 'הקלפים התהפכו! איזה חפץ מסתתר בקלף שליד שרלוק?',
+            questionAfterWrong: 'הקלפים התהפכו חזרה ושרלוק עבר לקלף הבא – איזה חפץ מסתתר כאן?',
+            questionSpeak: 'אֵיזֶה חֵפֶץ מִסְתַּתֵּר כָּאן?',
+            chooseLabel: 'בחרו איזה חפץ מסתתר מתחת לקלף שליד שרלוק:'
+          };
+        };
+
+        const createSherlockDeck = (topic = 'objects', langKey = 'he') => {
+          // כל הקלפים בחפיסה ייחודיים ללא כפילויות כלל
+          const pool = getSherlockPool(topic, langKey);
+          const shuffledItems = [...pool].sort(() => Math.random() - 0.5);
           const stepPool = Array.from({ length: shuffledItems.length }, (_, idx) => (idx % 5) + 1).sort(() => Math.random() - 0.5);
           const dirPool = Array.from({ length: shuffledItems.length }, (_, idx) => (idx % 2 === 0 ? 1 : -1)).sort(() => Math.random() - 0.5);
 
           return shuffledItems.map((item, idx) => ({
-            uid: `sherlock-card-${item.id}-${idx}`,
+            uid: `sherlock-card-${item.id}-${idx}-${Math.random().toString(36).slice(2, 5)}`,
             item,
             steps: stepPool[idx],
             dir: dirPool[idx], // 1 = עם כיוון השעון, -1 = נגד כיוון השעון
@@ -2457,11 +2586,13 @@
         };
 
         const SherlockGame = () => {
+          const [topic, setTopic] = useState('objects'); // 'objects' | 'colors' | 'animals' | 'numbers'
+          const [langKey, setLangKey] = useState('he'); // 'he' | 'ar' | 'en'
           const [voiceEnabled, setVoiceEnabled] = useState(true);
           const [showRules, setShowRules] = useState(false);
 
           const [circle, setCircle] = useState([]); // 8 unique cards around the ring
-          const [deck, setDeck] = useState([]); // remaining 41 unique cards
+          const [deck, setDeck] = useState([]); // remaining unique cards
           const [choiceItems, setChoiceItems] = useState([]); // 8 current circle items in stable shuffled order
           const [sherlockPos, setSherlockPos] = useState(0);
           const [wonCards, setWonCards] = useState([]); // collected cards
@@ -2473,6 +2604,10 @@
           const [wrongTargetPos, setWrongTargetPos] = useState(null);
           const [newCardPos, setNewCardPos] = useState(null);
           const [turnId, setTurnId] = useState(0);
+
+          const effectiveLang = topic === 'objects' ? 'he' : langKey;
+          const itemSpeechLang = effectiveLang === 'ar' ? 'ar-SA' : effectiveLang === 'en' ? 'en-US' : 'he-IL';
+          const topicPrompts = getSherlockTopicPrompts(topic);
 
           const speak = useSpeech('he-IL');
           const timersRef = React.useRef([]);
@@ -2489,7 +2624,7 @@
             }
           }, [voiceEnabled]);
 
-          // תור הקראה סדרתי שמונע מהנחיות קוליות לקטוע זו את זו במהלך התור
+          // תור הקראה סדרתי שמונע מהנחיות קוליות לקטוע זו את זו במהלך התור ותומך בריבוי שפות
           const clearSpeechQueue = React.useCallback(() => {
             speechGenRef.current += 1;
             speechQueueRef.current = [];
@@ -2527,6 +2662,7 @@
             isSpeakingRef.current = true;
             speak(nextItem.text, {
               cancelPrevious: nextItem.cancelPrevious,
+              langOverride: nextItem.lang || 'he-IL',
               onEnd: () => {
                 if (myGen !== speechGenRef.current) return;
                 speechPauseTimerRef.current = setTimeout(() => {
@@ -2541,7 +2677,7 @@
           }, [speak]);
 
           const say = React.useCallback((text, options = {}) => {
-            const { interrupt = false, onDone = null } = options;
+            const { interrupt = false, onDone = null, lang = 'he-IL' } = options;
             if (interrupt) {
               speechGenRef.current += 1;
               speechQueueRef.current = [];
@@ -2554,7 +2690,8 @@
             speechQueueRef.current.push({
               text,
               cancelPrevious: interrupt,
-              onDone
+              onDone,
+              lang
             });
             processSpeechQueue();
           }, [processSpeechQueue]);
@@ -2588,12 +2725,14 @@
             }
           };
 
-          const initGame = () => {
+          const initGame = (selectedTopic = topic, selectedLang = langKey) => {
             clearAllTimers();
             clearSpeechQueue();
             clearActiveFocus();
 
-            const fullDeck = createSherlockDeck();
+            const activeLang = selectedTopic === 'objects' ? 'he' : selectedLang;
+            const prompts = getSherlockTopicPrompts(selectedTopic);
+            const fullDeck = createSherlockDeck(selectedTopic, activeLang);
             const initialCircle = fullDeck.slice(0, 8).map(c => ({
               ...c,
               isRevealed: true
@@ -2611,13 +2750,13 @@
             setNewCardPos(null);
             setTurnId(prev => prev + 1);
             setPhase('memorize');
-            setPromptText('הביטו היטב ב-8 החפצים במעגל ונסו לזכור איפה כל אחד מסתתר! כשאתם מוכנים לחצו על "התחלה".');
-            say('נַסּוּ לִזְכּוֹר אֵיפֹה כָּל חֵפֶץ מִסְתַּתֵּר, וּכְשֶׁאַתֶּם מוּכָנִים לִחְצוּ עַל הַתְחָלָה', { interrupt: true });
+            setPromptText(prompts.memorizeText);
+            say(prompts.memorizeSpeak, { interrupt: true, lang: 'he-IL' });
           };
 
           useEffect(() => {
-            initGame();
-          }, []);
+            initGame(topic, langKey);
+          }, [topic, langKey]);
 
           const handleFlipCardsToStart = (e) => {
             if (e && e.currentTarget) e.currentTarget.blur();
@@ -2632,17 +2771,17 @@
             setPhase('guessing');
             setPromptText(
               wasSingleNewCard
-                ? 'הקלף החדש התהפך! איזה חפץ מסתתר כעת בקלף שליד שרלוק?'
-                : 'הקלפים התהפכו! איזה חפץ מסתתר בקלף שליד שרלוק?'
+                ? topicPrompts.questionAfterFlipSingle
+                : topicPrompts.questionAfterFlipAll
             );
-            say('אֵיזֶה חֵפֶץ מִסְתַּתֵּר כָּאן?', { interrupt: true });
+            say(topicPrompts.questionSpeak, { interrupt: true, lang: 'he-IL' });
           };
 
           const finishGame = (finalWonCards) => {
             clearAllTimers();
             clearActiveFocus();
             setPromptText(`החקירה הסתיימה! סיימתם את כל הקופה ואספתם ${finalWonCards.length} קלפים!`);
-            say('כָּל הַכָּבוֹד! סִיַּמְתֶּם אֶת כָּל הַקּוּפָּה!', { interrupt: false });
+            say('כּוֹל הַכָּבוֹד! סִיַּמְתֶּם אֶת כּוֹל הַקּוּפָּה!', { interrupt: false, lang: 'he-IL' });
             setPhase('game_over');
           };
 
@@ -2669,8 +2808,8 @@
                     } else {
                       setTurnId(prev => prev + 1);
                       setPhase('guessing');
-                      setPromptText('איזה חפץ מסתתר בקלף שליד שרלוק?');
-                      say('אֵיזֶה חֵפֶץ מִסְתַּתֵּר כָּאן?', { interrupt: false });
+                      setPromptText(topicPrompts.questionText);
+                      say(topicPrompts.questionSpeak, { interrupt: false, lang: 'he-IL' });
                     }
                   }, 320);
                 }
@@ -2684,9 +2823,10 @@
             setPhase('won_card');
 
             if (currentDeck.length === 0) {
-              setPromptText('בינגו! שרלוק עצר ליד קלף גלוי – זכיתם בקלף והקופה הסתיימה!');
-              say('בִּינְגוֹ! זְכִיתֶם בַּקְּלָף!', {
+              setPromptText('שרלוק עצר ליד קלף גלוי – זכיתם בקלף והקופה הסתיימה!');
+              say('זָכִיתֶם בַּקְּלָף!', {
                 interrupt: false,
+                lang: 'he-IL',
                 onDone: () => {
                   schedule(() => finishGame(nextWon), 400);
                 }
@@ -2694,9 +2834,10 @@
               return;
             }
 
-            setPromptText('בינגו! שרלוק עצר ליד קלף גלוי – זכיתם בקלף! מיד נניח קלף חדש מהקופה.');
-            say('בִּינְגוֹ! זְכִיתֶם בַּקְּלָף!', {
+            setPromptText('שרלוק עצר ליד קלף גלוי – זכיתם בקלף! מיד נניח קלף חדש מהקופה.');
+            say('זָכִיתֶם בַּקְּלָף!', {
               interrupt: false,
+              lang: 'he-IL',
               onDone: () => {
                 schedule(() => {
                   // מציגים את הקלף החדש גלוי במקומו במעגל כדי שהילד ישנן אותו וילחץ על התחלה כמו בסבב הראשון
@@ -2716,7 +2857,14 @@
                   setTurnId(prev => prev + 1);
                   setPhase('memorize');
                   setPromptText(`קלף חדש הונח במעגל: ${replacementCard.item.name}! שננו את מיקומו וכשאתם מוכנים לחצו על "התחלה".`);
-                  say(`קְלָף חָדָשׁ בַּמַּעְגָּל: ${replacementCard.item.speak}. זִכְרוּ אֵיפֹה הוּא נִמְצָא וְלִחְצוּ עַל הַתְחָלָה`, { interrupt: false });
+
+                  if (itemSpeechLang === 'he-IL') {
+                    say(`קְלָף חָדָשׁ בַּמַּעְגָּל: ${replacementCard.item.speak}. זִכְרוּ אֵיפֹה הוּא נִמְצָא וְלִחְצוּ עַל הַתְחָלָה`, { interrupt: false, lang: 'he-IL' });
+                  } else {
+                    say('קְלָף חָדָשׁ בַּמַּעְגָּל', { interrupt: false, lang: 'he-IL' });
+                    say(replacementCard.item.speak, { interrupt: false, lang: itemSpeechLang });
+                    say('זִכְרוּ אֵיפֹה הוּא נִמְצָא וְלִחְצוּ עַל הַתְחָלָה', { interrupt: false, lang: 'he-IL' });
+                  }
                 }, 400);
               }
             });
@@ -2753,12 +2901,20 @@
               setTurnId(prev => prev + 1);
               setPhase('pick_target');
               setPromptText(`פגיעה מדויקת! בקלף מופיע המספר ${nextSteps} (${dirText}) – לחצו על הקלף במעגל שאליו שרלוק צריך להגיע!`);
-              say(`פְּגִיעָה מְדֻיֶּקֶת! סִפְרוּ ${stepSpokenMap[nextSteps]} בְּכִיוּן הַחֵץ וְלִחְצוּ עַל הַקְּלָף הַנָּכוֹן`, { interrupt: true });
+
+              if (topic === 'objects') {
+                say(`פְּגִיעָה מְדֻיֶּקֶת! סִפְרוּ ${stepSpokenMap[nextSteps]} בכיוון הַחֵץ וְלִחְצוּ עַל הַקְּלָף הַנָּכוֹן`, { interrupt: true, lang: 'he-IL' });
+              } else if (itemSpeechLang === 'he-IL') {
+                say(`${guessedItem.speak}! פְּגִיעָה מְדֻיֶּקֶת! סִפְרוּ ${stepSpokenMap[nextSteps]} בכיוון הַחֵץ וְלִחְצוּ עַל הַקְּלָף הַנָּכוֹן`, { interrupt: true, lang: 'he-IL' });
+              } else {
+                say(guessedItem.speak, { interrupt: true, lang: itemSpeechLang });
+                say(`פְּגִיעָה מְדֻיֶּקֶת! סִפְרוּ ${stepSpokenMap[nextSteps]} בכיוון הַחֵץ וְלִחְצוּ עַל הַקְּלָף הַנָּכוֹן`, { interrupt: false, lang: 'he-IL' });
+              }
             } else {
               clearAllTimers();
               setWrongGuessChoiceId(guessedItem.id);
               setPhase('wrong_reveal');
-              setPromptText(`לא הפעם! זכרו שכאן מסתתר ${targetCard.item.name} להמשך.`);
+              setPromptText('לא הפעם! זכרו את הרמז להמשך.');
 
               let minDelayDone = false;
               let speechDone = false;
@@ -2772,8 +2928,8 @@
                 setWrongGuessChoiceId(null);
                 setTurnId(prev => prev + 1);
                 setPhase('guessing');
-                setPromptText('הקלפים התהפכו חזרה ושרלוק עבר לקלף הבא – איזה חפץ מסתתר כאן?');
-                say('אֵיזֶה חֵפֶץ מִסְתַּתֵּר כָּאן?', { interrupt: false });
+                setPromptText(topicPrompts.questionAfterWrong);
+                say(topicPrompts.questionSpeak, { interrupt: false, lang: 'he-IL' });
               };
 
               schedule(() => {
@@ -2781,8 +2937,9 @@
                 advanceAfterWrong();
               }, 1900);
 
-              say(`לֹא הַפַּעַם, כָּאן מִסְתַּתֵּר ${targetCard.item.speak}`, {
+              say('לֹא הַפַּעַם', {
                 interrupt: true,
+                lang: 'he-IL',
                 onDone: () => {
                   speechDone = true;
                   advanceAfterWrong();
@@ -2791,9 +2948,16 @@
             }
           };
 
-          const handleSelectTargetCard = (clickedIdx, e) => {
+          const handleCircleCardClick = (clickedIdx, e) => {
             if (e && e.currentTarget) e.currentTarget.blur();
             clearActiveFocus();
+
+            // בשלב השינון לחיצה על קלף גלוי משמיעה את שמו בשפה שנבחרה
+            if (phase === 'memorize' && circle[clickedIdx]?.isRevealed) {
+              say(circle[clickedIdx].item.speak, { interrupt: true, lang: itemSpeechLang });
+              return;
+            }
+
             if (phase !== 'pick_target' || expectedTargetPos === null) return;
             if (clickedIdx === sherlockPos) return;
 
@@ -2803,13 +2967,13 @@
             if (clickedIdx === expectedTargetPos) {
               setWrongTargetPos(null);
               setExpectedTargetPos(null);
-              say('מְצֻיָּן!', { interrupt: true });
+              say('מְצֻיָּן!', { interrupt: true, lang: 'he-IL' });
               walkSherlock(sherlockPos, currentCard.steps, currentCard.dir, circle, deck, wonCards);
             } else {
               setWrongTargetPos(clickedIdx);
               const dirText = currentCard.dir === 1 ? 'עם כיוון השעון' : 'נגד כיוון השעון';
               setPromptText(`לא הקלף הזה... ספרו שוב ${currentCard.steps} צעדים ${dirText} מהקלף של שרלוק ולחצו על הקלף הנכון!`);
-              say('נַסּוּ לִסְפּוֹר שׁוּב בְּכִיוּן הַחֵץ', { interrupt: true });
+              say('נַסּוּ לִסְפּוֹר שׁוּב בכיוון הַחֵץ', { interrupt: true, lang: 'he-IL' });
             }
           };
 
@@ -2831,8 +2995,50 @@
 
           return (
             <div className="flex flex-col items-center w-full max-w-4xl mx-auto select-none">
-              {/* סרגל פעולות עליון נקי */}
-              <div className="flex flex-wrap items-center justify-center gap-3 mb-4 w-full">
+              {/* בחירת נושא לשרלוק */}
+              <div className="flex flex-wrap items-center justify-center gap-2 mb-3">
+                {[
+                  { id: 'objects', label: '🕵️‍♂️ חפצים' },
+                  { id: 'colors', label: '🎨 צבעים' },
+                  { id: 'animals', label: '🐾 חיות' },
+                  { id: 'numbers', label: '🔢 מספרים' }
+                ].map(t => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setTopic(t.id)}
+                    className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${
+                      topic === t.id ? 'bg-orange-500 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* בחירת שפה (עבור צבעים, חיות ומספרים) + סרגל פעולות */}
+              <div className="flex flex-wrap items-center justify-center gap-2.5 mb-4 w-full">
+                {topic !== 'objects' && (
+                  <div className="flex gap-1.5 bg-gray-100 p-1 rounded-xl">
+                    {[
+                      { id: 'he', label: 'עברית' },
+                      { id: 'ar', label: 'ערבית' },
+                      { id: 'en', label: 'אנגלית' }
+                    ].map(l => (
+                      <button
+                        key={l.id}
+                        type="button"
+                        onClick={() => setLangKey(l.id)}
+                        className={`px-3 py-1.5 rounded-lg font-bold text-xs sm:text-sm transition-all ${
+                          langKey === l.id ? 'bg-white text-orange-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                      >
+                        {l.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
                 <button
                   type="button"
                   onClick={() => setVoiceEnabled(v => !v)}
@@ -2851,7 +3057,7 @@
 
                 <button
                   type="button"
-                  onClick={() => initGame()}
+                  onClick={() => initGame(topic, langKey)}
                   className="px-4 py-2 rounded-2xl bg-orange-100 text-orange-700 font-bold text-sm hover:bg-orange-200 transition-all"
                 >
                   🔄 משחק חדש
@@ -2866,11 +3072,11 @@
                     <button type="button" onClick={() => setShowRules(false)} className="text-sky-600 font-bold px-2 py-0.5 rounded-lg hover:bg-sky-100">סגור ✕</button>
                   </div>
                   <ul className="list-disc pr-5 space-y-1">
-                    <li>בחפיסה 49 קלפים ייחודיים ללא כפילויות: 8 מונחים במעגל ו-41 בקופה המרכזית.</li>
-                    <li>בתחילת המשחק מתבוננים ב-8 החפצים הגלויים במעגל וזוכרים אותם, ואז לוחצים על <strong>"התחלה"</strong> כדי להפוך את הקלפים.</li>
-                    <li>מנחשים איזה חפץ מסתתר בקלף ההפוך שלידו שרלוק עומד.</li>
-                    <li>צדקתם? הקלף נפתח וחושף <strong>מספר וחץ כיוון</strong> – ספרו את הצעדים בכיוון החץ <strong>ולחצו בעצמכם על הקלף שאליו שרלוק צריך להגיע</strong>! טעיתם בחפץ? רואים מה הסתתר בקלף, והקלפים מתהפכים חזרה.</li>
-                    <li>הגעתם ליד <strong>קלף שכבר גלוי</strong>? <strong>בינגו!</strong> זכיתם בקלף! קלף חדש מהקופה יוצג גלוי במקומו כדי שתוכלו לשנן גם אותו וללחוץ שוב על <strong>"התחלה"</strong> להמשך המשחק.</li>
+                    <li>כל הקלפים במשחק ייחודיים וללא כפילויות: 8 מונחים במעגל והשאר בקופה המרכזית.</li>
+                    <li>בתחילת המשחק מתבוננים ב-8 הקלפים הגלויים במעגל וזוכרים אותם (אפשר גם ללחוץ עליהם כדי לשמוע איך אומרים אותם), ואז לוחצים על <strong>"התחלה"</strong> כדי להפוך את הקלפים.</li>
+                    <li>מנחשים מה מסתתר בקלף ההפוך שלידו שרלוק עומד.</li>
+                    <li>צדקתם? הקלף נפתח וחושף <strong>מספר וחץ כיוון</strong> – ספרו את הצעדים בכיוון החץ <strong>ולחצו בעצמכם על הקלף שאליו שרלוק צריך להגיע</strong>! טעיתם בניחוש? רואים מה הסתתר בקלף, והקלפים מתהפכים חזרה.</li>
+                    <li>הגעתם ליד <strong>קלף שכבר גלוי</strong>? זכיתם בקלף! קלף חדש מהקופה יוצג גלוי במקומו כדי שתוכלו לשנן גם אותו וללחוץ שוב על <strong>"התחלה"</strong> להמשך המשחק.</li>
                   </ul>
                 </div>
               )}
@@ -2953,14 +3159,16 @@
                   const isHighlightedNewCard = phase === 'memorize' && newCardPos === idx;
                   const arrowAngle = getCardArrowAngle(idx, card.dir);
                   const canPickCard = phase === 'pick_target' && idx !== sherlockPos;
+                  const canTapToHear = phase === 'memorize' && card.isRevealed;
+                  const isCardInteractive = canPickCard || canTapToHear;
                   const isWrongTarget = phase === 'pick_target' && wrongTargetPos === idx;
 
                   return (
                     <button
                       key={card.uid}
                       type="button"
-                      disabled={!canPickCard}
-                      onClick={(e) => handleSelectTargetCard(idx, e)}
+                      disabled={!isCardInteractive}
+                      onClick={(e) => handleCircleCardClick(idx, e)}
                       style={{
                         left: pos.left,
                         top: pos.top
@@ -2974,7 +3182,7 @@
                         ${isHighlightedNewCard ? 'ring-4 ring-amber-400 scale-110 z-20' : ''}
                         ${isSherlockHere ? 'ring-4 ring-orange-400 scale-105 z-10' : ''}
                         ${phase === 'guessing' && isSherlockHere ? 'ring-4 ring-pink-500 scale-105' : ''}
-                        ${canPickCard ? 'cursor-pointer active:scale-95 [@media(hover:hover)]:hover:scale-110 [@media(hover:hover)]:hover:ring-4 [@media(hover:hover)]:hover:ring-sky-400' : 'cursor-default'}
+                        ${canPickCard ? 'cursor-pointer active:scale-95 [@media(hover:hover)]:hover:scale-110 [@media(hover:hover)]:hover:ring-4 [@media(hover:hover)]:hover:ring-sky-400' : canTapToHear ? 'cursor-pointer active:scale-95' : 'cursor-default'}
                         ${isWrongTarget ? 'ring-4 ring-red-500 scale-95 opacity-80' : ''}
                       `}
                     >
@@ -3002,7 +3210,7 @@
                             {renderSherlockItemIcon(card.item, 'md')}
                           </div>
 
-                          <span className="text-[9px] sm:text-[11px] font-black text-gray-700 text-center leading-tight px-0.5 truncate w-full">
+                          <span className="text-[9px] sm:text-[10px] font-black text-gray-700 text-center leading-tight px-0.5 line-clamp-2 w-full">
                             {card.item.name}
                           </span>
                         </div>
@@ -3038,7 +3246,7 @@
                 {(phase === 'guessing' || phase === 'wrong_reveal') && (
                   <div className="w-full">
                     <div className="text-center font-black text-gray-700 mb-3 text-base md:text-lg">
-                      בחרו איזה חפץ מסתתר מתחת לקלף שליד שרלוק:
+                      {topicPrompts.chooseLabel}
                     </div>
                     <div key={`choices-${turnId}`} className="grid grid-cols-4 sm:grid-cols-8 gap-2 md:gap-2.5">
                       {choiceItems.map(item => {
@@ -3061,7 +3269,7 @@
                             <div className="h-9 flex items-center justify-center mb-1">
                               {renderSherlockItemIcon(item, 'md')}
                             </div>
-                            <span className="text-[11px] md:text-xs font-black text-gray-700 text-center leading-tight">
+                            <span className="text-[10px] md:text-xs font-black text-gray-700 text-center leading-tight line-clamp-2">
                               {item.name}
                             </span>
                           </button>
@@ -3079,7 +3287,7 @@
                     </div>
                     <button
                       type="button"
-                      onClick={() => initGame()}
+                      onClick={() => initGame(topic, langKey)}
                       className="bg-orange-500 hover:bg-orange-600 text-white font-black text-lg px-8 py-3 rounded-full shadow-lg transition-all"
                     >
                       שחקו שוב 🔄
