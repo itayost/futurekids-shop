@@ -110,6 +110,29 @@
               { id: "math-count", title: "מנייה", icon: "🔢", content: "כמה פריטים יש כאן? בואו נספור ביחד!" },
               { id: "math-compare", title: "השוואה", icon: "⚖️", content: "איפה יש יותר? נשווה בין שתי קבוצות." }
             ]
+          },
+          {
+            category: "שירים",
+            icon: "🎵",
+            color: "bg-amber-100 text-amber-700",
+            hover: "hover:bg-amber-200",
+            theme: "amber",
+            items: [
+              { id: "songs-letters", title: "אותיות", icon: "🔠", content: "שירי אותיות מהגן" },
+              { id: "songs-numbers", title: "מספרים", icon: "🔢", content: "שירי מספרים מהגן" }
+            ]
+          },
+          {
+            category: "משחקים",
+            icon: "🎲",
+            color: "bg-orange-100 text-orange-700",
+            hover: "hover:bg-orange-200",
+            theme: "orange",
+            items: [
+              { id: "game-memory", title: "משחק זיכרון", icon: "🃏", content: "הפכו את הקלפים ומצאו את כל הזוגות!" },
+              { id: "game-war", title: "מלחמה בקלפים", icon: "🎴", content: "שני קלפים נשלפים – איזה קלף חזק יותר ומנצח?" },
+              { id: "game-sherlock", title: "שרלוק הבלש", icon: "🕵️‍♂️", content: "עזרו לבלש שרלוק לזכור את החפצים המסתתרים במעגל!" }
+            ]
           }
         ];
 
@@ -146,8 +169,6 @@
           { id: 'gray', bg: '#9CA3AF', text: 'Gray', speak: 'Gray', textColor: 'black' },
           { id: 'gold', bg: 'linear-gradient(135deg, #FFD700 0%, #FFF2A8 20%, #D4AF37 50%, #FFF2A8 80%, #FFD700 100%)', text: 'Gold', speak: 'Gold', textColor: 'black' },
           { id: 'silver', bg: 'linear-gradient(135deg, #E0E0E0 0%, #FFFFFF 20%, #BDBDBD 50%, #FFFFFF 80%, #E0E0E0 100%)', text: 'Silver', speak: 'Silver', textColor: 'black' },
-          { id: 'darkred', bg: '#7F1D1D', text: 'Dark Red', speak: 'Dark Red', textColor: 'white' },
-          { id: 'lightred', bg: '#FCA5A5', text: 'Light Red', speak: 'Light Red', textColor: 'black' },
           { id: 'darkblue', bg: '#1E3A8A', text: 'Dark Blue', speak: 'Dark Blue', textColor: 'white' },
           { id: 'lightblue', bg: '#7DD3FC', text: 'Light Blue', speak: 'Light Blue', textColor: 'black' },
           { id: 'darkgreen', bg: '#14532D', text: 'Dark Green', speak: 'Dark Green', textColor: 'white' },
@@ -284,6 +305,44 @@
           { id: 'pig', emoji: '🐷', text: 'Pig', speak: 'Pig' }
         ];
 
+        const HEBREW_COLORS = [
+          { id: 'heb-red', bg: '#EF4444', text: 'אדום', speak: 'אָדוֹם', textColor: 'white' },
+          { id: 'heb-blue', bg: '#2563EB', text: 'כחול', speak: 'כָּחוֹל', textColor: 'white' },
+          { id: 'heb-green', bg: '#22C55E', text: 'ירוק', speak: 'יָרוֹק', textColor: 'white' },
+          { id: 'heb-yellow', bg: '#FACC15', text: 'צהוב', speak: 'צָהֹב', textColor: 'black' },
+          { id: 'heb-orange', bg: '#F97316', text: 'כתום', speak: 'כָּתֹם', textColor: 'white' },
+          { id: 'heb-purple', bg: '#9333EA', text: 'סגול', speak: 'סָגֹל', textColor: 'white' },
+          { id: 'heb-pink', bg: '#EC4899', text: 'ורוד', speak: 'וָרֹד', textColor: 'white' },
+          { id: 'heb-lightblue', bg: '#38BDF8', text: 'תכלת', speak: 'תְּכֵלֶת', textColor: 'black' },
+          { id: 'heb-black', bg: '#000000', text: 'שחור', speak: 'שָׁחוֹר', textColor: 'white' },
+          { id: 'heb-white', bg: '#FFFFFF', text: 'לבן', speak: 'לָבָן', textColor: 'black', border: true },
+          { id: 'heb-brown', bg: '#8B4513', text: 'חום', speak: 'חוּם', textColor: 'white' },
+          { id: 'heb-gray', bg: '#9CA3AF', text: 'אפור', speak: 'אָפוֹר', textColor: 'black' },
+          { id: 'heb-gold', bg: 'linear-gradient(135deg, #FFD700 0%, #FFF2A8 20%, #D4AF37 50%, #FFF2A8 80%, #FFD700 100%)', text: 'זהב', speak: 'זָהָב', textColor: 'black' },
+          { id: 'heb-silver', bg: 'linear-gradient(135deg, #E0E0E0 0%, #FFFFFF 20%, #BDBDBD 50%, #FFFFFF 80%, #E0E0E0 100%)', text: 'כסף', speak: 'כֶּסֶף', textColor: 'black' }
+        ];
+
+        const HEBREW_ANIMALS = [
+          { id: 'heb-cat', emoji: '🐱', text: 'חתול', speak: 'חָתוּל' },
+          { id: 'heb-dog', emoji: '🐶', text: 'כלב', speak: 'כֶּלֶב' },
+          { id: 'heb-mouse', emoji: '🐭', text: 'עכבר', speak: 'עַכְבָּר' },
+          { id: 'heb-elephant', emoji: '🐘', text: 'פיל', speak: 'פִּיל' },
+          { id: 'heb-giraffe', emoji: '🦒', text: 'ג\'ירפה', speak: 'גִ\'ירָפָה' },
+          { id: 'heb-lion', emoji: '🦁', text: 'אריה', speak: 'אַרְיֵה' },
+          { id: 'heb-penguin', emoji: '🐧', text: 'פינגווין', speak: 'פִּינְגְוִין' },
+          { id: 'heb-rabbit', emoji: '🐰', text: 'ארנב', speak: 'אַרְנָב' },
+          { id: 'heb-tiger', emoji: '🐯', text: 'נמר', speak: 'נָמֵר' },
+          { id: 'heb-bear', emoji: '🐻', text: 'דוב', speak: 'דֹּב' },
+          { id: 'heb-butterfly', emoji: '🦋', text: 'פרפר', speak: 'פַּרְפַּר' },
+          { id: 'heb-fish', emoji: '🐟', text: 'דג', speak: 'דָּג' },
+          { id: 'heb-bird', emoji: '🐦', text: 'ציפור', speak: 'צִפּוֹר' },
+          { id: 'heb-monkey', emoji: '🐵', text: 'קוף', speak: 'קוֹף' },
+          { id: 'heb-sheep', emoji: '🐑', text: 'כבשה', speak: 'כִּבְשָׂה' },
+          { id: 'heb-fox', emoji: '🦊', text: 'שועל', speak: 'שׁוּעָל' },
+          { id: 'heb-horse', emoji: '🐴', text: 'סוס', speak: 'סוּס' },
+          { id: 'heb-cow', emoji: '🐮', text: 'פרה', speak: 'פָּרָה' }
+        ];
+
         const HEBREW_LETTERS = [
           { id: 'aleph', display: 'א', spoken: 'א' },
           { id: 'bet', display: 'ב', spoken: 'ב' },
@@ -350,8 +409,7 @@
         ];
 
         const MATH_NUMBERS_SONGS = [
-          { id: 'math-song-1', videoId: 'S0ASI6BKZCU', title: 'שיר המספרים לילדים – EZToddler' },
-          { id: 'math-song-2', videoId: 'JC4hndKeuko', title: 'שיר המספרים הראשונים' }
+          { id: 'math-song-1', videoId: 'S0ASI6BKZCU', title: 'שיר המספרים לילדים – EZToddler' }
         ];
 
         const WORD_COMBINATIONS = [
@@ -519,11 +577,13 @@
         // --- Helpers ---
         const getThemeClasses = (theme) => {
           switch (theme) {
-            case 'pink': return { border: 'border-pink-100', textMain: 'text-pink-600', textSub: 'text-pink-800', button: 'bg-pink-500', buttonHover: 'hover:bg-pink-600', text: 'text-pink-600' };
-            case 'blue': return { border: 'border-blue-100', textMain: 'text-blue-600', textSub: 'text-blue-800', button: 'bg-blue-500', buttonHover: 'hover:bg-blue-600', text: 'text-blue-600' };
-            case 'emerald': return { border: 'border-emerald-100', textMain: 'text-emerald-600', textSub: 'text-emerald-800', button: 'bg-emerald-500', buttonHover: 'hover:bg-emerald-600', text: 'text-emerald-600' };
-            case 'purple': return { border: 'border-purple-100', textMain: 'text-purple-600', textSub: 'text-purple-800', button: 'bg-purple-500', buttonHover: 'hover:bg-purple-600', text: 'text-purple-600' };
-            default: return { border: 'border-gray-100', textMain: 'text-gray-600', textSub: 'text-gray-800', button: 'bg-gray-500', buttonHover: 'hover:bg-gray-600', text: 'text-gray-600' };
+            case 'pink': return { border: 'border-pink-100', badgeBg: 'bg-pink-100', textMain: 'text-pink-600', textSub: 'text-pink-800', button: 'bg-pink-500', buttonHover: 'hover:bg-pink-600', text: 'text-pink-600' };
+            case 'blue': return { border: 'border-blue-100', badgeBg: 'bg-blue-100', textMain: 'text-blue-600', textSub: 'text-blue-800', button: 'bg-blue-500', buttonHover: 'hover:bg-blue-600', text: 'text-blue-600' };
+            case 'emerald': return { border: 'border-emerald-100', badgeBg: 'bg-emerald-100', textMain: 'text-emerald-600', textSub: 'text-emerald-800', button: 'bg-emerald-500', buttonHover: 'hover:bg-emerald-600', text: 'text-emerald-600' };
+            case 'purple': return { border: 'border-purple-100', badgeBg: 'bg-purple-100', textMain: 'text-purple-600', textSub: 'text-purple-800', button: 'bg-purple-500', buttonHover: 'hover:bg-purple-600', text: 'text-purple-600' };
+            case 'amber': return { border: 'border-amber-200', badgeBg: 'bg-amber-100', textMain: 'text-amber-600', textSub: 'text-amber-800', button: 'bg-amber-500', buttonHover: 'hover:bg-amber-600', text: 'text-amber-700' };
+            case 'orange': return { border: 'border-orange-200', badgeBg: 'bg-orange-100', textMain: 'text-orange-600', textSub: 'text-orange-800', button: 'bg-orange-500', buttonHover: 'hover:bg-orange-600', text: 'text-orange-700' };
+            default: return { border: 'border-gray-100', badgeBg: 'bg-gray-100', textMain: 'text-gray-600', textSub: 'text-gray-800', button: 'bg-gray-500', buttonHover: 'hover:bg-gray-600', text: 'text-gray-600' };
           }
         };
 
@@ -581,270 +641,223 @@
         const renderTextCardItem = (themeColor, sizeClass, mainTextSize) => {
           const styles = getThemeClasses(themeColor);
           return (item, onClick, disabled) => (
-            <button 
-              key={item.id} 
-              onClick={onClick} 
+            <button
+              key={item.id}
+              type="button"
+              onClick={onClick}
               disabled={disabled}
               className={`
-                ${sizeClass} bg-white rounded-3xl flex flex-col items-center justify-center 
-                shadow-md hover:shadow-xl hover:-translate-y-2 transition-all border-b-4 ${styles.border} 
+                ${sizeClass} bg-white rounded-3xl flex flex-col items-center justify-center
+                shadow-md hover:shadow-xl hover:-translate-y-2 transition-all border-b-4 ${styles.border}
+                focus:outline-none
                 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
               `}
             >
-              <span className={`${mainTextSize} font-black ${styles.textMain} ${item.sub ? 'mb-1' : ''}`}>{item.display || item.main}</span>
+              <span className={`${mainTextSize} font-black ${styles.textMain} ${item.sub ? 'mb-1' : ''}`}>{item.display}</span>
               {item.sub && <span className={`font-bold text-xs md:text-sm ${styles.textSub} select-none text-center leading-tight px-1`}>{item.sub}</span>}
             </button>
           );
         };
 
-        // --- Generic Interactive Module ---
-        const InteractiveModule = ({ items, lang, renderItem, themeClass, videos = [] }) => {
+        // Shared speech hook for consistent multi-language TTS
+        const useSpeech = (lang = 'he-IL') => {
+          const preferredVoiceRef = React.useRef(null);
+
+          useEffect(() => {
+            const initVoice = () => {
+              if (!('speechSynthesis' in window)) return;
+              const availableVoices = window.speechSynthesis.getVoices();
+              if (availableVoices.length > 0) {
+                const langPrefix = lang.split('-')[0];
+                const langVoices = availableVoices.filter(v =>
+                  v.lang.startsWith(langPrefix) ||
+                  (langPrefix === 'he' && (v.lang.includes('iw') || v.name.includes('Hebrew') || v.name.includes('עברית')))
+                );
+                const bestVoice = (langPrefix === 'ar' && langVoices.find(v =>
+                  v.lang.includes('IL') || v.lang.includes('PS') || v.lang.includes('JO') || v.lang.includes('LB') || v.lang.includes('EG')
+                )) || langVoices.find(v =>
+                  v.name.includes('Google') || v.name.includes('Natural') || v.name.toLowerCase().includes('female')
+                ) || langVoices[0];
+
+                if (bestVoice) preferredVoiceRef.current = bestVoice;
+              }
+            };
+            initVoice();
+            if ('speechSynthesis' in window && window.speechSynthesis.onvoiceschanged !== undefined) {
+              window.speechSynthesis.onvoiceschanged = initVoice;
+            }
+            return () => {
+              if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            };
+          }, [lang]);
+
+          const speak = React.useCallback((text) => {
+            if (!('speechSynthesis' in window) || !text) return;
+            window.speechSynthesis.cancel();
+            setTimeout(() => {
+              const utterance = new SpeechSynthesisUtterance(text);
+              const voice = preferredVoiceRef.current;
+              if (lang === 'he-IL' && voice && voice.lang.includes('iw')) {
+                utterance.lang = 'iw-IL';
+              } else if (voice && voice.lang) {
+                utterance.lang = voice.lang;
+              } else {
+                utterance.lang = lang;
+              }
+              if (voice) utterance.voice = voice;
+              utterance.pitch = 1.3;
+              utterance.rate = 0.85;
+              window.speechSynthesis.speak(utterance);
+            }, 120);
+          }, [lang]);
+
+          return speak;
+        };
+
+        // Helper to generate scattered non-overlapping coordinates (in %)
+        const generateScatteredPositions = (count, minDist = 16) => {
+          const positions = [];
+          for (let i = 0; i < count; i++) {
+            let best = null;
+            for (let attempt = 0; attempt < 80; attempt++) {
+              const x = 10 + Math.random() * 80;
+              const y = 12 + Math.random() * 76;
+              const currentMinDist = attempt > 50 ? minDist * 0.7 : minDist;
+              const tooClose = positions.some(p => Math.hypot(p.x - x, p.y - y) < currentMinDist);
+              if (!tooClose) {
+                best = { x, y, rot: (Math.random() - 0.5) * 24 };
+                break;
+              }
+            }
+            if (!best) {
+              best = { x: 10 + Math.random() * 80, y: 12 + Math.random() * 76, rot: 0 };
+            }
+            positions.push(best);
+          }
+          return positions;
+        };
+
+        // --- Generic Interactive Module (Learn & Practice) ---
+        const InteractiveModule = ({ items, lang, renderItem, themeClass }) => {
           const [mode, setMode] = useState('learn');
           const [targetItem, setTargetItem] = useState(null);
           const [practiceOptions, setPracticeOptions] = useState([]);
           const [feedback, setFeedback] = useState('');
-          const [preferredVoice, setPreferredVoice] = useState(null);
-          const [roundId, setRoundId] = useState(0); 
-          const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
-          const [failedThumbs, setFailedThumbs] = useState({});
+          const [roundId, setRoundId] = useState(0);
+          const lastTargetIdRef = React.useRef(null);
 
+          const speak = useSpeech(lang);
           const theme = getThemeClasses(themeClass);
 
-          useEffect(() => {
-            const initVoice = () => {
-              const availableVoices = window.speechSynthesis.getVoices();
-              if (availableVoices.length > 0) {
-                const langPrefix = lang.split('-')[0];
-                
-                const langVoices = availableVoices.filter(v => 
-                  v.lang.startsWith(langPrefix) || 
-                  (langPrefix === 'he' && (v.lang.includes('iw') || v.name.includes('Hebrew') || v.name.includes('עברית')))
-                );
-                
-                // העדפת קולות אזוריים לערבית מדוברת במידה וקיימים במכשיר, או קול טבעי של גוגל
-                const bestVoice = (langPrefix === 'ar' && langVoices.find(v =>
-                  v.lang.includes('IL') || v.lang.includes('PS') || v.lang.includes('JO') || v.lang.includes('LB') || v.lang.includes('EG')
-                )) || langVoices.find(v => 
-                  v.name.includes('Google') || 
-                  v.name.includes('Natural') || 
-                  v.name.toLowerCase().includes('female')
-                ) || langVoices[0];
-                
-                if (bestVoice) setPreferredVoice(bestVoice);
-              }
-            };
-            initVoice();
-            if (window.speechSynthesis.onvoiceschanged !== undefined) {
-              window.speechSynthesis.onvoiceschanged = initVoice;
-            }
-          }, [lang]);
-
-          const speak = (text) => {
-            if ('speechSynthesis' in window) {
-              window.speechSynthesis.cancel();
-              
-              setTimeout(() => {
-                const utterance = new SpeechSynthesisUtterance(text);
-                if (lang === 'he-IL' && preferredVoice && preferredVoice.lang.includes('iw')) {
-                  utterance.lang = 'iw-IL';
-                } else if (preferredVoice && preferredVoice.lang) {
-                  utterance.lang = preferredVoice.lang;
-                } else {
-                  utterance.lang = lang; 
-                }
-                if (preferredVoice) utterance.voice = preferredVoice;
-                
-                utterance.pitch = 1.3;
-                utterance.rate = 0.85;
-                window.speechSynthesis.speak(utterance);
-              }, 150); 
-            }
-          };
-
           const getPracticeOptions = (target) => {
-            const usedGroups = new Set();
-            if (target.conflictGroup) usedGroups.add(target.conflictGroup);
-            const others = items.filter(c => c.id !== target.id);
+            const others = items.filter(c => {
+              if (c.id === target.id) return false;
+              if (target.conflictGroup && c.conflictGroup === target.conflictGroup) return false;
+              return true;
+            });
             const shuffledOthers = [...others].sort(() => 0.5 - Math.random());
             const distractors = [];
+            const usedConflictGroups = new Set(target.conflictGroup ? [target.conflictGroup] : []);
+
             for (const candidate of shuffledOthers) {
               if (distractors.length >= 3) break;
-              if (candidate.conflictGroup && usedGroups.has(candidate.conflictGroup)) continue;
-              if (candidate.conflictGroup) usedGroups.add(candidate.conflictGroup);
+              if (candidate.conflictGroup && usedConflictGroups.has(candidate.conflictGroup)) continue;
+              if (candidate.conflictGroup) usedConflictGroups.add(candidate.conflictGroup);
               distractors.push(candidate);
             }
+
             return [...distractors, target].sort(() => 0.5 - Math.random());
           };
 
           const startPractice = () => {
-            let randomItem;
-            do {
-              randomItem = items[Math.floor(Math.random() * items.length)];
-            } while (targetItem && randomItem.id === targetItem.id && items.length > 1);
-            
+            let candidates = items;
+            if (items.length > 1 && lastTargetIdRef.current !== null) {
+              candidates = items.filter(i => i.id !== lastTargetIdRef.current);
+            }
+            const randomItem = candidates[Math.floor(Math.random() * candidates.length)];
+            lastTargetIdRef.current = randomItem.id;
+
+            setRoundId(prev => prev + 1);
             setTargetItem(randomItem);
             setPracticeOptions(getPracticeOptions(randomItem));
             setFeedback('');
-            setRoundId(prev => prev + 1);
             speak(randomItem.spoken || randomItem.speak);
           };
 
-          const handleItemClick = (item) => {
+          const handleItemClick = (item, e) => {
+            if (e && e.currentTarget) e.currentTarget.blur();
             if (mode === 'learn') {
               speak(item.spoken || item.speak);
-            } else if (mode === 'practice' && targetItem) {
+            } else if (mode === 'practice' && targetItem && feedback !== 'correct') {
               if (item.id === targetItem.id) {
                 setFeedback('correct');
-                setTimeout(() => setTargetItem(prev => prev ? (startPractice(), prev) : prev), 1500);
+                const successMsgs = { 'he-IL': 'כל הכבוד', 'en-US': 'Excellent', 'ar-SA': 'مُمْتَازْ' };
+                speak(successMsgs[lang] || 'Correct');
+                setTimeout(() => {
+                  startPractice();
+                }, 1400);
               } else {
                 setFeedback('wrong');
-                const tryAgainMsgs = { 'he-IL': 'נַסּוּ שׁוּב', 'en-US': 'Try again', 'ar-SA': 'حَاوِلْ كَمَانْ مَرَّةْ' };
-                speak(tryAgainMsgs[lang] || 'Try again'); 
+                const tryAgainMsgs = { 'he-IL': 'נַסּוּ שׁוּב', 'en-US': 'Try again', 'ar-SA': 'حَاوِلْ مَرَّةْ ثَانِيَةْ' };
+                speak(tryAgainMsgs[lang] || 'Try again');
               }
             }
           };
 
           return (
             <div className="flex flex-col items-center w-full">
-              <div className="flex flex-wrap justify-center gap-2 mb-8 bg-gray-100 p-2 rounded-2xl">
-                <button 
-                  onClick={() => { setMode('learn'); setFeedback(''); setTargetItem(null); }} 
+              <div className="flex space-x-4 space-x-reverse mb-8 bg-gray-100 p-2 rounded-2xl">
+                <button
+                  type="button"
+                  onClick={() => { setMode('learn'); setFeedback(''); setTargetItem(null); }}
                   className={`px-6 py-2 rounded-xl font-bold transition-all ${mode === 'learn' ? `bg-white shadow-md ${theme.text}` : 'text-gray-500 hover:text-gray-700'}`}
                 >
                   למידה
                 </button>
-                <button 
-                  onClick={() => { setMode('practice'); setFeedback(''); setTargetItem(null); }} 
+                <button
+                  type="button"
+                  onClick={() => { setMode('practice'); setFeedback(''); setTargetItem(null); }}
                   className={`px-6 py-2 rounded-xl font-bold transition-all ${mode === 'practice' ? `bg-white shadow-md ${theme.text}` : 'text-gray-500 hover:text-gray-700'}`}
                 >
                   תרגול
                 </button>
-                {videos.length > 0 && (
-                  <button 
-                    onClick={() => {
-                      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-                      setMode('songs');
-                      setSelectedVideoIndex(0);
-                      setFeedback('');
-                      setTargetItem(null);
-                    }} 
-                    className={`px-6 py-2 rounded-xl font-bold transition-all flex items-center gap-1.5 ${mode === 'songs' ? `bg-white shadow-md ${theme.text}` : 'text-gray-500 hover:text-gray-700'}`}
-                  >
-                    <span>🎵</span> שירים
-                  </button>
-                )}
               </div>
-              
+
               {mode === 'practice' && (
                 <div className="mb-8 flex flex-col items-center gap-4 min-h-[120px]">
                   {!targetItem ? (
-                    <button 
-                      onClick={startPractice} 
+                    <button
+                      type="button"
+                      onClick={startPractice}
                       className={`${theme.button} text-white px-8 py-3 rounded-full font-black text-xl ${theme.buttonHover} transition-all shadow-lg hover:shadow-xl flex items-center gap-2`}
                     >
                       <PlayIcon /> התחל תרגול
                     </button>
                   ) : (
                     <div className="flex flex-col items-center gap-3">
-                      <button 
-                        onClick={() => speak(targetItem.spoken || targetItem.speak)} 
+                      <button
+                        type="button"
+                        onClick={() => speak(targetItem.spoken || targetItem.speak)}
                         className="bg-sky-500 text-white px-6 py-2 rounded-full font-bold text-lg hover:bg-sky-600 transition-all shadow-md flex items-center gap-2"
                       >
                         <Volume2Icon /> שמע שוב
                       </button>
                       <div className="h-8 mt-2">
                         {feedback === 'correct' && <div className="text-2xl font-black text-green-500 animate-bounce">כל הכבוד! 🎉</div>}
-                        {feedback === 'wrong' && <div className="text-xl font-bold text-red-500 animate-pulse">נסה שוב! 💪</div>}
+                        {feedback === 'wrong' && <div className="text-xl font-bold text-red-500 animate-pulse">נסו שוב! 💪</div>}
                       </div>
                     </div>
                   )}
                 </div>
               )}
 
-              {mode === 'songs' && videos.length > 0 && (() => {
-                const activeVideo = videos[selectedVideoIndex] || videos[0];
-                return (
-                  <div className="w-full max-w-4xl flex flex-col items-center gap-6 animate-fade-in-up">
-                    {/* בחירת שיר במידה ויש יותר משיר אחד */}
-                    {videos.length > 1 && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-                        {videos.map((vid, idx) => {
-                          const isSelected = idx === selectedVideoIndex;
-                          return (
-                            <button
-                              key={vid.id}
-                              type="button"
-                              onClick={() => setSelectedVideoIndex(idx)}
-                              className={`flex items-center gap-3 p-3 rounded-2xl border-4 transition-all text-right cursor-pointer ${
-                                isSelected
-                                  ? `bg-white ${theme.border} ring-4 ring-amber-300 shadow-lg scale-[1.02]`
-                                  : 'bg-gray-50 border-transparent hover:bg-white hover:shadow-md opacity-80 hover:opacity-100'
-                              }`}
-                            >
-                              <div className="relative w-20 aspect-video rounded-xl overflow-hidden shrink-0 bg-amber-100 flex items-center justify-center">
-                                {!failedThumbs[vid.id] ? (
-                                  <img
-                                    src={`https://i.ytimg.com/vi/${vid.videoId}/mqdefault.jpg`}
-                                    alt={vid.title}
-                                    onError={() => setFailedThumbs(prev => ({ ...prev, [vid.id]: true }))}
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  <span className="text-2xl">🎵</span>
-                                )}
-                              </div>
-                              <span className={`font-bold text-sm md:text-base leading-snug ${isSelected ? theme.textSub : 'text-gray-700'}`}>
-                                {vid.title}
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {/* נגן וידאו פנימי מובנה */}
-                    <div className={`w-full max-w-3xl bg-black rounded-3xl overflow-hidden shadow-2xl border-4 ${theme.border} aspect-video`}>
-                      <iframe
-                        key={activeVideo.videoId}
-                        className="w-full h-full"
-                        src={`https://www.youtube.com/embed/${activeVideo.videoId}?rel=0`}
-                        title={activeVideo.title}
-                        frameBorder="0"
-                        referrerPolicy="strict-origin-when-cross-origin"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowFullScreen
-                      />
-                    </div>
-
-                    <div className="flex flex-col items-center gap-2 text-center">
-                      <h3 className={`text-xl md:text-2xl font-black ${theme.textSub}`}>
-                        {activeVideo.title}
-                      </h3>
-                      <a
-                        href={`https://www.youtube.com/watch?v=${activeVideo.videoId}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs md:text-sm font-semibold text-gray-400 hover:text-gray-600 underline transition-colors"
-                      >
-                        בדיקה מקומית לפני העלאה לאתר? לחצו כאן לפתיחה ישירה ביוטיוב
-                      </a>
-                    </div>
-                  </div>
-                );
-              })()}
-              
-              {mode !== 'songs' && (
-                <div className="flex flex-wrap justify-center gap-3 md:gap-4 max-w-4xl">
-                  {(mode === 'practice' && targetItem ? practiceOptions : items).map(item => {
-                     const isDisabled = mode === 'practice' && !targetItem;
-                     const element = renderItem(item, (e) => {
-                         if (e && e.currentTarget) e.currentTarget.blur();
-                         handleItemClick(item);
-                     }, isDisabled);
-                     return <React.Fragment key={`${mode}-${roundId}-${item.id}`}>{element}</React.Fragment>;
-                  })}
-                </div>
-              )}
+              <div key={mode === 'practice' ? `round-${roundId}` : 'learn-grid'} className="flex flex-wrap justify-center gap-4 max-w-4xl">
+                {(mode === 'practice' && targetItem ? practiceOptions : items).map(item => {
+                  const isDisabled = mode === 'practice' && !targetItem;
+                  const rendered = renderItem(item, (e) => handleItemClick(item, e), isDisabled);
+                  return React.cloneElement(rendered, { key: `${roundId}-${item.id}` });
+                })}
+              </div>
             </div>
           );
         };
@@ -854,136 +867,96 @@
           const [shuffledData] = useState(() => [...WORD_COMBINATIONS].sort(() => 0.5 - Math.random()));
           const [currentIndex, setCurrentIndex] = useState(0);
           const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
-          
-          const [preferredVoice, setPreferredVoice] = useState(null);
-          const preferredVoiceRef = React.useRef(null);
-          const timeoutRef = React.useRef(null);
-          const spokenRef = React.useRef(false);
+          const speak = useSpeech('he-IL');
+          const autoNextTimerRef = React.useRef(null);
+          const hasSpokenIntroRef = React.useRef(false);
 
-          useEffect(() => { preferredVoiceRef.current = preferredVoice; }, [preferredVoice]);
+          const instructionSpeech = 'מָה יוֹצֵא מֵהַחִבּוּר שֶׁל שְׁתֵּי הַמִּילִים?';
 
           useEffect(() => {
-            const initVoice = () => {
-              const availableVoices = window.speechSynthesis.getVoices();
-              if (availableVoices.length > 0) {
-                const langVoices = availableVoices.filter(v => 
-                  v.lang.startsWith('he') || v.lang.includes('iw') || v.name.includes('Hebrew') || v.name.includes('עברית')
-                );
-                const bestVoice = langVoices.find(v => 
-                  v.name.includes('Google') || v.name.includes('Natural') || v.name.toLowerCase().includes('female')
-                ) || langVoices[0];
-                if (bestVoice) setPreferredVoice(bestVoice);
-              }
-            };
-            initVoice();
-            if (window.speechSynthesis.onvoiceschanged !== undefined) {
-              window.speechSynthesis.onvoiceschanged = initVoice;
+            if (!hasSpokenIntroRef.current) {
+              hasSpokenIntroRef.current = true;
+              const t = setTimeout(() => speak(instructionSpeech), 450);
+              return () => clearTimeout(t);
             }
-            return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); };
+          }, [speak]);
+
+          useEffect(() => {
+            return () => {
+              if (autoNextTimerRef.current) clearTimeout(autoNextTimerRef.current);
+            };
           }, []);
 
-          const speak = (text) => {
-            if ('speechSynthesis' in window) {
-              window.speechSynthesis.cancel();
-              setTimeout(() => {
-                const utterance = new SpeechSynthesisUtterance(text);
-                const voice = preferredVoiceRef.current;
-                utterance.lang = (voice && voice.lang.includes('iw')) ? 'iw-IL' : 'he-IL';
-                if (voice) utterance.voice = voice;
-                utterance.pitch = 1.3;
-                utterance.rate = 0.85;
-                window.speechSynthesis.speak(utterance);
-              }, 150); 
+          const clearAutoTimer = () => {
+            if (autoNextTimerRef.current) {
+              clearTimeout(autoNextTimerRef.current);
+              autoNextTimerRef.current = null;
             }
           };
-
-          useEffect(() => {
-             if (preferredVoice && !spokenRef.current) {
-                spokenRef.current = true;
-                setTimeout(() => speak('מָה יוֹצֵא מֵהַחִבּוּר שֶׁל שְׁתֵּי הַמִּילִים?'), 600);
-             }
-          }, [preferredVoice]);
 
           const handleNext = () => {
-            if (timeoutRef.current) clearTimeout(timeoutRef.current);
-            if (currentIndex < shuffledData.length - 1) {
-              setCurrentIndex(prev => prev + 1);
-              setIsAnswerRevealed(false);
-            }
-          };
-          
-          const handlePrev = () => {
-            if (timeoutRef.current) clearTimeout(timeoutRef.current);
-            if (currentIndex > 0) {
-              setCurrentIndex(prev => prev - 1);
-              setIsAnswerRevealed(false);
-            }
+            clearAutoTimer();
+            setIsAnswerRevealed(false);
+            setCurrentIndex(prev => (prev + 1) % shuffledData.length);
           };
 
-          const handleReveal = () => {
-            setIsAnswerRevealed(true);
-            speak(combo.resultSpeak || combo.result);
-            
-            if (timeoutRef.current) clearTimeout(timeoutRef.current);
-            timeoutRef.current = setTimeout(() => {
-               setCurrentIndex(prev => {
-                  if (prev < shuffledData.length - 1) {
-                     setIsAnswerRevealed(false);
-                     return prev + 1;
-                  }
-                  return prev;
-               });
-            }, 2500);
+          const handlePrev = () => {
+            clearAutoTimer();
+            setIsAnswerRevealed(false);
+            setCurrentIndex(prev => (prev - 1 + shuffledData.length) % shuffledData.length);
           };
 
           const combo = shuffledData[currentIndex];
 
+          const handleReveal = () => {
+            clearAutoTimer();
+            setIsAnswerRevealed(true);
+            speak(combo.resultSpeak || combo.result);
+            autoNextTimerRef.current = setTimeout(() => {
+              setIsAnswerRevealed(false);
+              setCurrentIndex(prev => (prev + 1) % shuffledData.length);
+            }, 2200);
+          };
+
           return (
             <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
-              <div 
-                className="bg-pink-100 border-4 border-pink-300 rounded-full px-6 py-3 flex items-center shadow-md w-max justify-center mb-8 cursor-pointer transform hover:scale-105 transition-transform gap-3"
-                onClick={() => speak('מָה יוֹצֵא מֵהַחִבּוּר שֶׁל שְׁתֵּי הַמִּילִים?')}
+              <button
+                type="button"
+                onClick={() => speak(instructionSpeech)}
+                className="mb-8 bg-pink-100 hover:bg-pink-200 text-pink-700 px-6 py-3 rounded-full font-bold text-lg md:text-xl flex items-center gap-2 shadow-sm transition-all"
               >
-                <Volume2Icon />
-                <span className="text-xl md:text-2xl font-bold text-pink-600">מה יוצא מהחיבור של שתי המילים?</span>
-              </div>
+                <Volume2Icon /> מה יוצא מהחיבור של שתי המילים?
+              </button>
+
               <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6 mb-12">
-                {/* Word 1 (Clickable to hear the word) */}
+                {/* Word 1 */}
                 <button
                   type="button"
-                  onClick={(e) => {
-                    if (e && e.currentTarget) e.currentTarget.blur();
-                    speak(combo.w1Speak || combo.w1);
-                  }}
+                  onClick={() => speak(combo.w1Speak || combo.w1)}
                   className="bg-pink-50 border-4 border-pink-200 rounded-3xl p-4 md:p-8 flex flex-col items-center shadow-lg w-28 h-40 md:w-40 md:h-56 justify-center transform transition-transform hover:scale-105 cursor-pointer"
                 >
                   <span className="text-5xl md:text-7xl mb-3 md:mb-6">{combo.e1}</span>
-                  <span className="text-xl md:text-3xl font-black text-pink-600 text-center">{combo.w1}</span>
+                  <span className="text-xl md:text-3xl font-black text-pink-600">{combo.w1}</span>
                 </button>
-                
+
                 <div className="text-4xl md:text-6xl font-black text-pink-400 mt-4">+</div>
 
-                {/* Word 2 (Clickable to hear the word) */}
+                {/* Word 2 */}
                 <button
                   type="button"
-                  onClick={(e) => {
-                    if (e && e.currentTarget) e.currentTarget.blur();
-                    speak(combo.w2Speak || combo.w2);
-                  }}
+                  onClick={() => speak(combo.w2Speak || combo.w2)}
                   className="bg-pink-50 border-4 border-pink-200 rounded-3xl p-4 md:p-8 flex flex-col items-center shadow-lg w-28 h-40 md:w-40 md:h-56 justify-center transform transition-transform hover:scale-105 cursor-pointer"
                 >
                   <span className="text-5xl md:text-7xl mb-3 md:mb-6">{combo.e2}</span>
-                  <span className="text-xl md:text-3xl font-black text-pink-600 text-center">{combo.w2}</span>
+                  <span className="text-xl md:text-3xl font-black text-pink-600">{combo.w2}</span>
                 </button>
-                
+
                 <div className="text-4xl md:text-6xl font-black text-pink-400 mt-4">=</div>
-                
+
                 {/* Guess / Answer Box */}
-                <button 
-                  onClick={(e) => {
-                      if (e && e.currentTarget) e.currentTarget.blur();
-                      if (!isAnswerRevealed) handleReveal(); else speak(combo.resultSpeak || combo.result);
-                  }}
+                <button
+                  type="button"
+                  onClick={!isAnswerRevealed ? handleReveal : () => speak(combo.resultSpeak || combo.result)}
                   className={`border-4 rounded-3xl p-2 md:p-4 flex flex-col items-center justify-center w-28 h-40 md:w-40 md:h-56 transform transition-all hover:scale-105 cursor-pointer ${isAnswerRevealed ? 'bg-pink-100 border-pink-300 shadow-lg' : 'bg-gray-100 border-dashed border-gray-300 shadow-inner'}`}
                 >
                   {!isAnswerRevealed ? (
@@ -1001,22 +974,22 @@
               </div>
 
               <div className="flex gap-4 md:gap-8 w-full justify-center">
-                <button 
-                  onClick={handlePrev} 
-                  disabled={currentIndex === 0}
-                  className={`px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md ${currentIndex === 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-pink-100 text-pink-700 hover:bg-pink-200 hover:shadow-lg'}`}
+                <button
+                  type="button"
+                  onClick={handlePrev}
+                  className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md bg-pink-100 text-pink-700 hover:bg-pink-200 hover:shadow-lg"
                 >
                   הקודם
                 </button>
-                <button 
-                  onClick={handleNext} 
-                  disabled={currentIndex === shuffledData.length - 1}
-                  className={`px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md ${currentIndex === shuffledData.length - 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-pink-500 text-white hover:bg-pink-600 hover:shadow-lg'}`}
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md bg-pink-500 text-white hover:bg-pink-600 hover:shadow-lg"
                 >
                   הבא
                 </button>
               </div>
-              
+
               <div className="mt-8 text-pink-400 font-bold text-lg">
                 {currentIndex + 1} מתוך {shuffledData.length}
               </div>
@@ -1024,151 +997,122 @@
           );
         };
 
-        // --- Opposites Module (Text Only, No Images) ---
+        // --- Opposites Module (הפכים - ללא תמונות) ---
         const OppositesModule = () => {
-          const [shuffledData] = useState(() => [...OPPOSITES_DATA].sort(() => 0.5 - Math.random()));
+          const [shuffledData] = useState(() =>
+            [...OPPOSITES_DATA]
+              .map(pair => Math.random() > 0.5
+                ? pair
+                : { id: pair.id, w1: pair.w2, w1Speak: pair.w2Speak, w2: pair.w1, w2Speak: pair.w1Speak }
+              )
+              .sort(() => 0.5 - Math.random())
+          );
           const [currentIndex, setCurrentIndex] = useState(0);
-          const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
-
-          const [preferredVoice, setPreferredVoice] = useState(null);
-          const preferredVoiceRef = React.useRef(null);
-          const timeoutRef = React.useRef(null);
-          const spokenIndexRef = React.useRef(-1);
-
-          useEffect(() => { preferredVoiceRef.current = preferredVoice; }, [preferredVoice]);
-
-          useEffect(() => {
-            const initVoice = () => {
-              const availableVoices = window.speechSynthesis.getVoices();
-              if (availableVoices.length > 0) {
-                const langVoices = availableVoices.filter(v =>
-                  v.lang.startsWith('he') || v.lang.includes('iw') || v.name.includes('Hebrew') || v.name.includes('עברית')
-                );
-                const bestVoice = langVoices.find(v =>
-                  v.name.includes('Google') || v.name.includes('Natural') || v.name.toLowerCase().includes('female')
-                ) || langVoices[0];
-                if (bestVoice) setPreferredVoice(bestVoice);
-              }
-            };
-            initVoice();
-            if (window.speechSynthesis.onvoiceschanged !== undefined) {
-              window.speechSynthesis.onvoiceschanged = initVoice;
-            }
-            return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); };
-          }, []);
-
-          const speak = (text) => {
-            if ('speechSynthesis' in window) {
-              window.speechSynthesis.cancel();
-              setTimeout(() => {
-                const utterance = new SpeechSynthesisUtterance(text);
-                const voice = preferredVoiceRef.current;
-                utterance.lang = (voice && voice.lang.includes('iw')) ? 'iw-IL' : 'he-IL';
-                if (voice) utterance.voice = voice;
-                utterance.pitch = 1.3;
-                utterance.rate = 0.85;
-                window.speechSynthesis.speak(utterance);
-              }, 150);
-            }
-          };
+          const [isRevealed, setIsRevealed] = useState(false);
+          const speak = useSpeech('he-IL');
+          const autoTimerRef = React.useRef(null);
+          const spokenIdxRef = React.useRef(-1);
 
           const current = shuffledData[currentIndex];
 
-          useEffect(() => {
-            if (spokenIndexRef.current !== currentIndex) {
-              spokenIndexRef.current = currentIndex;
-              setTimeout(() => {
-                speak(`מה ההפך של ${current.w1Speak || current.w1}?`);
-              }, 600);
+          const clearTimer = () => {
+            if (autoTimerRef.current) {
+              clearTimeout(autoTimerRef.current);
+              autoTimerRef.current = null;
             }
-          }, [currentIndex, current]);
+          };
+
+          useEffect(() => {
+            return () => clearTimer();
+          }, []);
+
+          useEffect(() => {
+            if (spokenIdxRef.current !== currentIndex) {
+              spokenIdxRef.current = currentIndex;
+              const t = setTimeout(() => {
+                speak(`מָה הַהֵפֶךְ שֶׁל ${current.w1Speak || current.w1}?`);
+              }, 450);
+              return () => clearTimeout(t);
+            }
+          }, [currentIndex, current, speak]);
 
           const handleNext = () => {
-            if (timeoutRef.current) clearTimeout(timeoutRef.current);
-            if (currentIndex < shuffledData.length - 1) {
-              setCurrentIndex(prev => prev + 1);
-              setIsAnswerRevealed(false);
-            }
+            clearTimer();
+            setIsRevealed(false);
+            setCurrentIndex(prev => (prev + 1) % shuffledData.length);
           };
 
           const handlePrev = () => {
-            if (timeoutRef.current) clearTimeout(timeoutRef.current);
-            if (currentIndex > 0) {
-              setCurrentIndex(prev => prev - 1);
-              setIsAnswerRevealed(false);
-            }
+            clearTimer();
+            setIsRevealed(false);
+            setCurrentIndex(prev => (prev - 1 + shuffledData.length) % shuffledData.length);
           };
 
           const handleReveal = () => {
-            setIsAnswerRevealed(true);
+            clearTimer();
+            setIsRevealed(true);
             speak(current.w2Speak || current.w2);
-            if (timeoutRef.current) clearTimeout(timeoutRef.current);
-            timeoutRef.current = setTimeout(() => {
-              setCurrentIndex(prev => {
-                if (prev < shuffledData.length - 1) {
-                  setIsAnswerRevealed(false);
-                  return prev + 1;
-                }
-                return prev;
-              });
+            autoTimerRef.current = setTimeout(() => {
+              setIsRevealed(false);
+              setCurrentIndex(prev => (prev + 1) % shuffledData.length);
             }, 2000);
           };
 
           return (
-            <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
-              <div
-                className="bg-pink-100 border-4 border-pink-300 rounded-full px-6 py-3 flex items-center shadow-md w-max justify-center mb-8 cursor-pointer transform hover:scale-105 transition-transform gap-3"
-                onClick={() => speak(`מה ההפך של ${current.w1Speak || current.w1}?`)}
+            <div className="flex flex-col items-center w-full max-w-2xl mx-auto">
+              <button
+                type="button"
+                onClick={() => speak(`מָה הַהֵפֶךְ שֶׁל ${current.w1Speak || current.w1}?`)}
+                className="mb-8 bg-pink-100 hover:bg-pink-200 text-pink-700 px-6 py-3 rounded-full font-bold text-lg md:text-xl flex items-center gap-2 shadow-sm transition-all"
               >
-                <Volume2Icon />
-                <span className="text-xl md:text-2xl font-bold text-pink-600">מה ההפך של "{current.w1}"?</span>
-              </div>
+                <Volume2Icon /> מה ההפך של "{current.w1}"?
+              </button>
 
-              <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 mb-12">
+              <div className="flex items-center justify-center gap-4 md:gap-8 mb-12 w-full">
                 <button
                   type="button"
-                  onClick={(e) => {
-                    if (e && e.currentTarget) e.currentTarget.blur();
-                    speak(current.w1Speak || current.w1);
-                  }}
-                  className="bg-pink-50 border-4 border-pink-200 rounded-3xl p-6 md:p-8 flex flex-col items-center shadow-lg w-40 h-40 md:w-52 md:h-48 justify-center transform transition-transform hover:scale-105 cursor-pointer"
+                  onClick={() => speak(current.w1Speak || current.w1)}
+                  className="bg-pink-50 border-4 border-pink-200 rounded-3xl p-6 md:p-10 flex items-center justify-center shadow-lg w-36 h-36 md:w-52 md:h-52 hover:scale-105 transition-transform cursor-pointer"
                 >
-                  <span className="text-3xl md:text-5xl font-black text-pink-600 text-center leading-tight">{current.w1}</span>
+                  <span className="text-3xl md:text-5xl font-black text-pink-600 text-center">{current.w1}</span>
                 </button>
 
-                <div className="text-4xl md:text-5xl font-black text-pink-400">↔️</div>
+                <span className="text-3xl md:text-5xl font-black text-pink-400">↔️</span>
 
                 <button
                   type="button"
-                  onClick={(e) => {
-                    if (e && e.currentTarget) e.currentTarget.blur();
-                    if (!isAnswerRevealed) handleReveal(); else speak(current.w2Speak || current.w2);
-                  }}
-                  className={`border-4 rounded-3xl p-6 md:p-8 flex flex-col items-center justify-center w-40 h-40 md:w-52 md:h-48 transform transition-all hover:scale-105 cursor-pointer ${isAnswerRevealed ? 'bg-pink-100 border-pink-300 shadow-lg' : 'bg-gray-100 border-dashed border-gray-300 shadow-inner'}`}
+                  onClick={!isRevealed ? handleReveal : () => speak(current.w2Speak || current.w2)}
+                  className={`border-4 rounded-3xl p-6 md:p-10 flex flex-col items-center justify-center w-36 h-36 md:w-52 md:h-52 hover:scale-105 transition-all cursor-pointer ${
+                    isRevealed
+                      ? 'bg-pink-100 border-pink-300 shadow-lg'
+                      : 'bg-gray-100 border-dashed border-gray-300 shadow-inner'
+                  }`}
                 >
-                  {!isAnswerRevealed ? (
+                  {!isRevealed ? (
                     <>
                       <span className="text-5xl md:text-6xl font-black text-gray-300">❓</span>
-                      <span className="mt-2 text-sm md:text-base font-bold text-gray-400 text-center">לחצו לתשובה!</span>
+                      <span className="mt-2 text-xs md:text-base font-bold text-gray-400 text-center">לחצו לתשובה</span>
                     </>
                   ) : (
-                    <span className="text-3xl md:text-5xl font-black text-pink-600 text-center animate-fade-in-up leading-tight">{current.w2}</span>
+                    <span className="text-3xl md:text-5xl font-black text-pink-600 text-center animate-fade-in-up">
+                      {current.w2}
+                    </span>
                   )}
                 </button>
               </div>
 
               <div className="flex gap-4 md:gap-8 w-full justify-center">
                 <button
+                  type="button"
                   onClick={handlePrev}
-                  disabled={currentIndex === 0}
-                  className={`px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md ${currentIndex === 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-pink-100 text-pink-700 hover:bg-pink-200 hover:shadow-lg'}`}
+                  className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md bg-pink-100 text-pink-700 hover:bg-pink-200"
                 >
                   הקודם
                 </button>
                 <button
+                  type="button"
                   onClick={handleNext}
-                  disabled={currentIndex === shuffledData.length - 1}
-                  className={`px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md ${currentIndex === shuffledData.length - 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-pink-500 text-white hover:bg-pink-600 hover:shadow-lg'}`}
+                  className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md bg-pink-500 text-white hover:bg-pink-600"
                 >
                   הבא
                 </button>
@@ -1181,109 +1125,283 @@
           );
         };
 
-        // --- Math Counting & Comparison Data & Modules ---
+        // --- Rhymes Game ---
+        const RhymesGame = () => {
+          const [shuffledData] = useState(() => [...RHYMES_DATA].sort(() => 0.5 - Math.random()));
+          const [currentIndex, setCurrentIndex] = useState(0);
+          const [options, setOptions] = useState([]);
+          const [feedback, setFeedback] = useState(null);
+          const speak = useSpeech('he-IL');
+          const spokenIndexRef = React.useRef(-1);
+
+          const current = shuffledData[currentIndex];
+
+          const handleNext = () => setCurrentIndex(prev => (prev + 1) % shuffledData.length);
+          const handlePrev = () => setCurrentIndex(prev => (prev - 1 + shuffledData.length) % shuffledData.length);
+
+          useEffect(() => {
+            const choices = [current.match, ...current.distractors].sort(() => Math.random() - 0.5);
+            setOptions(choices);
+            setFeedback(null);
+          }, [currentIndex, current]);
+
+          useEffect(() => {
+            if (spokenIndexRef.current !== currentIndex) {
+              spokenIndexRef.current = currentIndex;
+              const t = setTimeout(() => {
+                speak(`מה מתחרז עם ${current.target.speak || current.target.w}?`);
+              }, 500);
+              return () => clearTimeout(t);
+            }
+          }, [currentIndex, current, speak]);
+
+          const handleGuess = (item, e) => {
+            if (e && e.currentTarget) e.currentTarget.blur();
+            if (feedback === 'correct') return;
+            speak(item.speak || item.w);
+
+            if (item.w === current.match.w) {
+              setFeedback('correct');
+              setTimeout(() => handleNext(), 1400);
+            } else {
+              setFeedback('wrong');
+              setTimeout(() => speak('נַסּוּ שׁוּב'), 850);
+            }
+          };
+
+          return (
+            <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
+              <button
+                type="button"
+                onClick={() => speak(current.target.speak || current.target.w)}
+                className="bg-pink-100 border-4 border-pink-300 rounded-3xl p-6 flex flex-col items-center shadow-lg w-56 h-64 justify-center mb-10 cursor-pointer transform hover:scale-105 transition-transform"
+              >
+                <span className="text-xl md:text-2xl font-bold text-pink-500 mb-2 text-center">מה מתחרז עם...</span>
+                <span className="text-7xl md:text-8xl mb-4">{current.target.e}</span>
+                <span className="text-3xl md:text-4xl font-black text-pink-700">{current.target.w}</span>
+              </button>
+
+              <div className="grid grid-cols-2 gap-4 md:gap-8 w-full max-w-lg mb-10">
+                {options.map((opt, i) => {
+                  const isCorrect = feedback === 'correct' && opt.w === current.match.w;
+                  const isWrong = feedback === 'wrong' && opt.w !== current.match.w;
+                  return (
+                    <button
+                      key={`${currentIndex}-${opt.w}-${i}`}
+                      type="button"
+                      onClick={(e) => handleGuess(opt, e)}
+                      className={`
+                        bg-white border-4 rounded-3xl p-4 flex flex-col items-center justify-center h-36 md:h-48 shadow-md hover:shadow-xl hover:scale-105 transition-all focus:outline-none
+                        ${isCorrect ? 'border-green-400 bg-green-50 shadow-green-200' : 'border-gray-200'}
+                        ${isWrong ? 'opacity-50 scale-95 border-red-200' : ''}
+                      `}
+                    >
+                      <span className={`text-6xl md:text-7xl mb-3 ${isCorrect ? 'animate-bounce' : ''}`}>{opt.e}</span>
+                      <span className={`text-xl md:text-2xl font-bold ${isCorrect ? 'text-green-600' : 'text-gray-700'}`}>{opt.w}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="flex gap-4 md:gap-8 w-full justify-center">
+                <button type="button" onClick={handlePrev} className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md bg-pink-100 text-pink-700 hover:bg-pink-200">
+                  הקודם
+                </button>
+                <button type="button" onClick={handleNext} className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md bg-pink-500 text-white hover:bg-pink-600">
+                  הבא
+                </button>
+              </div>
+
+              <div className="mt-8 text-pink-400 font-bold text-lg">
+                {currentIndex + 1} מתוך {shuffledData.length}
+              </div>
+            </div>
+          );
+        };
+
+        // --- Starting Sounds Game ---
+        const StartingSoundsGame = () => {
+          const [shuffledData] = useState(() => [...STARTING_SOUNDS_DATA].sort(() => 0.5 - Math.random()));
+          const [currentIndex, setCurrentIndex] = useState(0);
+          const [options, setOptions] = useState([]);
+          const [feedback, setFeedback] = useState(null);
+          const speak = useSpeech('he-IL');
+          const spokenIndexRef = React.useRef(-1);
+
+          const current = shuffledData[currentIndex];
+
+          const handleNext = () => setCurrentIndex(prev => (prev + 1) % shuffledData.length);
+          const handlePrev = () => setCurrentIndex(prev => (prev - 1 + shuffledData.length) % shuffledData.length);
+
+          useEffect(() => {
+            const choices = [current.match, ...current.distractors].sort(() => Math.random() - 0.5);
+            setOptions(choices);
+            setFeedback(null);
+          }, [currentIndex, current]);
+
+          useEffect(() => {
+            if (spokenIndexRef.current !== currentIndex) {
+              spokenIndexRef.current = currentIndex;
+              const t = setTimeout(() => {
+                speak(`מה מתחיל בְּ... ${current.soundSpeak}?`);
+              }, 500);
+              return () => clearTimeout(t);
+            }
+          }, [currentIndex, current, speak]);
+
+          const handleGuess = (item, e) => {
+            if (e && e.currentTarget) e.currentTarget.blur();
+            if (feedback === 'correct') return;
+            speak(item.speak || item.w);
+
+            if (item.w === current.match.w) {
+              setFeedback('correct');
+              setTimeout(() => handleNext(), 1400);
+            } else {
+              setFeedback('wrong');
+              setTimeout(() => speak('נַסּוּ שׁוּב'), 850);
+            }
+          };
+
+          return (
+            <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
+              <button
+                type="button"
+                onClick={() => speak(`מה מתחיל בְּ... ${current.soundSpeak}?`)}
+                className="bg-pink-100 border-4 border-pink-300 rounded-3xl p-6 flex flex-col items-center shadow-lg w-56 h-64 md:w-64 justify-center mb-10 cursor-pointer transform hover:scale-105 transition-transform"
+              >
+                <span className="text-xl md:text-2xl font-bold text-pink-500 mb-2 text-center">מה מתחיל ב-</span>
+                <span className="text-7xl md:text-8xl mb-4 font-black text-pink-700 leading-none">{current.soundDisplay}</span>
+                <div className="bg-pink-200 text-pink-600 px-4 py-2 rounded-full font-bold flex items-center gap-2 mt-2">
+                  <Volume2Icon /> שמע שוב
+                </div>
+              </button>
+
+              <div className="grid grid-cols-2 gap-4 md:gap-8 w-full max-w-lg mb-10">
+                {options.map((opt, i) => {
+                  const isCorrect = feedback === 'correct' && opt.w === current.match.w;
+                  const isWrong = feedback === 'wrong' && opt.w !== current.match.w;
+                  return (
+                    <button
+                      key={`${currentIndex}-${opt.w}-${i}`}
+                      type="button"
+                      onClick={(e) => handleGuess(opt, e)}
+                      className={`
+                        bg-white border-4 rounded-3xl p-4 flex flex-col items-center justify-center h-36 md:h-48 shadow-md hover:shadow-xl hover:scale-105 transition-all focus:outline-none
+                        ${isCorrect ? 'border-green-400 bg-green-50 shadow-green-200' : 'border-gray-200'}
+                        ${isWrong ? 'opacity-50 scale-95 border-red-200' : ''}
+                      `}
+                    >
+                      <span className={`text-6xl md:text-7xl mb-3 ${isCorrect ? 'animate-bounce' : ''}`}>{opt.e}</span>
+                      <span className={`text-xl md:text-2xl font-bold ${isCorrect ? 'text-green-600' : 'text-gray-700'}`}>{opt.w}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="flex gap-4 md:gap-8 w-full justify-center">
+                <button type="button" onClick={handlePrev} className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md bg-pink-100 text-pink-700 hover:bg-pink-200">
+                  הקודם
+                </button>
+                <button type="button" onClick={handleNext} className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md bg-pink-500 text-white hover:bg-pink-600">
+                  הבא
+                </button>
+              </div>
+
+              <div className="mt-8 text-pink-400 font-bold text-lg">
+                {currentIndex + 1} מתוך {shuffledData.length}
+              </div>
+            </div>
+          );
+        };
+
+        // --- Math Counting Game (מנייה: קל 1-10 מסודר | קשה עד 20 מפוזר) ---
         const COUNTING_ITEMS = [
-          { id: 'car', emoji: '🚗' },
-          { id: 'ladybug', emoji: '🐞' },
-          { id: 'apple', emoji: '🍎' },
-          { id: 'star', emoji: '⭐' },
-          { id: 'balloon', emoji: '🎈' },
-          { id: 'butterfly', emoji: '🦋' },
-          { id: 'flower', emoji: '🌻' },
-          { id: 'fish', emoji: '🐟' },
-          { id: 'ball', emoji: '⚽' },
-          { id: 'strawberry', emoji: '🍓' }
+          { emoji: '🚗', plural: 'מכוניות' },
+          { emoji: '🐞', plural: 'חיפושיות' },
+          { emoji: '🍎', plural: 'תפוחים' },
+          { emoji: '⭐', plural: 'כוכבים' },
+          { emoji: '🎈', plural: 'בלונים' },
+          { emoji: '🦋', plural: 'פרפרים' },
+          { emoji: '🍓', plural: 'תותים' },
+          { emoji: '⚽', plural: 'כדורים' },
+          { emoji: '🐟', plural: 'דגים' },
+          { emoji: '🌻', plural: 'פרחים' }
         ];
 
         const CountingGame = () => {
+          const [difficulty, setDifficulty] = useState('easy'); // 'easy' | 'hard'
           const [question, setQuestion] = useState(null);
-          const [feedback, setFeedback] = useState(null);
+          const [feedback, setFeedback] = useState('');
           const [roundId, setRoundId] = useState(0);
+          const lastCountRef = React.useRef(null);
+          const hasSpokenIntroRef = React.useRef(false);
+          const speak = useSpeech('he-IL');
 
-          const [preferredVoice, setPreferredVoice] = useState(null);
-          const preferredVoiceRef = React.useRef(null);
-          const spokenOnceRef = React.useRef(false);
+          const generateQuestion = (level = difficulty) => {
+            const minCount = level === 'hard' ? 8 : 1;
+            const maxCount = level === 'hard' ? 20 : 10;
 
-          useEffect(() => { preferredVoiceRef.current = preferredVoice; }, [preferredVoice]);
-
-          useEffect(() => {
-            const initVoice = () => {
-              const availableVoices = window.speechSynthesis.getVoices();
-              if (availableVoices.length > 0) {
-                const langVoices = availableVoices.filter(v =>
-                  v.lang.startsWith('he') || v.lang.includes('iw') || v.name.includes('Hebrew') || v.name.includes('עברית')
-                );
-                const bestVoice = langVoices.find(v =>
-                  v.name.includes('Google') || v.name.includes('Natural') || v.name.toLowerCase().includes('female')
-                ) || langVoices[0];
-                if (bestVoice) setPreferredVoice(bestVoice);
-              }
-            };
-            initVoice();
-            if (window.speechSynthesis.onvoiceschanged !== undefined) {
-              window.speechSynthesis.onvoiceschanged = initVoice;
-            }
-          }, []);
-
-          const speak = (text) => {
-            if ('speechSynthesis' in window) {
-              window.speechSynthesis.cancel();
-              setTimeout(() => {
-                const utterance = new SpeechSynthesisUtterance(text);
-                const voice = preferredVoiceRef.current;
-                utterance.lang = (voice && voice.lang.includes('iw')) ? 'iw-IL' : 'he-IL';
-                if (voice) utterance.voice = voice;
-                utterance.pitch = 1.3;
-                utterance.rate = 0.85;
-                window.speechSynthesis.speak(utterance);
-              }, 150);
-            }
-          };
-
-          const generateQuestion = (prevCount = null) => {
             let count;
             do {
-              count = Math.floor(Math.random() * 10) + 1;
-            } while (count === prevCount);
+              count = minCount + Math.floor(Math.random() * (maxCount - minCount + 1));
+            } while (count === lastCountRef.current && maxCount > minCount);
+            lastCountRef.current = count;
 
-            const item = COUNTING_ITEMS[Math.floor(Math.random() * COUNTING_ITEMS.length)];
-            const distractors = [];
-            while (distractors.length < 3) {
-              const d = Math.floor(Math.random() * 10) + 1;
-              if (d !== count && !distractors.includes(d)) {
-                distractors.push(d);
+            const itemType = COUNTING_ITEMS[Math.floor(Math.random() * COUNTING_ITEMS.length)];
+
+            // Build 4 distinct number options
+            const optionSet = new Set([count]);
+            if (level === 'hard') {
+              const nearbyOffsets = [-3, -2, -1, 1, 2, 3].sort(() => 0.5 - Math.random());
+              for (const off of nearbyOffsets) {
+                if (optionSet.size >= 4) break;
+                const cand = count + off;
+                if (cand >= 1 && cand <= 20) optionSet.add(cand);
               }
             }
-            const options = [count, ...distractors].sort(() => Math.random() - 0.5);
-            setQuestion({ count, item, options });
-            setFeedback(null);
+            while (optionSet.size < 4) {
+              const cand = 1 + Math.floor(Math.random() * maxCount);
+              optionSet.add(cand);
+            }
+
+            const options = Array.from(optionSet).sort((a, b) => a - b);
+            const positions = level === 'hard' ? generateScatteredPositions(count, 15) : [];
+
             setRoundId(prev => prev + 1);
+            setFeedback('');
+            setQuestion({ count, itemType, options, positions });
           };
 
           useEffect(() => {
-            generateQuestion();
-          }, []);
+            generateQuestion(difficulty);
+          }, [difficulty]);
 
           useEffect(() => {
-            if (!spokenOnceRef.current) {
-              spokenOnceRef.current = true;
-              setTimeout(() => speak('כַּמָּה יֵשׁ כָּאן?'), 600);
+            if (!hasSpokenIntroRef.current && question) {
+              hasSpokenIntroRef.current = true;
+              const t = setTimeout(() => speak('כַּמָּה יֵשׁ כָּאן?'), 450);
+              return () => clearTimeout(t);
             }
-          }, []);
+          }, [question, speak]);
 
-          const handleGuess = (num) => {
-            if (feedback === 'correct' || !question) return;
-            speak(HEBREW_NUMBER_WORDS[num - 1]);
+          const handleSelectOption = (num, e) => {
+            if (e && e.currentTarget) e.currentTarget.blur();
+            if (!question || feedback === 'correct') return;
+
+            const numWord = HEBREW_NUMBER_WORDS[num - 1] || num.toString();
+            speak(numWord);
+
             if (num === question.count) {
               setFeedback('correct');
               setTimeout(() => {
-                generateQuestion(question.count);
-              }, 1500);
+                generateQuestion(difficulty);
+              }, 1150);
             } else {
               setFeedback('wrong');
               setTimeout(() => {
                 speak('נַסּוּ שׁוּב');
-              }, 900);
+              }, 850);
             }
           };
 
@@ -1291,35 +1409,77 @@
 
           return (
             <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
-              <div
-                className="bg-purple-100 border-4 border-purple-300 rounded-full px-6 py-3 flex items-center shadow-md w-max justify-center mb-8 cursor-pointer transform hover:scale-105 transition-transform gap-3"
-                onClick={() => speak('כַּמָּה יֵשׁ כָּאן?')}
+              {/* בורר רמת קושי */}
+              <div className="flex gap-2 bg-gray-100 p-1.5 rounded-2xl mb-6">
+                <button
+                  type="button"
+                  onClick={() => setDifficulty('easy')}
+                  className={`px-6 py-2 rounded-xl font-bold transition-all ${difficulty === 'easy' ? 'bg-white text-purple-600 shadow-md' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  קל
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDifficulty('hard')}
+                  className={`px-6 py-2 rounded-xl font-bold transition-all ${difficulty === 'hard' ? 'bg-white text-purple-600 shadow-md' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  קשה
+                </button>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => speak(`כַּמָּה ${question.itemType.plural} יֵשׁ כָּאן?`)}
+                className="mb-6 bg-purple-100 hover:bg-purple-200 text-purple-700 px-6 py-3 rounded-full font-bold text-lg md:text-2xl flex items-center gap-2 shadow-sm transition-all"
               >
-                <Volume2Icon />
-                <span className="text-xl md:text-2xl font-bold text-purple-700">כמה יש כאן?</span>
+                <Volume2Icon /> כמה {question.itemType.plural} יש כאן?
+              </button>
+
+              {/* תצוגת הפריטים */}
+              {difficulty === 'easy' ? (
+                <div className="bg-purple-50 border-4 border-purple-200 rounded-3xl p-6 md:p-10 w-full min-h-[200px] flex flex-wrap items-center justify-center gap-4 md:gap-6 mb-8 shadow-inner">
+                  {Array.from({ length: question.count }).map((_, idx) => (
+                    <span key={`${roundId}-item-${idx}`} className="text-5xl md:text-6xl select-none">
+                      {question.itemType.emoji}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <div className="relative bg-purple-50 border-4 border-purple-200 rounded-3xl w-full h-72 md:h-96 mb-8 shadow-inner overflow-hidden">
+                  {question.positions.map((pos, idx) => (
+                    <span
+                      key={`${roundId}-scatter-${idx}`}
+                      style={{
+                        left: `${pos.x}%`,
+                        top: `${pos.y}%`,
+                        transform: `translate(-50%, -50%) rotate(${pos.rot}deg)`
+                      }}
+                      className="absolute text-3xl md:text-5xl select-none"
+                    >
+                      {question.itemType.emoji}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* חיווי ויזואלי */}
+              <div className="h-8 mb-4">
+                {feedback === 'correct' && <div className="text-2xl font-black text-green-500 animate-bounce">נכון מאוד! 🎉</div>}
+                {feedback === 'wrong' && <div className="text-xl font-bold text-red-500 animate-pulse">נסו שוב! 💪</div>}
               </div>
 
-              <div className="bg-purple-50 border-4 border-purple-200 rounded-3xl p-6 md:p-10 flex flex-wrap items-center justify-center gap-4 min-h-[180px] w-full max-w-xl mb-10 shadow-inner">
-                {Array.from({ length: question.count }).map((_, idx) => (
-                  <span key={`${roundId}-item-${idx}`} className="text-5xl md:text-6xl select-none animate-fade-in-up">
-                    {question.item.emoji}
-                  </span>
-                ))}
-              </div>
-
-              <div className="grid grid-cols-4 gap-3 md:gap-6 w-full max-w-lg">
-                {question.options.map((num) => {
+              {/* כפתורי תשובות */}
+              <div key={`count-opts-${roundId}`} className="grid grid-cols-4 gap-3 md:gap-6 w-full max-w-xl">
+                {question.options.map(num => {
                   const isCorrect = feedback === 'correct' && num === question.count;
                   return (
                     <button
-                      key={`count-${roundId}-${num}`}
-                      onClick={(e) => {
-                        if (e && e.currentTarget) e.currentTarget.blur();
-                        handleGuess(num);
-                      }}
+                      key={`${roundId}-opt-${num}`}
+                      type="button"
+                      onClick={(e) => handleSelectOption(num, e)}
                       className={`
-                        h-20 md:h-24 rounded-3xl font-black text-3xl md:text-4xl shadow-md hover:shadow-xl hover:-translate-y-1 transition-all border-b-4
-                        ${isCorrect ? 'bg-green-100 border-green-400 text-green-700 animate-bounce' : 'bg-white border-purple-200 text-purple-700'}
+                        h-20 md:h-24 rounded-3xl font-black text-3xl md:text-4xl border-4 transition-all shadow-md hover:shadow-xl hover:-translate-y-1 focus:outline-none
+                        ${isCorrect ? 'bg-green-100 border-green-400 text-green-700 scale-105' : 'bg-white border-purple-200 text-purple-700 hover:bg-purple-50'}
                       `}
                     >
                       {num}
@@ -1331,514 +1491,1441 @@
           );
         };
 
+        // --- Math Comparison Game (השוואה: קל עד 9 מסודר | קשה עד 15 מפוזר, אייקונים שונים) ---
         const ComparisonGame = () => {
-          const [difficulty, setDifficulty] = useState('easy');
-          const [pair, setPair] = useState(null);
-          const [feedback, setFeedback] = useState(null);
+          const [difficulty, setDifficulty] = useState('easy'); // 'easy' | 'hard'
+          const [round, setRound] = useState(null);
+          const [feedback, setFeedback] = useState('');
+          const [winnerGroup, setWinnerGroup] = useState(null);
           const [roundId, setRoundId] = useState(0);
+          const speak = useSpeech('he-IL');
+          const hasSpokenIntroRef = React.useRef(false);
 
-          const [preferredVoice, setPreferredVoice] = useState(null);
-          const preferredVoiceRef = React.useRef(null);
-          const spokenOnceRef = React.useRef(false);
+          const generateRound = (level = difficulty) => {
+            const minVal = level === 'hard' ? 6 : 1;
+            const maxVal = level === 'hard' ? 15 : 9;
 
-          useEffect(() => { preferredVoiceRef.current = preferredVoice; }, [preferredVoice]);
-
-          useEffect(() => {
-            const initVoice = () => {
-              const availableVoices = window.speechSynthesis.getVoices();
-              if (availableVoices.length > 0) {
-                const langVoices = availableVoices.filter(v =>
-                  v.lang.startsWith('he') || v.lang.includes('iw') || v.name.includes('Hebrew') || v.name.includes('עברית')
-                );
-                const bestVoice = langVoices.find(v =>
-                  v.name.includes('Google') || v.name.includes('Natural') || v.name.toLowerCase().includes('female')
-                ) || langVoices[0];
-                if (bestVoice) setPreferredVoice(bestVoice);
-              }
-            };
-            initVoice();
-            if (window.speechSynthesis.onvoiceschanged !== undefined) {
-              window.speechSynthesis.onvoiceschanged = initVoice;
+            let c1 = minVal + Math.floor(Math.random() * (maxVal - minVal + 1));
+            let c2 = minVal + Math.floor(Math.random() * (maxVal - minVal + 1));
+            while (c2 === c1) {
+              c2 = minVal + Math.floor(Math.random() * (maxVal - minVal + 1));
             }
-          }, []);
-
-          const speak = (text) => {
-            if ('speechSynthesis' in window) {
-              window.speechSynthesis.cancel();
-              setTimeout(() => {
-                const utterance = new SpeechSynthesisUtterance(text);
-                const voice = preferredVoiceRef.current;
-                utterance.lang = (voice && voice.lang.includes('iw')) ? 'iw-IL' : 'he-IL';
-                if (voice) utterance.voice = voice;
-                utterance.pitch = 1.3;
-                utterance.rate = 0.85;
-                window.speechSynthesis.speak(utterance);
-              }, 150);
-            }
-          };
-
-          // מייצר מיקומים מפוזרים על הלוח ללא חפיפה בין הפריטים עבור הרמה הקשה
-          const generateScatteredPositions = (count) => {
-            const cells = [];
-            for (let row = 0; row < 4; row++) {
-              for (let col = 0; col < 5; col++) {
-                cells.push({ row, col });
-              }
-            }
-            const picked = cells.sort(() => 0.5 - Math.random()).slice(0, count);
-            return picked.map(({ row, col }) => ({
-              left: `${11 + col * 19.5 + (Math.random() * 6 - 3)}%`,
-              top: `${14 + row * 24 + (Math.random() * 7 - 3.5)}%`,
-              rotate: `${Math.floor(Math.random() * 28 - 14)}deg`
-            }));
-          };
-
-          const generatePair = (level = difficulty, prevKey = '') => {
-            let c1, c2, key;
-            const maxCount = level === 'hard' ? 15 : 9;
-            const minCount = level === 'hard' ? 3 : 1;
-            const range = maxCount - minCount + 1;
-
-            do {
-              c1 = Math.floor(Math.random() * range) + minCount;
-              c2 = Math.floor(Math.random() * range) + minCount;
-              key = `${c1}-${c2}`;
-            } while (c1 === c2 || key === prevKey);
 
             const shuffledItems = [...COUNTING_ITEMS].sort(() => 0.5 - Math.random());
             const item1 = shuffledItems[0];
             const item2 = shuffledItems[1];
 
-            const pos1 = level === 'hard' ? generateScatteredPositions(c1) : [];
-            const pos2 = level === 'hard' ? generateScatteredPositions(c2) : [];
+            const pos1 = level === 'hard' ? generateScatteredPositions(c1, 17) : [];
+            const pos2 = level === 'hard' ? generateScatteredPositions(c2, 17) : [];
 
-            setPair({ c1, c2, item1, item2, pos1, pos2, key });
-            setFeedback(null);
             setRoundId(prev => prev + 1);
+            setFeedback('');
+            setWinnerGroup(null);
+            setRound({ c1, c2, item1, item2, pos1, pos2 });
           };
 
           useEffect(() => {
-            generatePair(difficulty);
+            generateRound(difficulty);
           }, [difficulty]);
 
           useEffect(() => {
-            if (!spokenOnceRef.current) {
-              spokenOnceRef.current = true;
-              setTimeout(() => speak('אֵיפֹה יֵשׁ יוֹתֵר?'), 600);
+            if (!hasSpokenIntroRef.current && round) {
+              hasSpokenIntroRef.current = true;
+              const t = setTimeout(() => speak('אֵיפֹה יֵשׁ יוֹתֵר?'), 450);
+              return () => clearTimeout(t);
             }
-          }, []);
+          }, [round, speak]);
 
-          const handleChoice = (side) => {
-            if (feedback === 'correct' || !pair) return;
-            const isRightAnswer = (side === 'right' && pair.c1 > pair.c2) || (side === 'left' && pair.c2 > pair.c1);
-            if (isRightAnswer) {
+          const handleChoose = (side, e) => {
+            if (e && e.currentTarget) e.currentTarget.blur();
+            if (!round || feedback === 'correct') return;
+
+            const chosenCount = side === 'right' ? round.c1 : round.c2;
+            const otherCount = side === 'right' ? round.c2 : round.c1;
+
+            if (chosenCount > otherCount) {
               setFeedback('correct');
-              setTimeout(() => {
-                generatePair(difficulty, pair.key);
-              }, 1300);
+              setWinnerGroup(side);
+              speak('כָּל הַכָּבוֹד!');
+              setTimeout(() => generateRound(difficulty), 1350);
             } else {
               setFeedback('wrong');
               speak('נַסּוּ שׁוּב');
             }
           };
 
-          if (!pair) return null;
+          if (!round) return null;
 
-          const rightWins = feedback === 'correct' && pair.c1 > pair.c2;
-          const leftWins = feedback === 'correct' && pair.c2 > pair.c1;
+          const renderGroupBox = (side, count, itemType, positions) => {
+            const isWin = winnerGroup === side;
+            return (
+              <button
+                type="button"
+                onClick={(e) => handleChoose(side, e)}
+                className={`
+                  flex-1 min-h-[210px] md:min-h-[280px] rounded-3xl border-4 p-4 md:p-6 transition-all focus:outline-none cursor-pointer
+                  ${isWin
+                    ? 'bg-green-50 border-green-400 ring-4 ring-green-200 scale-[1.03] shadow-xl'
+                    : 'bg-purple-50/70 border-purple-200 hover:border-purple-400 hover:bg-purple-50 shadow-md hover:shadow-xl'
+                  }
+                `}
+              >
+                {difficulty === 'easy' ? (
+                  <div className="w-full h-full flex flex-wrap items-center justify-center gap-3 md:gap-4">
+                    {Array.from({ length: count }).map((_, i) => (
+                      <span key={`${roundId}-${side}-${i}`} className="text-4xl md:text-5xl select-none">
+                        {itemType.emoji}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="relative w-full h-56 md:h-72 overflow-hidden">
+                    {positions.map((pos, i) => (
+                      <span
+                        key={`${roundId}-${side}-s-${i}`}
+                        style={{
+                          left: `${pos.x}%`,
+                          top: `${pos.y}%`,
+                          transform: `translate(-50%, -50%) rotate(${pos.rot}deg)`
+                        }}
+                        className="absolute text-2xl sm:text-3xl md:text-4xl select-none"
+                      >
+                        {itemType.emoji}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </button>
+            );
+          };
 
           return (
             <div className="flex flex-col items-center w-full max-w-4xl mx-auto">
-              {/* בורר רמת קושי */}
-              <div className="flex space-x-4 space-x-reverse mb-6 bg-gray-100 p-2 rounded-2xl">
+              <div className="flex gap-2 bg-gray-100 p-1.5 rounded-2xl mb-6">
                 <button
+                  type="button"
                   onClick={() => setDifficulty('easy')}
-                  className={`px-6 py-2 rounded-xl font-bold transition-all ${difficulty === 'easy' ? 'bg-white shadow-md text-purple-600' : 'text-gray-500 hover:text-gray-700'}`}
+                  className={`px-6 py-2 rounded-xl font-bold transition-all ${difficulty === 'easy' ? 'bg-white text-purple-600 shadow-md' : 'text-gray-500 hover:text-gray-700'}`}
                 >
                   קל
                 </button>
                 <button
+                  type="button"
                   onClick={() => setDifficulty('hard')}
-                  className={`px-6 py-2 rounded-xl font-bold transition-all ${difficulty === 'hard' ? 'bg-white shadow-md text-purple-600' : 'text-gray-500 hover:text-gray-700'}`}
+                  className={`px-6 py-2 rounded-xl font-bold transition-all ${difficulty === 'hard' ? 'bg-white text-purple-600 shadow-md' : 'text-gray-500 hover:text-gray-700'}`}
                 >
                   קשה
                 </button>
               </div>
 
-              <div
-                className="bg-purple-100 border-4 border-purple-300 rounded-full px-6 py-3 flex items-center shadow-md w-max justify-center mb-8 cursor-pointer transform hover:scale-105 transition-transform gap-3"
+              <button
+                type="button"
                 onClick={() => speak('אֵיפֹה יֵשׁ יוֹתֵר?')}
+                className="mb-6 bg-purple-100 hover:bg-purple-200 text-purple-700 px-6 py-3 rounded-full font-bold text-lg md:text-2xl flex items-center gap-2 shadow-sm transition-all"
               >
-                <Volume2Icon />
-                <span className="text-xl md:text-2xl font-bold text-purple-700">איפה יש יותר?</span>
+                <Volume2Icon /> איפה יש יותר?
+              </button>
+
+              <div className="h-8 mb-4">
+                {feedback === 'correct' && <div className="text-2xl font-black text-green-500 animate-bounce">כל הכבוד! 🎉</div>}
+                {feedback === 'wrong' && <div className="text-xl font-bold text-red-500 animate-pulse">נסו שוב! 💪</div>}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 w-full">
-                <button
-                  key={`comp-right-${difficulty}-${roundId}`}
-                  onClick={(e) => {
-                    if (e && e.currentTarget) e.currentTarget.blur();
-                    handleChoice('right');
-                  }}
-                  className={`
-                    ${difficulty === 'hard' ? 'min-h-[260px] md:min-h-[320px] relative overflow-hidden' : 'min-h-[220px] p-6 flex flex-wrap items-center justify-center gap-3'}
-                    rounded-3xl border-4 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all cursor-pointer
-                    ${rightWins ? 'bg-green-50 border-green-400 animate-bounce' : 'bg-white border-purple-200'}
-                  `}
-                >
-                  {difficulty === 'easy' ? (
-                    Array.from({ length: pair.c1 }).map((_, i) => (
-                      <span key={i} className="text-4xl md:text-5xl select-none">{pair.item1.emoji}</span>
-                    ))
-                  ) : (
-                    pair.pos1.map((pos, i) => (
-                      <span
-                        key={i}
-                        style={{
-                          left: pos.left,
-                          top: pos.top,
-                          transform: `translate(-50%, -50%) rotate(${pos.rotate})`
-                        }}
-                        className="absolute text-3xl md:text-4xl select-none pointer-events-none"
-                      >
-                        {pair.item1.emoji}
-                      </span>
-                    ))
-                  )}
-                </button>
-
-                <button
-                  key={`comp-left-${difficulty}-${roundId}`}
-                  onClick={(e) => {
-                    if (e && e.currentTarget) e.currentTarget.blur();
-                    handleChoice('left');
-                  }}
-                  className={`
-                    ${difficulty === 'hard' ? 'min-h-[260px] md:min-h-[320px] relative overflow-hidden' : 'min-h-[220px] p-6 flex flex-wrap items-center justify-center gap-3'}
-                    rounded-3xl border-4 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all cursor-pointer
-                    ${leftWins ? 'bg-green-50 border-green-400 animate-bounce' : 'bg-white border-purple-200'}
-                  `}
-                >
-                  {difficulty === 'easy' ? (
-                    Array.from({ length: pair.c2 }).map((_, i) => (
-                      <span key={i} className="text-4xl md:text-5xl select-none">{pair.item2.emoji}</span>
-                    ))
-                  ) : (
-                    pair.pos2.map((pos, i) => (
-                      <span
-                        key={i}
-                        style={{
-                          left: pos.left,
-                          top: pos.top,
-                          transform: `translate(-50%, -50%) rotate(${pos.rotate})`
-                        }}
-                        className="absolute text-3xl md:text-4xl select-none pointer-events-none"
-                      >
-                        {pair.item2.emoji}
-                      </span>
-                    ))
-                  )}
-                </button>
+              <div className="flex flex-col sm:flex-row items-stretch justify-center gap-4 md:gap-8 w-full">
+                {renderGroupBox('right', round.c1, round.item1, round.pos1)}
+                <div className="flex items-center justify-center text-3xl md:text-4xl font-black text-purple-400 select-none">
+                  ⚖️
+                </div>
+                {renderGroupBox('left', round.c2, round.item2, round.pos2)}
               </div>
             </div>
           );
         };
 
-        // --- Rhymes Module ---
-        const RhymesGame = () => {
-          const [shuffledData] = useState(() => [...RHYMES_DATA].sort(() => 0.5 - Math.random()));
-          const [currentIndex, setCurrentIndex] = useState(0);
-          const [options, setOptions] = useState([]);
-          const [feedback, setFeedback] = useState(null);
+        // --- YouTube Songs Module ---
+        const SongsModule = ({ videos, themeClass = 'amber' }) => {
+          const [selectedIdx, setSelectedIdx] = useState(0);
+          const theme = getThemeClasses(themeClass);
+          const currentVideo = videos[selectedIdx] || videos[0];
 
-          const [preferredVoice, setPreferredVoice] = useState(null);
-          const preferredVoiceRef = React.useRef(null);
-          const spokenIndexRef = React.useRef(-1);
-
-          useEffect(() => { preferredVoiceRef.current = preferredVoice; }, [preferredVoice]);
-
-          useEffect(() => {
-            const initVoice = () => {
-              const availableVoices = window.speechSynthesis.getVoices();
-              if (availableVoices.length > 0) {
-                const langVoices = availableVoices.filter(v =>
-                  v.lang.startsWith('he') || v.lang.includes('iw') || v.name.includes('Hebrew') || v.name.includes('עברית')
-                );
-                const bestVoice = langVoices.find(v =>
-                  v.name.includes('Google') || v.name.includes('Natural') || v.name.toLowerCase().includes('female')
-                ) || langVoices[0];
-                if (bestVoice) setPreferredVoice(bestVoice);
-              }
-            };
-            initVoice();
-            if (window.speechSynthesis.onvoiceschanged !== undefined) {
-              window.speechSynthesis.onvoiceschanged = initVoice;
-            }
-          }, []);
-
-          const speak = (text) => {
-            if ('speechSynthesis' in window) {
-              window.speechSynthesis.cancel();
-              setTimeout(() => {
-                const utterance = new SpeechSynthesisUtterance(text);
-                const voice = preferredVoiceRef.current;
-                utterance.lang = (voice && voice.lang.includes('iw')) ? 'iw-IL' : 'he-IL';
-                if (voice) utterance.voice = voice;
-                utterance.pitch = 1.3;
-                utterance.rate = 0.85;
-                window.speechSynthesis.speak(utterance);
-              }, 150);
-            }
-          };
-
-          const handleNext = () => {
-            setCurrentIndex((prev) => (prev + 1) % shuffledData.length);
-          };
-
-          const handlePrev = () => {
-            setCurrentIndex((prev) => (prev - 1 + shuffledData.length) % shuffledData.length);
-          };
-
-          const current = shuffledData[currentIndex];
-
-          useEffect(() => {
-            const choices = [current.match, ...current.distractors].sort(() => Math.random() - 0.5);
-            setOptions(choices);
-            setFeedback(null);
-          }, [currentIndex, current]);
-
-          useEffect(() => {
-            if (spokenIndexRef.current !== currentIndex) {
-              spokenIndexRef.current = currentIndex;
-              setTimeout(() => {
-                speak(`מה מתחרז עם ${current.target.speak || current.target.w}?`);
-              }, 600);
-            }
-          }, [currentIndex, current]);
-
-          const handleGuess = (item) => {
-            if (feedback === 'correct') return;
-
-            speak(item.speak || item.w);
-
-            if (item.w === current.match.w) {
-              setFeedback('correct');
-              setTimeout(() => {
-                handleNext();
-              }, 1500);
-            } else {
-              setFeedback('wrong');
-              setTimeout(() => {
-                speak('נַסּוּ שׁוּב');
-              }, 800);
-            }
-          };
+          if (!currentVideo) return null;
 
           return (
             <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
-              {/* Target Area */}
-              <div
-                className="bg-pink-100 border-4 border-pink-300 rounded-3xl p-6 flex flex-col items-center shadow-lg w-56 h-64 justify-center mb-10 cursor-pointer transform hover:scale-105 transition-transform"
-                onClick={() => speak(current.target.speak || current.target.w)}
-              >
-                <span className="text-xl md:text-2xl font-bold text-pink-500 mb-2 text-center">מה מתחרז עם...</span>
-                <span className="text-7xl md:text-8xl mb-4">{current.target.e}</span>
-                <span className="text-3xl md:text-4xl font-black text-pink-700">{current.target.w}</span>
+              {videos.length > 1 && (
+                <div className="flex flex-wrap justify-center gap-3 mb-6 w-full">
+                  {videos.map((vid, idx) => (
+                    <button
+                      key={vid.id}
+                      type="button"
+                      onClick={() => setSelectedIdx(idx)}
+                      className={`px-4 py-2.5 rounded-2xl font-bold text-sm md:text-base transition-all border-2 ${
+                        idx === selectedIdx
+                          ? `${theme.button} text-white border-transparent shadow-md scale-105`
+                          : 'bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100'
+                      }`}
+                    >
+                      🎵 {vid.title}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <div className="w-full aspect-video rounded-3xl overflow-hidden shadow-xl border-4 border-amber-200 bg-black">
+                <iframe
+                  key={currentVideo.videoId}
+                  className="w-full h-full"
+                  src={`https://www.youtube.com/embed/${currentVideo.videoId}?rel=0`}
+                  title={currentVideo.title}
+                  frameBorder="0"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
               </div>
 
-              {/* Options Grid */}
-              <div className="grid grid-cols-2 gap-4 md:gap-8 w-full max-w-lg mb-10">
-                {options.map((opt, i) => {
-                  const isCorrect = feedback === 'correct' && opt.w === current.match.w;
-                  const isWrong = feedback === 'wrong' && opt.w !== current.match.w;
+              <a
+                href={`https://www.youtube.com/watch?v=${currentVideo.videoId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 text-sm font-bold text-amber-600 hover:text-amber-700 underline"
+              >
+                פתיחה ישירה ביוטיוב ↗
+              </a>
+            </div>
+          );
+        };
+
+        // --- Memory Game (משחק זיכרון רב-לשוני) ---
+        const MemoryGame = () => {
+          const [topic, setTopic] = useState('animals'); // 'letters' | 'numbers' | 'animals' | 'colors'
+          const [langKey, setLangKey] = useState('he'); // 'he' | 'ar' | 'en'
+          const [boardSize, setBoardSize] = useState(12); // 12 | 16
+          const [cards, setCards] = useState([]);
+          const [flippedIndices, setFlippedIndices] = useState([]);
+          const [matchedIds, setMatchedIds] = useState([]);
+          const [moves, setMoves] = useState(0);
+          const [isLocked, setIsLocked] = useState(false);
+
+          const effectiveLang = topic === 'letters' ? 'he' : langKey;
+          const speechLangMap = { he: 'he-IL', ar: 'ar-SA', en: 'en-US' };
+          const speak = useSpeech(speechLangMap[effectiveLang] || 'he-IL');
+
+          const getPool = () => {
+            if (topic === 'letters') {
+              return HEBREW_LETTERS.map(l => ({
+                id: l.id,
+                type: 'text',
+                display: l.display,
+                speakText: l.spoken
+              }));
+            }
+            if (topic === 'numbers') {
+              if (effectiveLang === 'ar') {
+                return ARABIC_NUMBERS.map(n => ({ id: n.id, type: 'text', display: n.display, sub: n.sub, speakText: n.spoken }));
+              }
+              if (effectiveLang === 'en') {
+                return ENGLISH_NUMBERS.map(n => ({ id: n.id, type: 'text', display: n.display, sub: n.sub, speakText: n.spoken }));
+              }
+              return MATH_NUMBERS.slice(0, 20).map(n => ({ id: n.id, type: 'text', display: n.display, speakText: n.spoken }));
+            }
+            if (topic === 'animals') {
+              const src = effectiveLang === 'ar' ? ARABIC_ANIMALS : effectiveLang === 'en' ? ENGLISH_ANIMALS : HEBREW_ANIMALS;
+              return src.map(a => ({ id: a.id, type: 'animal', emoji: a.emoji, label: a.text, speakText: a.speak }));
+            }
+            // colors
+            const cSrc = effectiveLang === 'ar' ? ARABIC_COLORS : effectiveLang === 'en' ? ENGLISH_COLORS : HEBREW_COLORS;
+            return cSrc.map(c => ({
+              id: c.id,
+              type: 'color',
+              bg: c.bg,
+              label: c.text,
+              textColor: c.textColor,
+              border: c.border,
+              speakText: c.speak
+            }));
+          };
+
+          const initMemoryBoard = () => {
+            const pool = getPool();
+            const pairCount = Math.min(boardSize / 2, pool.length);
+            const selected = [...pool].sort(() => 0.5 - Math.random()).slice(0, pairCount);
+            const deck = [...selected, ...selected]
+              .map((item, idx) => ({ ...item, uid: `mem-${idx}-${Math.random().toString(36).slice(2, 6)}` }))
+              .sort(() => 0.5 - Math.random());
+
+            setCards(deck);
+            setFlippedIndices([]);
+            setMatchedIds([]);
+            setMoves(0);
+            setIsLocked(false);
+          };
+
+          useEffect(() => {
+            initMemoryBoard();
+          }, [topic, langKey, boardSize]);
+
+          const handleCardFlip = (idx) => {
+            if (isLocked) return;
+            if (flippedIndices.includes(idx)) return;
+            const card = cards[idx];
+            if (!card || matchedIds.includes(card.id)) return;
+
+            speak(card.speakText);
+            const nextFlipped = [...flippedIndices, idx];
+            setFlippedIndices(nextFlipped);
+
+            if (nextFlipped.length === 2) {
+              setMoves(m => m + 1);
+              setIsLocked(true);
+              const [firstIdx, secondIdx] = nextFlipped;
+              if (cards[firstIdx].id === cards[secondIdx].id) {
+                setTimeout(() => {
+                  setMatchedIds(prev => [...prev, cards[firstIdx].id]);
+                  setFlippedIndices([]);
+                  setIsLocked(false);
+                }, 650);
+              } else {
+                setTimeout(() => {
+                  setFlippedIndices([]);
+                  setIsLocked(false);
+                }, 1150);
+              }
+            }
+          };
+
+          const isComplete = cards.length > 0 && matchedIds.length === cards.length / 2;
+
+          return (
+            <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
+              <div className="flex flex-wrap items-center justify-center gap-2 mb-3">
+                {[
+                  { id: 'animals', label: '🐾 חיות' },
+                  { id: 'colors', label: '🎨 צבעים' },
+                  { id: 'numbers', label: '🔢 מספרים' },
+                  { id: 'letters', label: '🔠 אותיות' }
+                ].map(t => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setTopic(t.id)}
+                    className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${
+                      topic === t.id ? 'bg-orange-500 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+                {topic !== 'letters' && (
+                  <div className="flex gap-1.5 bg-gray-100 p-1 rounded-xl">
+                    {[
+                      { id: 'he', label: 'עברית' },
+                      { id: 'ar', label: 'ערבית' },
+                      { id: 'en', label: 'אנגלית' }
+                    ].map(l => (
+                      <button
+                        key={l.id}
+                        type="button"
+                        onClick={() => setLangKey(l.id)}
+                        className={`px-3 py-1.5 rounded-lg font-bold text-xs sm:text-sm transition-all ${
+                          langKey === l.id ? 'bg-white text-orange-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                      >
+                        {l.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex gap-1.5 bg-gray-100 p-1 rounded-xl">
+                  {[12, 16].map(sz => (
+                    <button
+                      key={sz}
+                      type="button"
+                      onClick={() => setBoardSize(sz)}
+                      className={`px-3 py-1.5 rounded-lg font-bold text-xs sm:text-sm transition-all ${
+                        boardSize === sz ? 'bg-white text-orange-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                      }`}
+                    >
+                      {sz} קלפים
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={initMemoryBoard}
+                  className="px-4 py-2 rounded-xl bg-orange-100 text-orange-700 font-bold text-xs sm:text-sm hover:bg-orange-200 transition-all"
+                >
+                  🔄 ערבב מחדש
+                </button>
+              </div>
+
+              {isComplete && (
+                <div className="mb-6 bg-green-50 border-4 border-green-300 rounded-3xl px-6 py-4 text-center animate-bounce">
+                  <div className="text-xl md:text-2xl font-black text-green-700">
+                    כל הכבוד! מצאתם את כל הזוגות ב-{moves} מהלכים! 🎉
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 md:gap-4 w-full max-w-xl">
+                {cards.map((card, idx) => {
+                  const isOpen = flippedIndices.includes(idx) || matchedIds.includes(card.id);
+                  const isMatched = matchedIds.includes(card.id);
+
                   return (
                     <button
-                      key={`rhyme-${currentIndex}-${i}-${opt.w}`}
-                      onClick={(e) => {
-                        if (e && e.currentTarget) e.currentTarget.blur();
-                        handleGuess(opt);
-                      }}
+                      key={card.uid}
+                      type="button"
+                      onClick={() => handleCardFlip(idx)}
                       className={`
-                        bg-white border-4 rounded-3xl p-4 flex flex-col items-center justify-center h-36 md:h-48 shadow-md hover:shadow-xl hover:scale-105 transition-all
-                        ${isCorrect ? 'border-green-400 bg-green-50 shadow-green-200' : 'border-gray-200'}
-                        ${isWrong ? 'opacity-50 scale-95 border-red-200' : ''}
+                        aspect-square rounded-2xl border-4 flex flex-col items-center justify-center p-2 transition-all duration-300 focus:outline-none
+                        ${isOpen
+                          ? isMatched
+                            ? 'bg-green-50 border-green-400 scale-95 shadow-sm'
+                            : 'bg-white border-orange-300 shadow-lg scale-105'
+                          : 'bg-gradient-to-br from-orange-400 to-amber-500 border-amber-200 text-white shadow-md hover:scale-105 cursor-pointer'
+                        }
                       `}
                     >
-                      <span className={`text-6xl md:text-7xl mb-3 ${isCorrect ? 'animate-bounce' : ''}`}>{opt.e}</span>
-                      <span className={`text-xl md:text-2xl font-bold ${isCorrect ? 'text-green-600' : 'text-gray-700'}`}>{opt.w}</span>
+                      {!isOpen ? (
+                        <span className="text-3xl md:text-4xl select-none">🌸</span>
+                      ) : card.type === 'color' ? (
+                        <div className="flex flex-col items-center justify-center gap-1.5">
+                          <div
+                            style={{ background: card.bg }}
+                            className={`w-10 h-10 md:w-14 md:h-14 rounded-full shadow-inner ${card.border ? 'border-2 border-gray-300' : ''}`}
+                          />
+                          <span className="text-xs md:text-sm font-black text-gray-700 text-center leading-tight">{card.label}</span>
+                        </div>
+                      ) : card.type === 'animal' ? (
+                        <div className="flex flex-col items-center justify-center">
+                          <span className="text-3xl md:text-5xl mb-1">{card.emoji}</span>
+                          <span className="text-xs md:text-sm font-black text-gray-700 text-center leading-tight">{card.label}</span>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center">
+                          <span className="text-3xl md:text-5xl font-black text-orange-600">{card.display}</span>
+                          {card.sub && <span className="text-[11px] md:text-xs font-bold text-gray-500 mt-1">{card.sub}</span>}
+                        </div>
+                      )}
                     </button>
                   );
                 })}
               </div>
-
-              <div className="flex gap-4 md:gap-8 w-full justify-center">
-                <button
-                  onClick={handlePrev}
-                  className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md bg-pink-100 text-pink-700 hover:bg-pink-200 hover:shadow-lg"
-                >
-                  הקודם
-                </button>
-                <button
-                  onClick={handleNext}
-                  className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md bg-pink-500 text-white hover:bg-pink-600 hover:shadow-lg"
-                >
-                  הבא
-                </button>
-              </div>
-
-              <div className="mt-8 text-pink-400 font-bold text-lg">
-                {currentIndex + 1} מתוך {shuffledData.length}
-              </div>
             </div>
           );
         };
 
-        // --- Starting Sounds Module ---
-        const StartingSoundsGame = () => {
-          const [shuffledData] = useState(() => [...STARTING_SOUNDS_DATA].sort(() => 0.5 - Math.random()));
-          const [currentIndex, setCurrentIndex] = useState(0);
-          const [options, setOptions] = useState([]);
-          const [feedback, setFeedback] = useState(null);
+        // --- War Card Game (משחק "מלחמה" בקלפים - סידור סמלים של קלפים אמיתיים) ---
+        const WAR_SUITS = [
+          { id: 'hearts', symbol: '♥', colorClass: 'text-rose-600' },
+          { id: 'diamonds', symbol: '♦', colorClass: 'text-rose-600' },
+          { id: 'spades', symbol: '♠', colorClass: 'text-slate-800' },
+          { id: 'clubs', symbol: '♣', colorClass: 'text-slate-800' }
+        ];
 
-          const [preferredVoice, setPreferredVoice] = useState(null);
-          const preferredVoiceRef = React.useRef(null);
-          const spokenIndexRef = React.useRef(-1);
+        const WAR_RANKS = [
+          { value: 2, label: '2', name: 'שתיים', speak: 'שְׁתַּיִם' },
+          { value: 3, label: '3', name: 'שלוש', speak: 'שָׁלוֹשׁ' },
+          { value: 4, label: '4', name: 'ארבע', speak: 'אַרְבַּע' },
+          { value: 5, label: '5', name: 'חמש', speak: 'חָמֵשׁ' },
+          { value: 6, label: '6', name: 'שש', speak: 'שֵׁשׁ' },
+          { value: 7, label: '7', name: 'שבע', speak: 'שֶׁבַע' },
+          { value: 8, label: '8', name: 'שמונה', speak: 'שְׁמוֹנֶה' },
+          { value: 9, label: '9', name: 'תשע', speak: 'תֵּשַׁע' },
+          { value: 10, label: '10', name: 'עשר', speak: 'עֶשֶׂר' },
+          { value: 11, label: 'J', royalIcon: '🤴', royalTitle: 'נסיך', speak: 'נָסִיךְ' },
+          { value: 12, label: 'Q', royalIcon: '👸', royalTitle: 'מלכה', speak: 'מַלְכָּה' },
+          { value: 13, label: 'K', royalIcon: '👑', royalTitle: 'מלך', speak: 'מֶלֶךְ' },
+          { value: 14, label: 'A', royalIcon: '⭐', royalTitle: 'אס', speak: 'אָס' }
+        ];
 
-          useEffect(() => { preferredVoiceRef.current = preferredVoice; }, [preferredVoice]);
+        // סידור סמלים קלאסי כמו בחפיסת קלפים אמיתית (כולל היפוך הסמלים בחצי התחתון)
+        const REAL_CARD_PIP_LAYOUTS = {
+          2: [
+            { x: 50, y: 18 },
+            { x: 50, y: 82, flip: true }
+          ],
+          3: [
+            { x: 50, y: 16 },
+            { x: 50, y: 50 },
+            { x: 50, y: 84, flip: true }
+          ],
+          4: [
+            { x: 28, y: 18 }, { x: 72, y: 18 },
+            { x: 28, y: 82, flip: true }, { x: 72, y: 82, flip: true }
+          ],
+          5: [
+            { x: 28, y: 18 }, { x: 72, y: 18 },
+            { x: 50, y: 50 },
+            { x: 28, y: 82, flip: true }, { x: 72, y: 82, flip: true }
+          ],
+          6: [
+            { x: 28, y: 18 }, { x: 72, y: 18 },
+            { x: 28, y: 50 }, { x: 72, y: 50 },
+            { x: 28, y: 82, flip: true }, { x: 72, y: 82, flip: true }
+          ],
+          7: [
+            { x: 28, y: 18 }, { x: 72, y: 18 },
+            { x: 50, y: 34 },
+            { x: 28, y: 50 }, { x: 72, y: 50 },
+            { x: 28, y: 82, flip: true }, { x: 72, y: 82, flip: true }
+          ],
+          8: [
+            { x: 28, y: 18 }, { x: 72, y: 18 },
+            { x: 50, y: 34 },
+            { x: 28, y: 50 }, { x: 72, y: 50 },
+            { x: 50, y: 66, flip: true },
+            { x: 28, y: 82, flip: true }, { x: 72, y: 82, flip: true }
+          ],
+          9: [
+            { x: 28, y: 14 }, { x: 72, y: 14 },
+            { x: 28, y: 38 }, { x: 72, y: 38 },
+            { x: 50, y: 50 },
+            { x: 28, y: 62, flip: true }, { x: 72, y: 62, flip: true },
+            { x: 28, y: 86, flip: true }, { x: 72, y: 86, flip: true }
+          ],
+          10: [
+            { x: 28, y: 14 }, { x: 72, y: 14 },
+            { x: 50, y: 26 },
+            { x: 28, y: 38 }, { x: 72, y: 38 },
+            { x: 28, y: 62, flip: true }, { x: 72, y: 62, flip: true },
+            { x: 50, y: 74, flip: true },
+            { x: 28, y: 86, flip: true }, { x: 72, y: 86, flip: true }
+          ]
+        };
+
+        const TOTAL_WAR_BATTLES = 15;
+
+        const WarCardGame = () => {
+          const [battles, setBattles] = useState([]);
+          const [battleIndex, setBattleIndex] = useState(0);
+          const [collectedCards, setCollectedCards] = useState(0);
+          const [feedback, setFeedback] = useState(''); // '' | 'correct' | 'wrong'
+          const [winnerSide, setWinnerSide] = useState(null); // 'right' | 'left' | null
+          const [wrongSide, setWrongSide] = useState(null); // 'right' | 'left' | null
+          const [isFinished, setIsFinished] = useState(false);
+
+          const speak = useSpeech('he-IL');
+          const timerRef = React.useRef(null);
+          const hasSpokenIntroRef = React.useRef(false);
+
+          const clearWarTimer = () => {
+            if (timerRef.current) {
+              clearTimeout(timerRef.current);
+              timerRef.current = null;
+            }
+          };
 
           useEffect(() => {
-            const initVoice = () => {
-              const availableVoices = window.speechSynthesis.getVoices();
-              if (availableVoices.length > 0) {
-                const langVoices = availableVoices.filter(v =>
-                  v.lang.startsWith('he') || v.lang.includes('iw') || v.name.includes('Hebrew') || v.name.includes('עברית')
-                );
-                const bestVoice = langVoices.find(v =>
-                  v.name.includes('Google') || v.name.includes('Natural') || v.name.toLowerCase().includes('female')
-                ) || langVoices[0];
-                if (bestVoice) setPreferredVoice(bestVoice);
-              }
-            };
-            initVoice();
-            if (window.speechSynthesis.onvoiceschanged !== undefined) {
-              window.speechSynthesis.onvoiceschanged = initVoice;
-            }
+            return () => clearWarTimer();
           }, []);
 
-          const speak = (text) => {
-            if ('speechSynthesis' in window) {
-              window.speechSynthesis.cancel();
-              setTimeout(() => {
-                const utterance = new SpeechSynthesisUtterance(text);
-                const voice = preferredVoiceRef.current;
-                utterance.lang = (voice && voice.lang.includes('iw')) ? 'iw-IL' : 'he-IL';
-                if (voice) utterance.voice = voice;
-                utterance.pitch = 1.3;
-                utterance.rate = 0.85;
-                window.speechSynthesis.speak(utterance);
-              }, 150);
+          const buildBattles = () => {
+            clearWarTimer();
+            const generated = [];
+            let lastKey = '';
+
+            for (let i = 0; i < TOTAL_WAR_BATTLES; i++) {
+              let r1 = WAR_RANKS[0];
+              let r2 = WAR_RANKS[1];
+              for (let attempt = 0; attempt < 30; attempt++) {
+                r1 = WAR_RANKS[Math.floor(Math.random() * WAR_RANKS.length)];
+                r2 = WAR_RANKS[Math.floor(Math.random() * WAR_RANKS.length)];
+                const key = `${r1.value}-${r2.value}`;
+                if (r1.value !== r2.value && key !== lastKey) {
+                  lastKey = key;
+                  break;
+                }
+              }
+              if (r1.value === r2.value) {
+                r2 = WAR_RANKS.find(r => r.value !== r1.value) || WAR_RANKS[0];
+              }
+
+              const s1 = WAR_SUITS[Math.floor(Math.random() * WAR_SUITS.length)];
+              const s2 = WAR_SUITS[Math.floor(Math.random() * WAR_SUITS.length)];
+
+              generated.push({
+                id: `war-round-${i}-${Math.random().toString(36).slice(2, 6)}`,
+                right: { rank: r1, suit: s1 },
+                left: { rank: r2, suit: s2 }
+              });
             }
-          };
 
-          const handleNext = () => {
-            setCurrentIndex((prev) => (prev + 1) % shuffledData.length);
+            setBattles(generated);
+            setBattleIndex(0);
+            setCollectedCards(0);
+            setFeedback('');
+            setWinnerSide(null);
+            setWrongSide(null);
+            setIsFinished(false);
           };
-
-          const handlePrev = () => {
-            setCurrentIndex((prev) => (prev - 1 + shuffledData.length) % shuffledData.length);
-          };
-
-          const current = shuffledData[currentIndex];
 
           useEffect(() => {
-            const choices = [current.match, ...current.distractors].sort(() => Math.random() - 0.5);
-            setOptions(choices);
-            setFeedback(null);
-          }, [currentIndex, current]);
+            buildBattles();
+          }, []);
 
           useEffect(() => {
-            if (spokenIndexRef.current !== currentIndex) {
-              spokenIndexRef.current = currentIndex;
-              setTimeout(() => {
-                speak(`מה מתחיל בְּ... ${current.soundSpeak}?`);
-              }, 600);
+            if (!hasSpokenIntroRef.current && battles.length > 0) {
+              hasSpokenIntroRef.current = true;
+              const t = setTimeout(() => speak('אֵיזֶה קְלָף מְנַצֵּחַ?'), 450);
+              return () => clearTimeout(t);
             }
-          }, [currentIndex, current]);
+          }, [battles, speak]);
 
-          const handleGuess = (item) => {
-            if (feedback === 'correct') return;
+          const currentBattle = battles[battleIndex];
 
-            speak(item.speak || item.w);
+          const handleSelectCard = (side, e) => {
+            if (e && e.currentTarget) e.currentTarget.blur();
+            if (!currentBattle || feedback === 'correct' || isFinished) return;
 
-            if (item.w === current.match.w) {
+            const chosen = side === 'right' ? currentBattle.right : currentBattle.left;
+            const other = side === 'right' ? currentBattle.left : currentBattle.right;
+
+            speak(chosen.rank.speak);
+
+            if (chosen.rank.value > other.rank.value) {
+              clearWarTimer();
+              setWrongSide(null);
+              setWinnerSide(side);
               setFeedback('correct');
-              setTimeout(() => {
-                handleNext();
-              }, 1500);
+              setCollectedCards(prev => prev + 2);
+
+              timerRef.current = setTimeout(() => {
+                if (battleIndex + 1 >= battles.length) {
+                  setIsFinished(true);
+                  speak('כל הכבוד! ניצחתם בכל הקלפים!');
+                } else {
+                  setBattleIndex(prev => prev + 1);
+                  setFeedback('');
+                  setWinnerSide(null);
+                  setWrongSide(null);
+                }
+              }, 1350);
             } else {
+              setWrongSide(side);
               setFeedback('wrong');
-              setTimeout(() => {
+              clearWarTimer();
+              timerRef.current = setTimeout(() => {
                 speak('נַסּוּ שׁוּב');
-              }, 800);
+              }, 750);
             }
           };
+
+          const renderPlayingCard = (side, cardData) => {
+            const isWinner = winnerSide === side;
+            const isLoser = winnerSide !== null && winnerSide !== side;
+            const isWrong = wrongSide === side && feedback === 'wrong';
+            const { rank, suit } = cardData;
+            const isAce = rank.value === 14;
+            const isCourtCard = rank.value >= 11 && rank.value <= 13;
+            const pipCoords = REAL_CARD_PIP_LAYOUTS[rank.value] || [];
+
+            const pipSizeClass =
+              rank.value <= 3
+                ? 'text-2xl sm:text-4xl md:text-[42px]'
+                : rank.value <= 6
+                  ? 'text-xl sm:text-3xl md:text-4xl'
+                  : rank.value <= 8
+                    ? 'text-lg sm:text-2xl md:text-3xl'
+                    : 'text-base sm:text-xl md:text-2xl';
+
+            return (
+              <div className="relative flex flex-col items-center">
+                {/* כתר מעל הקלף המנצח */}
+                <div className="h-9 flex items-center justify-center mb-1">
+                  {isWinner && <span className="text-3xl sm:text-4xl animate-bounce">👑</span>}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={(e) => handleSelectCard(side, e)}
+                  dir="ltr"
+                  className={`
+                    relative w-[138px] h-[200px] sm:w-48 sm:h-[272px] md:w-56 md:h-80 bg-white rounded-2xl sm:rounded-3xl
+                    transition-all duration-300 focus:outline-none select-none cursor-pointer overflow-hidden
+                    ${isWinner
+                      ? 'border-4 border-green-400 ring-4 ring-green-200 shadow-2xl scale-105 bg-green-50/20'
+                      : isWrong
+                        ? 'border-4 border-red-300 opacity-75 scale-95 shadow-md'
+                        : isLoser
+                          ? 'border-4 border-gray-200 opacity-60 scale-95 shadow-sm'
+                          : 'border-2 sm:border-4 border-slate-200 hover:border-orange-400 shadow-lg hover:shadow-2xl hover:-translate-y-2'
+                    }
+                  `}
+                >
+                  {/* אינדקס פינה שמאלית-עליונה */}
+                  <div className={`absolute top-2 left-2 sm:top-3 sm:left-3 flex flex-col items-center leading-none ${suit.colorClass}`}>
+                    <span className="text-base sm:text-2xl md:text-[26px] font-black tracking-tighter">{rank.label}</span>
+                    <span className="text-xs sm:text-lg md:text-xl leading-none mt-0.5">{suit.symbol}</span>
+                  </div>
+
+                  {/* אינדקס פינה ימנית-תחתונה (הפוך כמו בקלף אמיתי) */}
+                  <div className={`absolute bottom-2 right-2 sm:bottom-3 sm:right-3 flex flex-col items-center leading-none rotate-180 ${suit.colorClass}`}>
+                    <span className="text-base sm:text-2xl md:text-[26px] font-black tracking-tighter">{rank.label}</span>
+                    <span className="text-xs sm:text-lg md:text-xl leading-none mt-0.5">{suit.symbol}</span>
+                  </div>
+
+                  {/* אזור מרכז הקלף */}
+                  {isAce ? (
+                    <div className="absolute inset-6 sm:inset-9 md:inset-11 flex flex-col items-center justify-center">
+                      <span className={`text-6xl sm:text-8xl md:text-9xl leading-none ${suit.colorClass} drop-shadow-sm`}>
+                        {suit.symbol}
+                      </span>
+                    </div>
+                  ) : isCourtCard ? (
+                    <div className="absolute inset-x-7 inset-y-6 sm:inset-x-10 sm:inset-y-8 md:inset-x-12 md:inset-y-9 rounded-xl border-2 border-amber-300/80 bg-gradient-to-b from-amber-50/70 via-white to-amber-50/70 flex flex-col items-center justify-center p-1">
+                      <span className={`text-sm sm:text-lg ${suit.colorClass} opacity-80 mb-0.5`}>{suit.symbol}</span>
+                      <span className="text-4xl sm:text-6xl md:text-7xl leading-none my-0.5">{rank.royalIcon}</span>
+                      <span dir="rtl" className="text-[11px] sm:text-sm md:text-base font-black text-slate-700 mt-1">
+                        {rank.royalTitle}
+                      </span>
+                    </div>
+                  ) : (
+                    /* פריסת הסמלים המדויקת לקלפי מספרים 2 עד 10 */
+                    <div className="absolute inset-x-6 inset-y-4 sm:inset-x-9 sm:inset-y-6 md:inset-x-11 md:inset-y-7">
+                      {pipCoords.map((pt, idx) => (
+                        <span
+                          key={idx}
+                          style={{
+                            left: `${pt.x}%`,
+                            top: `${pt.y}%`,
+                            transform: `translate(-50%, -50%)${pt.flip ? ' rotate(180deg)' : ''}`
+                          }}
+                          className={`absolute leading-none ${suit.colorClass} ${pipSizeClass}`}
+                        >
+                          {suit.symbol}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </button>
+              </div>
+            );
+          };
+
+          if (!currentBattle) return null;
 
           return (
             <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
-              {/* Target Area */}
-              <div
-                className="bg-pink-100 border-4 border-pink-300 rounded-3xl p-6 flex flex-col items-center shadow-lg w-56 h-64 md:w-64 justify-center mb-10 cursor-pointer transform hover:scale-105 transition-transform"
-                onClick={() => speak(`מה מתחיל בְּ... ${current.soundSpeak}?`)}
-              >
-                <span className="text-xl md:text-2xl font-bold text-pink-500 mb-2 text-center">מה מתחיל ב-</span>
-                <span className="text-7xl md:text-8xl mb-4 font-black text-pink-700 leading-none">{current.soundDisplay}</span>
-                <div className="bg-pink-200 text-pink-600 px-4 py-2 rounded-full font-bold flex items-center gap-2 mt-2">
-                  <Volume2Icon /> שמע שוב
+              {/* סרגל עליון: השמעת ההוראה, ניקוד וחפיסה חדשה */}
+              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-4">
+                <button
+                  type="button"
+                  onClick={() => speak('אֵיזֶה קְלָף מְנַצֵּחַ?')}
+                  className="bg-orange-100 hover:bg-orange-200 text-orange-800 px-6 py-2.5 rounded-full font-bold text-lg md:text-xl flex items-center gap-2 shadow-sm transition-all"
+                >
+                  <Volume2Icon /> איזה קלף מנצח?
+                </button>
+
+                <div className="bg-amber-50 border-2 border-amber-200 px-4 py-2 rounded-full font-black text-amber-800 text-sm md:text-base flex items-center gap-2">
+                  <span>🎴 קלפים שזכיתם:</span>
+                  <span className="text-orange-600 text-lg">{collectedCards}</span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={buildBattles}
+                  className="px-4 py-2.5 rounded-full bg-gray-100 text-gray-700 font-bold text-sm hover:bg-gray-200 transition-all"
+                >
+                  🔄 חפיסה חדשה
+                </button>
+              </div>
+
+              {/* חיווי הצלחה / ניסיון חוזר */}
+              <div className="h-8 mb-2 flex items-center justify-center">
+                {feedback === 'correct' && !isFinished && (
+                  <div className="text-xl sm:text-2xl font-black text-green-600 animate-bounce">
+                    נכון מאוד! הקלף החזק מנצח! 🎉
+                  </div>
+                )}
+                {feedback === 'wrong' && (
+                  <div className="text-lg sm:text-xl font-bold text-red-500 animate-pulse">
+                    נסו שוב! איזה קלף חזק יותר? 💪
+                  </div>
+                )}
+              </div>
+
+              {isFinished ? (
+                <div className="flex flex-col items-center gap-4 bg-amber-50 border-4 border-amber-300 rounded-3xl px-8 py-8 shadow-md animate-fade-in-up mt-4">
+                  <div className="text-5xl">👑🎴🎉</div>
+                  <div className="text-2xl md:text-3xl font-black text-amber-800 text-center">
+                    כל הכבוד! אספתם את כל {collectedCards} הקלפים בחפיסה!
+                  </div>
+                  <button
+                    type="button"
+                    onClick={buildBattles}
+                    className="bg-orange-500 hover:bg-orange-600 text-white font-black text-xl px-8 py-3.5 rounded-full shadow-lg transition-all"
+                  >
+                    שחקו שוב 🔄
+                  </button>
+                </div>
+              ) : (
+                <>
+                  {/* שני הקלפים זה מול זה */}
+                  <div key={currentBattle.id} className="flex flex-row items-center justify-center gap-3 sm:gap-8 md:gap-12 my-2 animate-fade-in-up">
+                    {renderPlayingCard('right', currentBattle.right)}
+                    <div className="text-2xl sm:text-4xl font-black text-orange-400 select-none mt-8">⚡</div>
+                    {renderPlayingCard('left', currentBattle.left)}
+                  </div>
+
+                  <div className="mt-6 text-orange-400 font-bold text-base md:text-lg">
+                    סיבוב {battleIndex + 1} מתוך {battles.length}
+                  </div>
+                </>
+              )}
+            </div>
+          );
+        };
+
+        // --- Sherlock (FoxMind) Detective Memory Game ---
+        const PipeIconSVG = ({ className = "w-8 h-8" }) => (
+          <svg viewBox="0 0 64 64" className={className}>
+            <path
+              d="M12 24 H28 V38 C28 43, 33 45, 40 42 C46 39, 51 31, 54 22 L59 24 C55 37, 48 48, 36 51 C22 54, 12 46, 12 34 Z"
+              fill="#92400E"
+              stroke="#451A03"
+              strokeWidth="2.5"
+              strokeLinejoin="round"
+            />
+            <rect x="10" y="20" width="20" height="6" rx="2" fill="#B45309" stroke="#451A03" strokeWidth="2" />
+            <path d="M53 23 L60 17 L62 20 L56 26 Z" fill="#1F2937" />
+          </svg>
+        );
+
+        const SHERLOCK_ITEMS = [
+          { id: 'magnifier', name: 'זכוכית מגדלת', speak: 'זְכוּכִית מַגְדֶּלֶת', emoji: '🔍' },
+          { id: 'pipe', name: 'מקטרת', speak: 'מִקְטֶרֶת', isPipe: true },
+          { id: 'hat', name: 'כובע', speak: 'כּוֹבַע', emoji: '🎩' },
+          { id: 'book', name: 'ספר', speak: 'סֵפֶר', emoji: '📖' },
+          { id: 'watch', name: 'שעון', speak: 'שָׁעוֹן', emoji: '⌚' },
+          { id: 'key', name: 'מפתח', speak: 'מַפְתֵּחַ', emoji: '🔑' },
+          { id: 'flashlight', name: 'פנס', speak: 'פָּנָס', emoji: '🔦' },
+          { id: 'compass', name: 'מצפן', speak: 'מַצְפֵּן', emoji: '🧭' },
+          { id: 'glasses', name: 'משקפיים', speak: 'מִשְׁקָפַיִם', emoji: '👓' },
+          { id: 'camera', name: 'מצלמה', speak: 'מַצְלֵמָה', emoji: '📷' },
+          { id: 'umbrella', name: 'מטריה', speak: 'מִטְרִיָּה', emoji: '☂️' },
+          { id: 'phone', name: 'טלפון', speak: 'טֵלֵפוֹן', emoji: '☎️' },
+          { id: 'bell', name: 'פעמון', speak: 'פַּעֲמוֹן', emoji: '🔔' },
+          { id: 'candle', name: 'נר', speak: 'נֵר', emoji: '🕯️' },
+          { id: 'diamond', name: 'יהלום', speak: 'יַהֲלוֹם', emoji: '💎' },
+          { id: 'crown', name: 'כתר', speak: 'כֶּתֶר', emoji: '👑' },
+          { id: 'backpack', name: 'תיק', speak: 'תִּיק', emoji: '🎒' },
+          { id: 'lock', name: 'מנעול', speak: 'מַנְעוּל', emoji: '🔒' },
+          { id: 'scissors', name: 'מספריים', speak: 'מִסְפָּרַיִם', emoji: '✂️' },
+          { id: 'pencil', name: 'עיפרון', speak: 'עִפָּרוֹן', emoji: '✏️' },
+          { id: 'envelope', name: 'מעטפה', speak: 'מַעֲטָפָה', emoji: '✉️' },
+          { id: 'trophy', name: 'גביע', speak: 'גָּבִיעַ', emoji: '🏆' },
+          { id: 'guitar', name: 'גיטרה', speak: 'גִּיטָרָה', emoji: '🎸' },
+          { id: 'drum', name: 'תוף', speak: 'תֹּף', emoji: '🥁' },
+          { id: 'ball', name: 'כדור', speak: 'כַּדּוּר', emoji: '⚽' },
+          { id: 'balloon', name: 'בלון', speak: 'בָּלוֹן', emoji: '🎈' },
+          { id: 'gift', name: 'מתנה', speak: 'מַתָּנָה', emoji: '🎁' },
+          { id: 'apple', name: 'תפוח', speak: 'תַּפּוּחַ', emoji: '🍎' },
+          { id: 'banana', name: 'בננה', speak: 'בָּנָנָה', emoji: '🍌' },
+          { id: 'strawberry', name: 'תות', speak: 'תּוּת', emoji: '🍓' },
+          { id: 'icecream', name: 'גלידה', speak: 'גְּלִידָה', emoji: '🍦' },
+          { id: 'cake', name: 'עוגה', speak: 'עוּגָה', emoji: '🎂' },
+          { id: 'flower', name: 'פרח', speak: 'פֶּרַח', emoji: '🌻' },
+          { id: 'tree', name: 'עץ', speak: 'עֵץ', emoji: '🌳' },
+          { id: 'sun', name: 'שמש', speak: 'שֶׁמֶשׁ', emoji: '☀️' },
+          { id: 'moon', name: 'ירח', speak: 'יָרֵחַ', emoji: '🌙' },
+          { id: 'star', name: 'כוכב', speak: 'כּוֹכָב', emoji: '⭐' },
+          { id: 'car', name: 'מכונית', speak: 'מְכוֹנִית', emoji: '🚗' },
+          { id: 'train', name: 'רכבת', speak: 'רַכֶּבֶת', emoji: '🚂' },
+          { id: 'airplane', name: 'מטוס', speak: 'מָטוֹס', emoji: '✈️' },
+          { id: 'boat', name: 'סירה', speak: 'סִירָה', emoji: '⛵' },
+          { id: 'bicycle', name: 'אופניים', speak: 'אוֹפַנַּיִם', emoji: '🚲' },
+          { id: 'cat', name: 'חתול', speak: 'חָתוּל', emoji: '🐱' },
+          { id: 'dog', name: 'כלב', speak: 'כֶּלֶב', emoji: '🐶' },
+          { id: 'lion', name: 'אריה', speak: 'אַרְיֵה', emoji: '🦁' },
+          { id: 'elephant', name: 'פיל', speak: 'פִּיל', emoji: '🐘' },
+          { id: 'butterfly', name: 'פרפר', speak: 'פַּרְפַּר', emoji: '🦋' },
+          { id: 'fish', name: 'דג', speak: 'דָּג', emoji: '🐟' },
+          { id: 'bird', name: 'ציפור', speak: 'צִפּוֹר', emoji: '🐦' }
+        ];
+
+        const DirectionArrowSVG = ({ angleDeg = 0, className = "w-3.5 h-3.5" }) => (
+          <svg
+            viewBox="0 0 24 24"
+            style={{ transform: `rotate(${angleDeg}deg)` }}
+            className={`${className} shrink-0 transition-transform`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <polyline points="13 5 20 12 13 19" />
+          </svg>
+        );
+
+        const renderSherlockItemIcon = (item, size = 'md') => {
+          if (item.isPipe) {
+            const cls = size === 'sm' ? 'w-6 h-6' : size === 'lg' ? 'w-11 h-11 md:w-12 md:h-12' : 'w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9';
+            return <PipeIconSVG className={cls} />;
+          }
+          const textCls = size === 'sm' ? 'text-xl' : size === 'lg' ? 'text-4xl md:text-5xl' : 'text-xl sm:text-2xl md:text-3xl';
+          return <span className={`${textCls} leading-none select-none`}>{item.emoji}</span>;
+        };
+
+        const createSherlockDeck = () => {
+          // 49 unique cards: each item appears once (no duplicates anywhere in the deck)
+          const shuffledItems = [...SHERLOCK_ITEMS].sort(() => Math.random() - 0.5);
+          const stepPool = Array.from({ length: shuffledItems.length }, (_, idx) => (idx % 5) + 1).sort(() => Math.random() - 0.5);
+          const dirPool = Array.from({ length: shuffledItems.length }, (_, idx) => (idx % 2 === 0 ? 1 : -1)).sort(() => Math.random() - 0.5);
+
+          return shuffledItems.map((item, idx) => ({
+            uid: `sherlock-card-${item.id}-${idx}`,
+            item,
+            steps: stepPool[idx],
+            dir: dirPool[idx], // 1 = עם כיוון השעון, -1 = נגד כיוון השעון
+            isRevealed: false
+          }));
+        };
+
+        const SherlockGame = () => {
+          const [voiceEnabled, setVoiceEnabled] = useState(true);
+          const [showRules, setShowRules] = useState(false);
+
+          const [circle, setCircle] = useState([]); // 8 unique cards around the ring
+          const [deck, setDeck] = useState([]); // remaining 41 unique cards
+          const [choiceItems, setChoiceItems] = useState([]); // 8 current circle items in stable shuffled order
+          const [sherlockPos, setSherlockPos] = useState(0);
+          const [wonCards, setWonCards] = useState([]); // collected cards
+          const [phase, setPhase] = useState('memorize');
+          // Phases: 'memorize' | 'guessing' | 'pick_target' | 'moving' | 'wrong_reveal' | 'won_card' | 'game_over'
+          const [promptText, setPromptText] = useState('');
+          const [wrongGuessChoiceId, setWrongGuessChoiceId] = useState(null);
+          const [expectedTargetPos, setExpectedTargetPos] = useState(null);
+          const [wrongTargetPos, setWrongTargetPos] = useState(null);
+          const [newCardPos, setNewCardPos] = useState(null);
+          const [turnId, setTurnId] = useState(0);
+
+          const speak = useSpeech('he-IL');
+          const timersRef = React.useRef([]);
+          const voiceEnabledRef = React.useRef(voiceEnabled);
+
+          useEffect(() => {
+            voiceEnabledRef.current = voiceEnabled;
+            if (!voiceEnabled && 'speechSynthesis' in window) {
+              window.speechSynthesis.cancel();
+            }
+          }, [voiceEnabled]);
+
+          const say = React.useCallback((text) => {
+            if (voiceEnabledRef.current) {
+              speak(text);
+            }
+          }, [speak]);
+
+          const clearAllTimers = () => {
+            timersRef.current.forEach(id => clearTimeout(id));
+            timersRef.current = [];
+          };
+
+          const schedule = (fn, delay) => {
+            const id = setTimeout(fn, delay);
+            timersRef.current.push(id);
+            return id;
+          };
+
+          useEffect(() => {
+            return () => clearAllTimers();
+          }, []);
+
+          const refreshChoicesForCircle = (circleCards) => {
+            const items = circleCards.map(c => c.item).sort(() => Math.random() - 0.5);
+            setChoiceItems(items);
+          };
+
+          const clearActiveFocus = () => {
+            if (document.activeElement instanceof HTMLElement) {
+              document.activeElement.blur();
+            }
+          };
+
+          const initGame = () => {
+            clearAllTimers();
+            clearActiveFocus();
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
+            const fullDeck = createSherlockDeck();
+            const initialCircle = fullDeck.slice(0, 8).map(c => ({
+              ...c,
+              isRevealed: true
+            }));
+            const remainingDeck = fullDeck.slice(8);
+
+            setCircle(initialCircle);
+            setDeck(remainingDeck);
+            refreshChoicesForCircle(initialCircle);
+            setSherlockPos(0);
+            setWonCards([]);
+            setWrongGuessChoiceId(null);
+            setExpectedTargetPos(null);
+            setWrongTargetPos(null);
+            setNewCardPos(null);
+            setTurnId(prev => prev + 1);
+            setPhase('memorize');
+            setPromptText('הביטו היטב ב-8 החפצים במעגל ונסו לזכור איפה כל אחד מסתתר! כשאתם מוכנים לחצו על "התחלה".');
+            say('נסו לזכור איפה כל חפץ מסתתר, וכשאתם מוכנים לחצו על התחלה');
+          };
+
+          useEffect(() => {
+            initGame();
+          }, []);
+
+          const handleFlipCardsToStart = (e) => {
+            if (e && e.currentTarget) e.currentTarget.blur();
+            clearActiveFocus();
+            if (phase !== 'memorize') return;
+            clearAllTimers();
+
+            const wasSingleNewCard = newCardPos !== null;
+            setCircle(prev => prev.map(c => ({ ...c, isRevealed: false })));
+            setNewCardPos(null);
+            setTurnId(prev => prev + 1);
+            setPhase('guessing');
+            setPromptText(
+              wasSingleNewCard
+                ? 'הקלף החדש התהפך! איזה חפץ מסתתר כעת בקלף שליד שרלוק?'
+                : 'הקלפים התהפכו! איזה חפץ מסתתר בקלף שליד שרלוק?'
+            );
+            say('איזה חפץ מסתתר כאן?');
+          };
+
+          const finishGame = (finalWonCards) => {
+            clearAllTimers();
+            clearActiveFocus();
+            setPromptText(`החקירה הסתיימה! סיימתם את כל הקופה ואספתם ${finalWonCards.length} קלפים!`);
+            say('כל הכבוד! סיימתם את כל הקופה!');
+            setPhase('game_over');
+          };
+
+          // Animate Sherlock walking `steps` in direction `dir` (1 = clockwise, -1 = counter-clockwise)
+          const walkSherlock = (startPos, steps, dir, currentCircle, currentDeck, currentWon) => {
+            clearAllTimers();
+            clearActiveFocus();
+            setPhase('moving');
+            setWrongGuessChoiceId(null);
+            setWrongTargetPos(null);
+            const dirLabel = dir === 1 ? 'עם כיוון השעון' : 'נגד כיוון השעון';
+            setPromptText(`מצוין! שרלוק צועד ${steps} צעדים ${dirLabel}...`);
+
+            for (let s = 1; s <= steps; s++) {
+              schedule(() => {
+                const nextIdx = (startPos + s * dir + 80) % 8;
+                setSherlockPos(nextIdx);
+
+                if (s === steps) {
+                  schedule(() => {
+                    const landedCard = currentCircle[nextIdx];
+                    if (landedCard.isRevealed) {
+                      handleLandOnRevealedCard(nextIdx, landedCard, currentCircle, currentDeck, currentWon);
+                    } else {
+                      setTurnId(prev => prev + 1);
+                      setPhase('guessing');
+                      setPromptText('איזה חפץ מסתתר בקלף שליד שרלוק?');
+                      say('איזה חפץ מסתתר כאן?');
+                    }
+                  }, 320);
+                }
+              }, s * 360);
+            }
+          };
+
+          const handleLandOnRevealedCard = (pos, wonCard, currentCircle, currentDeck, currentWon) => {
+            const nextWon = [...currentWon, wonCard];
+            setWonCards(nextWon);
+            setPhase('won_card');
+
+            if (currentDeck.length === 0) {
+              setPromptText('בינגו! שרלוק עצר ליד קלף גלוי – זכיתם בקלף והקופה הסתיימה!');
+              say('בינגו! זכית בקלף!');
+              schedule(() => {
+                finishGame(nextWon);
+              }, 1500);
+              return;
+            }
+
+            setPromptText('בינגו! שרלוק עצר ליד קלף גלוי – זכיתם בקלף! מיד נניח קלף חדש מהקופה.');
+            say('בינגו! זכית בקלף!');
+
+            schedule(() => {
+              // מציגים את הקלף החדש גלוי במקומו במעגל כדי שהילד ישנן אותו וילחץ על התחלה כמו בסבב הראשון
+              const replacementCard = { ...currentDeck[0], isRevealed: true };
+              const updatedDeck = currentDeck.slice(1);
+              const updatedCircle = currentCircle.map((c, idx) =>
+                idx === pos ? replacementCard : { ...c, isRevealed: false }
+              );
+              const nextStartPos = (pos + 1) % 8;
+
+              setCircle(updatedCircle);
+              setDeck(updatedDeck);
+              refreshChoicesForCircle(updatedCircle);
+              setSherlockPos(nextStartPos);
+              setNewCardPos(pos);
+              setTurnId(prev => prev + 1);
+              setPhase('memorize');
+              setPromptText(`קלף חדש הונח במעגל: ${replacementCard.item.name}! שננו את מיקומו וכשאתם מוכנים לחצו על "התחלה".`);
+              say(`קלף חדש במעגל: ${replacementCard.item.speak}. זכרו איפה הוא נמצא ולחצו על התחלה`);
+            }, 1500);
+          };
+
+          const handleGuessObject = (guessedItem, e) => {
+            if (e && e.currentTarget) e.currentTarget.blur();
+            clearActiveFocus();
+            if (phase !== 'guessing') return;
+
+            const targetCard = circle[sherlockPos];
+            if (!targetCard) return;
+
+            const revealedCircle = circle.map((c, idx) =>
+              idx === sherlockPos ? { ...c, isRevealed: true } : c
+            );
+            setCircle(revealedCircle);
+
+            if (guessedItem.id === targetCard.item.id) {
+              const nextSteps = targetCard.steps;
+              const nextDir = targetCard.dir;
+              const dirText = nextDir === 1 ? 'עם כיוון השעון' : 'נגד כיוון השעון';
+              const targetIdx = (sherlockPos + nextSteps * nextDir + 80) % 8;
+              const stepSpokenMap = {
+                1: 'צַעַד אֶחָד',
+                2: 'שְׁנֵי צְעָדִים',
+                3: 'שְׁלוֹשָׁה צְעָדִים',
+                4: 'אַרְבָּעָה צְעָדִים',
+                5: 'חֲמִישָּׁה צְעָדִים'
+              };
+
+              setExpectedTargetPos(targetIdx);
+              setWrongTargetPos(null);
+              setTurnId(prev => prev + 1);
+              setPhase('pick_target');
+              setPromptText(`פגיעה מדויקת! בקלף מופיע המספר ${nextSteps} (${dirText}) – לחצו על הקלף במעגל שאליו שרלוק צריך להגיע!`);
+              say(`פגיעה מדויקת! ספרו ${stepSpokenMap[nextSteps]} בכיוון החץ ולחצו על הקלף הנכון`);
+            } else {
+              setWrongGuessChoiceId(guessedItem.id);
+              setPhase('wrong_reveal');
+              setPromptText(`לא הפעם! זכרו שכאן מסתתר ${targetCard.item.name} להמשך.`);
+              say(`לא הפעם, כאן מסתתר ${targetCard.item.speak}`);
+
+              schedule(() => {
+                const flippedBackCircle = revealedCircle.map(c => ({ ...c, isRevealed: false }));
+                const nextPos = (sherlockPos + 1) % 8;
+                clearActiveFocus();
+                setCircle(flippedBackCircle);
+                setSherlockPos(nextPos);
+                setWrongGuessChoiceId(null);
+                setTurnId(prev => prev + 1);
+                setPhase('guessing');
+                setPromptText('הקלפים התהפכו חזרה ושרלוק עבר לקלף הבא – איזה חפץ מסתתר כאן?');
+              }, 2400);
+            }
+          };
+
+          const handleSelectTargetCard = (clickedIdx, e) => {
+            if (e && e.currentTarget) e.currentTarget.blur();
+            clearActiveFocus();
+            if (phase !== 'pick_target' || expectedTargetPos === null) return;
+            if (clickedIdx === sherlockPos) return;
+
+            const currentCard = circle[sherlockPos];
+            if (!currentCard) return;
+
+            if (clickedIdx === expectedTargetPos) {
+              setWrongTargetPos(null);
+              setExpectedTargetPos(null);
+              say('מצוין!');
+              walkSherlock(sherlockPos, currentCard.steps, currentCard.dir, circle, deck, wonCards);
+            } else {
+              setWrongTargetPos(clickedIdx);
+              const dirText = currentCard.dir === 1 ? 'עם כיוון השעון' : 'נגד כיוון השעון';
+              setPromptText(`לא הקלף הזה... ספרו שוב ${currentCard.steps} צעדים ${dirText} מהקלף של שרלוק ולחצו על הקלף הנכון!`);
+              say('נסו לספור שוב בכיוון החץ');
+            }
+          };
+
+          // Compute circular coordinates for the 8 cards and for Sherlock's pawn
+          const getCircleCoords = (idx, radiusPct) => {
+            const angleRad = ((idx * 45) - 90) * (Math.PI / 180);
+            return {
+              left: `${50 + radiusPct * Math.cos(angleRad)}%`,
+              top: `${50 + radiusPct * Math.sin(angleRad)}%`
+            };
+          };
+
+          // Tangent angle along the ring so the arrow inside each card physically points in Sherlock's travel direction
+          const getCardArrowAngle = (idx, dir) => {
+            return dir === 1 ? idx * 45 : idx * 45 + 180;
+          };
+
+          const sherlockBadgeCoords = getCircleCoords(sherlockPos, 21);
+
+          return (
+            <div className="flex flex-col items-center w-full max-w-4xl mx-auto select-none">
+              {/* סרגל פעולות עליון נקי */}
+              <div className="flex flex-wrap items-center justify-center gap-3 mb-4 w-full">
+                <button
+                  type="button"
+                  onClick={() => setVoiceEnabled(v => !v)}
+                  className={`px-4 py-2 rounded-2xl font-bold text-sm border-2 transition-all ${voiceEnabled ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-gray-100 border-gray-200 text-gray-400'}`}
+                >
+                  {voiceEnabled ? '🔊 קול פעיל' : '🔇 מושתק'}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowRules(r => !r)}
+                  className="px-4 py-2 rounded-2xl bg-sky-50 border-2 border-sky-200 text-sky-700 font-bold text-sm hover:bg-sky-100 transition-all"
+                >
+                  ❓ הוראות
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => initGame()}
+                  className="px-4 py-2 rounded-2xl bg-orange-100 text-orange-700 font-bold text-sm hover:bg-orange-200 transition-all"
+                >
+                  🔄 משחק חדש
+                </button>
+              </div>
+
+              {/* חלונית הסבר חוקים מתקפלת */}
+              {showRules && (
+                <div className="w-full max-w-2xl mb-4 bg-sky-50 border-2 border-sky-200 rounded-3xl p-4 text-sm md:text-base text-gray-700 leading-relaxed shadow-sm">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-black text-sky-800 text-lg">🕵️‍♂️ איך משחקים בשרלוק?</span>
+                    <button type="button" onClick={() => setShowRules(false)} className="text-sky-600 font-bold px-2 py-0.5 rounded-lg hover:bg-sky-100">סגור ✕</button>
+                  </div>
+                  <ul className="list-disc pr-5 space-y-1">
+                    <li>בחפיסה 49 קלפים ייחודיים ללא כפילויות: 8 מונחים במעגל ו-41 בקופה המרכזית.</li>
+                    <li>בתחילת המשחק מתבוננים ב-8 החפצים הגלויים במעגל וזוכרים אותם, ואז לוחצים על <strong>"התחלה"</strong> כדי להפוך את הקלפים.</li>
+                    <li>מנחשים איזה חפץ מסתתר בקלף ההפוך שלידו שרלוק עומד.</li>
+                    <li>צדקתם? הקלף נפתח וחושף <strong>מספר וחץ כיוון</strong> – ספרו את הצעדים בכיוון החץ <strong>ולחצו בעצמכם על הקלף שאליו שרלוק צריך להגיע</strong>! טעיתם בחפץ? רואים מה הסתתר בקלף, והקלפים מתהפכים חזרה.</li>
+                    <li>הגעתם ליד <strong>קלף שכבר גלוי</strong>? <strong>בינגו!</strong> זכיתם בקלף! קלף חדש מהקופה יוצג גלוי במקומו כדי שתוכלו לשנן גם אותו וללחוץ שוב על <strong>"התחלה"</strong> להמשך המשחק.</li>
+                  </ul>
+                </div>
+              )}
+
+              {/* לוח ניקוד של הבלש היחיד */}
+              <div className="w-full max-w-md mb-4 rounded-2xl p-3 bg-amber-50 border-4 border-orange-300 shadow-sm flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-3xl">🕵️‍♂️</span>
+                  <div>
+                    <div className="font-black text-gray-800 text-base">הבלש שרלוק</div>
+                    <div className="flex flex-wrap gap-1 mt-1 min-h-[22px]">
+                      {wonCards.slice(-8).map((c, cIdx) => (
+                        <span key={cIdx} className="inline-flex items-center justify-center bg-white rounded-md p-0.5 shadow-sm border border-amber-100">
+                          {renderSherlockItemIcon(c.item, 'sm')}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-center bg-white px-4 py-1.5 rounded-xl border border-amber-200 shadow-sm shrink-0">
+                  <div className="text-2xl font-black text-orange-600 leading-none">{wonCards.length}</div>
+                  <div className="text-xs font-bold text-gray-500">קלפים שנאספו</div>
                 </div>
               </div>
 
-              {/* Options Grid */}
-              <div className="grid grid-cols-2 gap-4 md:gap-8 w-full max-w-lg mb-10">
-                {options.map((opt, i) => {
-                  const isCorrect = feedback === 'correct' && opt.w === current.match.w;
-                  const isWrong = feedback === 'wrong' && opt.w !== current.match.w;
+              {/* בועת הנחיה והודעות מערכת */}
+              <div
+                className={`w-full max-w-2xl mb-5 px-5 py-3 rounded-2xl border-2 text-center font-bold text-base md:text-lg shadow-sm transition-all ${
+                  phase === 'pick_target' && wrongTargetPos !== null
+                    ? 'bg-orange-50 border-orange-300 text-orange-800'
+                    : phase === 'pick_target' || phase === 'won_card'
+                      ? 'bg-green-50 border-green-300 text-green-800'
+                      : phase === 'wrong_reveal'
+                        ? 'bg-red-50 border-red-200 text-red-700'
+                        : phase === 'game_over'
+                          ? 'bg-amber-100 border-amber-400 text-amber-900 text-xl'
+                          : 'bg-indigo-50 border-indigo-200 text-indigo-900'
+                }`}
+              >
+                {promptText}
+              </div>
+
+              {/* מעגל 8 הקלפים + הקופה המרכזית + דמות שרלוק */}
+              <div className="relative w-[305px] h-[305px] sm:w-[390px] sm:h-[390px] md:w-[450px] md:h-[450px] rounded-full bg-gradient-to-br from-amber-50 via-orange-50/60 to-amber-100/70 border-4 border-amber-200 shadow-inner mb-6 shrink-0">
+                {/* מסלול מעגלי מקווקו */}
+                <div className="absolute inset-[14%] rounded-full border-2 border-dashed border-amber-300/80 pointer-events-none" />
+
+                {/* קופה מרכזית */}
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center pointer-events-none">
+                  {deck.length > 0 ? (
+                    <div className="w-16 h-20 sm:w-20 sm:h-24 rounded-2xl bg-gradient-to-br from-indigo-700 to-slate-800 border-2 border-amber-300 shadow-lg flex flex-col items-center justify-center text-white overflow-hidden p-1">
+                      <span className="text-[10px] sm:text-xs font-bold text-amber-200">קופה</span>
+                      <span className="text-xl sm:text-2xl font-black text-amber-300 leading-tight">{deck.length}</span>
+                    </div>
+                  ) : (
+                    <div className="w-16 h-20 sm:w-20 sm:h-24 rounded-2xl border-2 border-dashed border-amber-400 bg-amber-50/70 flex items-center justify-center text-center p-1">
+                      <span className="text-[10px] sm:text-xs font-bold text-amber-700 leading-tight">הקופה נגמרה!</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* דמות הבלש שרלוק הצועדת בין הקלפים */}
+                <div
+                  style={{
+                    left: sherlockBadgeCoords.left,
+                    top: sherlockBadgeCoords.top,
+                    transform: 'translate(-50%, -50%)'
+                  }}
+                  className="absolute z-20 transition-all duration-300 ease-out pointer-events-none"
+                >
+                  <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-amber-300 border-2 border-white shadow-lg flex items-center justify-center text-xl sm:text-2xl">
+                    🕵️‍♂️
+                  </div>
+                </div>
+
+                {/* 8 הקלפים במעגל */}
+                {circle.map((card, idx) => {
+                  const pos = getCircleCoords(idx, 38);
+                  const isSherlockHere = idx === sherlockPos && phase !== 'memorize';
+                  const isHighlightedNewCard = phase === 'memorize' && newCardPos === idx;
+                  const arrowAngle = getCardArrowAngle(idx, card.dir);
+                  const canPickCard = phase === 'pick_target' && idx !== sherlockPos;
+                  const isWrongTarget = phase === 'pick_target' && wrongTargetPos === idx;
+
                   return (
                     <button
-                      key={`sound-${currentIndex}-${i}-${opt.w}`}
-                      onClick={(e) => {
-                        if (e && e.currentTarget) e.currentTarget.blur();
-                        handleGuess(opt);
+                      key={card.uid}
+                      type="button"
+                      disabled={!canPickCard}
+                      onClick={(e) => handleSelectTargetCard(idx, e)}
+                      style={{
+                        left: pos.left,
+                        top: pos.top
                       }}
                       className={`
-                        bg-white border-4 rounded-3xl p-4 flex flex-col items-center justify-center h-36 md:h-48 shadow-md hover:shadow-xl hover:scale-105 transition-all
-                        ${isCorrect ? 'border-green-400 bg-green-50 shadow-green-200' : 'border-gray-200'}
-                        ${isWrong ? 'opacity-50 scale-95 border-red-200' : ''}
+                        absolute -translate-x-1/2 -translate-y-1/2 w-[68px] h-[84px] sm:w-[86px] sm:h-[104px] md:w-[98px] md:h-[116px] rounded-2xl overflow-hidden flex flex-col items-center justify-between p-1 sm:p-1.5 transition-all duration-300 focus:outline-none
+                        ${card.isRevealed
+                          ? 'bg-white border-4 border-emerald-400 shadow-lg'
+                          : 'bg-gradient-to-br from-indigo-600 via-indigo-700 to-slate-800 border-4 border-amber-200 text-white shadow-md'
+                        }
+                        ${isHighlightedNewCard ? 'ring-4 ring-amber-400 scale-110 z-20' : ''}
+                        ${isSherlockHere ? 'ring-4 ring-orange-400 scale-105 z-10' : ''}
+                        ${phase === 'guessing' && isSherlockHere ? 'ring-4 ring-pink-500 scale-105' : ''}
+                        ${canPickCard ? 'cursor-pointer active:scale-95 [@media(hover:hover)]:hover:scale-110 [@media(hover:hover)]:hover:ring-4 [@media(hover:hover)]:hover:ring-sky-400' : 'cursor-default'}
+                        ${isWrongTarget ? 'ring-4 ring-red-500 scale-95 opacity-80' : ''}
                       `}
                     >
-                      <span className={`text-6xl md:text-7xl mb-3 ${isCorrect ? 'animate-bounce' : ''}`}>{opt.e}</span>
-                      <span className={`text-xl md:text-2xl font-bold ${isCorrect ? 'text-green-600' : 'text-gray-700'}`}>{opt.w}</span>
+                      {!card.isRevealed ? (
+                        /* גב הקלף – נקי ללא מספר וללא חץ */
+                        <div className="w-full h-full rounded-xl border-2 border-amber-300/35 flex items-center justify-center">
+                          <span className="text-2xl sm:text-3xl opacity-90 select-none">🕵️‍♂️</span>
+                        </div>
+                      ) : (
+                        /* פני הכרטיס עצמו – כולל המספר וחץ כיוון ההתקדמות */
+                        <div className="w-full h-full flex flex-col items-center justify-between overflow-hidden">
+                          <div
+                            title={card.dir === 1 ? `${card.steps} צעדים עם כיוון השעון` : `${card.steps} צעדים נגד כיוון השעון`}
+                            className={`w-full flex items-center justify-center gap-1 rounded-lg px-1.5 py-0.5 text-xs sm:text-sm font-black ${
+                              card.dir === 1
+                                ? 'bg-sky-100 text-sky-800'
+                                : 'bg-purple-100 text-purple-800'
+                            } ${phase === 'pick_target' && isSherlockHere ? 'animate-pulse ring-2 ring-amber-400' : ''}`}
+                          >
+                            <span>{card.steps}</span>
+                            <DirectionArrowSVG angleDeg={arrowAngle} className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          </div>
+
+                          <div className="flex items-center justify-center my-auto">
+                            {renderSherlockItemIcon(card.item, 'md')}
+                          </div>
+
+                          <span className="text-[9px] sm:text-[11px] font-black text-gray-700 text-center leading-tight px-0.5 truncate w-full">
+                            {card.item.name}
+                          </span>
+                        </div>
+                      )}
                     </button>
                   );
                 })}
               </div>
 
-              <div className="flex gap-4 md:gap-8 w-full justify-center">
-                <button
-                  onClick={handlePrev}
-                  className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md bg-pink-100 text-pink-700 hover:bg-pink-200 hover:shadow-lg"
-                >
-                  הקודם
-                </button>
-                <button
-                  onClick={handleNext}
-                  className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md bg-pink-500 text-white hover:bg-pink-600 hover:shadow-lg"
-                >
-                  הבא
-                </button>
-              </div>
+              {/* אזור פעולה תחתון לפי שלב המשחק */}
+              <div className="w-full max-w-2xl min-h-[110px] flex flex-col items-center justify-center">
+                {phase === 'memorize' && (
+                  <button
+                    type="button"
+                    onClick={handleFlipCardsToStart}
+                    className="bg-orange-500 hover:bg-orange-600 text-white font-black text-xl md:text-2xl px-10 py-4 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-3"
+                  >
+                    <span>🔄</span>
+                    <span>{newCardPos !== null ? 'התחלה – הפוך את הקלף החדש' : 'התחלה – הפוך את הקלפים'}</span>
+                  </button>
+                )}
 
-              <div className="mt-8 text-pink-400 font-bold text-lg">
-                {currentIndex + 1} מתוך {shuffledData.length}
+                {phase === 'pick_target' && circle[sherlockPos] && (
+                  <div className="bg-sky-50 border-2 border-sky-300 rounded-2xl px-6 py-3 flex items-center gap-3 shadow-sm animate-fade-in-up">
+                    <span className="text-3xl">👆</span>
+                    <div className="text-sky-900 font-black text-base md:text-lg text-center">
+                      ספרו <span className="text-orange-600 text-xl mx-1">{circle[sherlockPos].steps}</span> קלפים{' '}
+                      {circle[sherlockPos].dir === 1 ? 'עם כיוון השעון' : 'נגד כיוון השעון'} ולחצו על הקלף במעגל!
+                    </div>
+                  </div>
+                )}
+
+                {(phase === 'guessing' || phase === 'wrong_reveal') && (
+                  <div className="w-full">
+                    <div className="text-center font-black text-gray-700 mb-3 text-base md:text-lg">
+                      בחרו איזה חפץ מסתתר מתחת לקלף שליד שרלוק:
+                    </div>
+                    <div key={`choices-${turnId}`} className="grid grid-cols-4 sm:grid-cols-8 gap-2 md:gap-2.5">
+                      {choiceItems.map(item => {
+                        const isWrongPicked = phase === 'wrong_reveal' && wrongGuessChoiceId === item.id;
+                        return (
+                          <button
+                            key={`${turnId}-${item.id}`}
+                            type="button"
+                            disabled={phase !== 'guessing'}
+                            onClick={(e) => handleGuessObject(item, e)}
+                            className={`
+                              rounded-2xl p-2 md:p-2.5 flex flex-col items-center justify-center transition-all shadow-sm focus:outline-none
+                              ${isWrongPicked
+                                ? 'bg-red-100 border-2 border-red-400 opacity-75 scale-95'
+                                : 'bg-white border-2 border-orange-200 active:scale-95 [@media(hover:hover)]:hover:border-orange-400 [@media(hover:hover)]:hover:bg-orange-50 [@media(hover:hover)]:hover:scale-105 [@media(hover:hover)]:hover:shadow-md cursor-pointer'
+                              }
+                              ${phase !== 'guessing' ? 'cursor-not-allowed opacity-70' : ''}
+                            `}
+                          >
+                            <div className="h-9 flex items-center justify-center mb-1">
+                              {renderSherlockItemIcon(item, 'md')}
+                            </div>
+                            <span className="text-[11px] md:text-xs font-black text-gray-700 text-center leading-tight">
+                              {item.name}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {phase === 'game_over' && (
+                  <div className="flex flex-col items-center gap-4 bg-amber-50 border-4 border-amber-300 rounded-3xl px-8 py-6 shadow-md animate-fade-in-up">
+                    <div className="text-4xl">🏆🕵️‍♂️🎉</div>
+                    <div className="text-xl md:text-2xl font-black text-amber-800 text-center">
+                      כל הכבוד! סיימתם את כל הקופה ואספתם {wonCards.length} קלפים!
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => initGame()}
+                      className="bg-orange-500 hover:bg-orange-600 text-white font-black text-lg px-8 py-3 rounded-full shadow-lg transition-all"
+                    >
+                      שחקו שוב 🔄
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           );
@@ -1877,7 +2964,7 @@
               case 'en-animals':
                 return <InteractiveModule key={activeItem.id} items={ENGLISH_ANIMALS} lang="en-US" themeClass="blue" renderItem={renderAnimalItem('blue')} />;
               case 'heb-letters':
-                return <InteractiveModule key={activeItem.id} items={HEBREW_LETTERS} videos={HEBREW_LETTERS_SONGS} lang="he-IL" themeClass="pink" renderItem={renderTextCardItem('pink', 'w-16 h-16 md:w-24 md:h-24', 'text-2xl md:text-4xl')} />;
+                return <InteractiveModule key={activeItem.id} items={HEBREW_LETTERS} lang="he-IL" themeClass="pink" renderItem={renderTextCardItem('pink', 'w-16 h-16 md:w-24 md:h-24', 'text-2xl md:text-4xl')} />;
               case 'heb-rhymes':
                 return <RhymesGame key={activeItem.id} />;
               case 'heb-sounds':
@@ -1885,7 +2972,7 @@
               case 'en-numbers':
                 return <InteractiveModule key={activeItem.id} items={ENGLISH_NUMBERS} lang="en-US" themeClass="blue" renderItem={renderTextCardItem('blue', 'w-16 h-16 md:w-24 md:h-24', 'text-2xl md:text-4xl')} />;
               case 'math-30':
-                return <InteractiveModule key={activeItem.id} items={MATH_NUMBERS} videos={MATH_NUMBERS_SONGS} lang="he-IL" themeClass="purple" renderItem={renderTextCardItem('purple', 'w-14 h-14 md:w-20 md:h-20', 'text-xl md:text-2xl')} />;
+                return <InteractiveModule key={activeItem.id} items={MATH_NUMBERS} lang="he-IL" themeClass="purple" renderItem={renderTextCardItem('purple', 'w-14 h-14 md:w-20 md:h-20', 'text-xl md:text-2xl')} />;
               case 'math-count':
                 return <CountingGame key={activeItem.id} />;
               case 'math-compare':
@@ -1894,6 +2981,16 @@
                 return <WordCombinationsModule key={activeItem.id} />;
               case 'heb-opposites':
                 return <OppositesModule key={activeItem.id} />;
+              case 'songs-letters':
+                return <SongsModule key={activeItem.id} videos={HEBREW_LETTERS_SONGS} themeClass="amber" />;
+              case 'songs-numbers':
+                return <SongsModule key={activeItem.id} videos={MATH_NUMBERS_SONGS} themeClass="amber" />;
+              case 'game-memory':
+                return <MemoryGame key={activeItem.id} />;
+              case 'game-war':
+                return <WarCardGame key={activeItem.id} />;
+              case 'game-sherlock':
+                return <SherlockGame key={activeItem.id} />;
               default:
                 return (
                   <div className="flex flex-col items-center">
@@ -1912,9 +3009,6 @@
                 );
             }
           };
-
-          const isInteractive = ['ar-colors', 'ar-animals', 'ar-body', 'ar-family', 'ar-rosh-hashana', 'ar-days', 'ar-numbers', 'en-colors', 'en-animals', 'heb-letters', 'en-numbers', 'math-30', 'math-count', 'math-compare', 'heb-combinations', 'heb-rhymes', 'heb-sounds', 'heb-opposites'].includes(activeItem?.id);
-          const themeStyles = activeCategoryTheme ? getThemeClasses(activeCategoryTheme) : null;
 
           return (
             <div className="min-h-screen flex flex-col md:flex-row bg-amber-50 h-screen overflow-hidden">
@@ -1977,9 +3071,6 @@
                 <div className="max-w-5xl mx-auto pb-20">
                   {activeItem ? (
                     <div className="bg-white rounded-3xl shadow-xl p-6 md:p-12 border-4 border-white transform transition-all animate-fade-in-up flex flex-col items-center">
-                      <div className={`inline-flex items-center px-4 py-1 rounded-full text-sm font-bold mb-6 bg-${activeCategoryTheme}-100 ${themeStyles?.text}`}>
-                        {activeItem.title} {isInteractive && "- אינטראקטיבי"}
-                      </div>
                       <h1 className="text-3xl md:text-5xl font-black text-gray-800 mb-8 flex items-center">
                         <span className="ml-4 text-4xl md:text-5xl">{activeItem.icon}</span> {activeItem.title}
                       </h1>
