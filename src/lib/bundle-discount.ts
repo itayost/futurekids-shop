@@ -15,11 +15,13 @@ export const BUNDLE_WORKBOOK_IDS = ['ai-workbook', 'encryption-workbook', 'algor
 // bundle pages add plain products to the cart and rely on this function for
 // the price, so the two must not drift apart - bundle-discount.test.ts fails
 // if they do. Ordered richest first, which is also the order the tiers are
-// packed and named in.
+// packed and named in. saleDiscount applies on top of the sale's unit prices and
+// lands each tier on 15% off its regular bundle price, rounded down; a test checks
+// that too.
 export const BUNDLE_TIERS = [
-  { name: 'מארז המומחים', plural: 'מארזי מומחים', workbookSets: 2, discount: 85 },
-  { name: 'מארז החוקרים הצעירים', plural: 'מארזי חוקרים צעירים', workbookSets: 1, discount: 45 },
-  { name: 'מארז הספרים', plural: 'מארזי ספרים', workbookSets: 0, discount: 15 },
+  { name: 'מארז המומחים', plural: 'מארזי מומחים', workbookSets: 2, discount: 85, saleDiscount: 67 },
+  { name: 'מארז החוקרים הצעירים', plural: 'מארזי חוקרים צעירים', workbookSets: 1, discount: 45, saleDiscount: 35 },
+  { name: 'מארז הספרים', plural: 'מארזי ספרים', workbookSets: 0, discount: 15, saleDiscount: 11 },
 ] as const;
 
 // Every tier costs one complete set of the three books, and differs only in how
@@ -58,7 +60,7 @@ function describeBundles(counts: number[]): string {
     .join(' + ');
 }
 
-export function computeBundleDiscount(items: BundleItem[]): BundleResult {
+export function computeBundleDiscount(items: BundleItem[], { sale = false }: { sale?: boolean } = {}): BundleResult {
   // Sum the cart once, ignoring anything that is not a whole positive
   // quantity. The counts below multiply the tier discounts, so a NaN,
   // fractional or negative quantity - a hand-edited localStorage cart is the
@@ -79,7 +81,10 @@ export function computeBundleDiscount(items: BundleItem[]): BundleResult {
   if (bookSets < 1) return { bundleDiscount: 0, bundleName: null };
 
   const counts = packBundles(bookSets, workbookSets);
-  const bundleDiscount = counts.reduce((sum, count, i) => sum + count * BUNDLE_TIERS[i].discount, 0);
+  const bundleDiscount = counts.reduce(
+    (sum, count, i) => sum + count * (sale ? BUNDLE_TIERS[i].saleDiscount : BUNDLE_TIERS[i].discount),
+    0
+  );
 
   return { bundleDiscount, bundleName: describeBundles(counts) };
 }

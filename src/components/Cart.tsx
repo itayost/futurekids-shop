@@ -9,13 +9,14 @@ import { products, bundles, books, workbooks, getProductById } from '@/lib/produ
 import { Product } from '@/types';
 import { getCompanionProduct } from '@/application/hooks/useCompanionOffer';
 import { preorderShippingNote } from '@/lib/preorder';
-import { priceOf } from '@/lib/promo';
+import { isSaleActive, priceOf, salePriceOf } from '@/lib/sale';
 import { usePriceMoment } from './sale/usePriceMoment';
 import { SaleSavings } from './sale/SaleSavings';
 
 export default function Cart() {
   const { items, isOpen, setIsOpen, removeItem, updateQuantity, subtotal, bundleDiscount, bundleName, hasBundle, total, saleSavings, itemCount, addItem } = useCart();
   const moment = usePriceMoment();
+  const saleActive = isSaleActive(moment);
   const [isClosing, setIsClosing] = useState(false);
   const bundle = bundles[1]; // Default bundle (most popular)
 
@@ -140,8 +141,8 @@ export default function Cart() {
                     <p className="font-black text-sm">{bundle.name}</p>
                     <p className="text-xs text-gray-600">3 ספרים + 3 חוברות</p>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-pink-500 font-black">₪{bundle.price}</span>
-                      <span className="text-gray-400 text-xs line-through">₪{bundle.originalPrice}</span>
+                      <span className="text-pink-500 font-black">₪{saleActive ? salePriceOf(bundle.price) : bundle.price}</span>
+                      <span className="text-gray-400 text-xs line-through">₪{saleActive ? bundle.price : bundle.originalPrice}</span>
                     </div>
                   </div>
                   <div className="bg-pink-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex-shrink-0">
@@ -314,7 +315,7 @@ export default function Cart() {
                   ₪{total}
                 </span>
               </div>
-              <SaleSavings amount={saleSavings} />
+              <SaleSavings amount={saleSavings} sitewideSale={saleActive} />
             </div>
             <Link
               href="/checkout"
