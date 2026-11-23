@@ -6,6 +6,9 @@ const DURING = Date.parse('2026-11-20T12:00:00+02:00');
 const AFTER = Date.parse('2026-12-01T09:00:00+02:00');
 // The days of the ended Shopping IL sale, now priced like any other day.
 const SHOPPING_IL = Date.parse('2026-11-04T12:00:00+02:00');
+// Black Friday, 15% off sitewide on 26-28.11, inside the riddles launch price.
+const BLACK_FRIDAY = Date.parse('2026-11-27T12:00:00+02:00');
+const AFTER_BLACK_FRIDAY = Date.parse('2026-11-29T09:00:00+02:00');
 
 const line = (productId: string, quantity = 1, price = 0) => ({ productId, quantity, price });
 const BOOKS = ['ai-book', 'encryption-book', 'algorithms-book'];
@@ -34,6 +37,46 @@ describe('priceCart during the riddles launch price', () => {
     const cart = priceCart([...set(1), line('riddles-book-1')], DURING);
     expect(cart.total).toBe(270 + 102);
     expect(cart.saleSavings).toBe(18);
+  });
+});
+
+describe('priceCart during Black Friday', () => {
+  it('takes 15% off the trilogy, rounded down per unit', () => {
+    const cart = priceCart([line('ai-book'), line('ai-workbook')], BLACK_FRIDAY);
+    expect(cart.lines.map((l) => l.price)).toEqual([63, 25]);
+    expect(cart.lines.map((l) => l.regularPrice)).toEqual([75, 30]);
+    expect(cart.total).toBe(88);
+    expect(cart.saleSavings).toBe(17);
+  });
+
+  // Each bundle lands on 15% off its regular bundle price, rounded down.
+  it.each([
+    ['books', 0, 178, 210],
+    ['researchers', 1, 229, 270],
+    ['experts', 2, 272, 320],
+  ])('charges the %s bundle its sale price', (_name, workbookQty, total, regular) => {
+    const cart = priceCart(set(workbookQty), BLACK_FRIDAY);
+    expect(cart.total).toBe(total);
+    expect(cart.saleSavings).toBe(regular - total);
+  });
+
+  // Already 15% off at its launch price; the sale never stacks on top.
+  it('holds the riddles book at ₪102', () => {
+    const cart = priceCart([line('riddles-book-1')], BLACK_FRIDAY);
+    expect(cart.total).toBe(102);
+    expect(cart.saleSavings).toBe(18);
+  });
+
+  it('adds the riddles book at ₪102 to a sale-priced bundle', () => {
+    const cart = priceCart([...set(1), line('riddles-book-1')], BLACK_FRIDAY);
+    expect(cart.total).toBe(229 + 102);
+    expect(cart.saleSavings).toBe(41 + 18);
+  });
+
+  it('returns the trilogy to list price at midnight after Saturday', () => {
+    const cart = priceCart([line('ai-book'), line('ai-workbook')], AFTER_BLACK_FRIDAY);
+    expect(cart.total).toBe(105);
+    expect(priceCart([line('riddles-book-1')], AFTER_BLACK_FRIDAY).total).toBe(102);
   });
 });
 
@@ -129,6 +172,20 @@ describe('repriceForReminder', () => {
   it('re-checks free shipping at the new prices', () => {
     const result = repriceForReminder([item('ai-book', 63), item('ai-workbook', 25)], 108, pickup, AFTER);
     expect(result.total).toBe(105);
+  });
+
+  // Abandoned on Wednesday at list price, reminded on Black Friday: quote the
+  // sale price, which drops ₪105 under the free pickup threshold.
+  it('re-quotes a list-priced order at the Black Friday price', () => {
+    const result = repriceForReminder([item('ai-book', 75), item('ai-workbook', 30)], 105, pickup, BLACK_FRIDAY);
+    expect(result.items.map((i) => i.price)).toEqual([63, 25]);
+    expect(result.total).toBe(88 + 20);
+  });
+
+  it('re-quotes a Black Friday order at list price once the sale ends', () => {
+    const result = repriceForReminder([item('ai-book', 63)], 83, pickup, AFTER_BLACK_FRIDAY);
+    expect(result.items[0].price).toBe(75);
+    expect(result.total).toBe(95);
   });
 
   it('keeps the stored shipping cost for an order with no known method', () => {

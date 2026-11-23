@@ -28,6 +28,8 @@ const DURING = Date.parse('2026-11-20T12:00:00+02:00');
 const AFTER = Date.parse('2026-12-01T00:00:00+02:00');
 // The days of the ended Shopping IL sale, now priced like any other day.
 const SHOPPING_IL = Date.parse('2026-11-04T12:00:00+02:00');
+// Black Friday, 15% off sitewide on 26-28.11, inside the riddles launch price.
+const BLACK_FRIDAY = Date.parse('2026-11-27T12:00:00+02:00');
 
 const unit = (productId: string, quantity = 1) => ({ productId, name: 'ignored', price: 1, quantity });
 const BOOKS = ['ai-book', 'encryption-book', 'algorithms-book'].map((id) => unit(id));
@@ -108,6 +110,73 @@ describe('POST /api/checkout on the days of the ended Shopping IL sale', () => {
   });
 
   it('takes a coupon', async () => {
+    db.coupon = {
+      id: '1', code: 'CLUB10', discount_type: 'percent', discount_value: 10,
+      min_subtotal: null, max_uses: null, used_count: 0, active: true, expires_at: null,
+    };
+    const res = await checkout([unit('ai-book')], { couponCode: 'CLUB10' });
+    expect(res.status).toBe(200);
+    expect(orderTotal()).toBe(75 - 8 + 20);
+  });
+});
+
+describe('POST /api/checkout during Black Friday', () => {
+  beforeEach(() => vi.useFakeTimers({ toFake: ['Date'], now: BLACK_FRIDAY }));
+
+  const CLUB10 = {
+    id: '1', code: 'CLUB10', discount_type: 'percent', discount_value: 10,
+    min_subtotal: null, max_uses: null, used_count: 0, active: true, expires_at: null,
+  };
+
+  // ₪88 of products is under the ₪100 free pickup threshold.
+  it('charges 15% off and stores the sale prices on the order', async () => {
+    const res = await checkout([unit('ai-book'), unit('ai-workbook')]);
+    expect(res.status).toBe(200);
+    expect(orderTotal()).toBe(88 + 20);
+    expect(itemPrices()).toEqual([63, 25]);
+  });
+
+  it('charges the researchers bundle 15% off its regular price', async () => {
+    await checkout([...BOOKS, ...WORKBOOKS]);
+    expect(orderTotal()).toBe(229);
+  });
+
+  it('holds the riddles book at ₪102', async () => {
+    await checkout([unit('riddles-book-1')]);
+    expect(orderTotal()).toBe(102);
+    expect(itemPrices()).toEqual([102]);
+  });
+
+  it('sends iCount lines that add up to the order total', async () => {
+    await checkout([...BOOKS, ...WORKBOOKS, unit('riddles-book-1')]);
+    const sum = icount.items.reduce((total, line) => total + line.price * line.quantity, 0);
+    expect(orderTotal()).toBe(229 + 102);
+    expect(sum).toBe(229 + 102);
+  });
+
+  it('rejects any coupon without writing an order', async () => {
+    db.coupon = CLUB10;
+    const res = await checkout([unit('ai-book'), unit('ai-workbook', 2)], { couponCode: 'CLUB10' });
+    const body = await res.json();
+    expect(res.status).toBe(409);
+    expect(body.couponRejected).toBe(true);
+    expect(body.message).toContain('בלאק פריידי');
+    expect(wroteOrder()).toBe(false);
+  });
+
+  // A tab opened on Wednesday still shows the list price with free shipping.
+  it('stops before charging when the page still showed the price from before the sale', async () => {
+    const res = await checkout([unit('ai-book'), unit('ai-workbook')], { expectedTotal: 105 });
+    expect(res.status).toBe(409);
+    expect(await res.json()).toEqual({ priceChanged: true, total: 88 + 20 });
+    expect(wroteOrder()).toBe(false);
+  });
+});
+
+describe('POST /api/checkout the morning after Black Friday', () => {
+  beforeEach(() => vi.useFakeTimers({ toFake: ['Date'], now: Date.parse('2026-11-29T09:00:00+02:00') }));
+
+  it('charges list price and takes coupons again', async () => {
     db.coupon = {
       id: '1', code: 'CLUB10', discount_type: 'percent', discount_value: 10,
       min_subtotal: null, max_uses: null, used_count: 0, active: true, expires_at: null,

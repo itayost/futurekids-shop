@@ -191,3 +191,38 @@ describe('parseCouponCartItems', () => {
   it('rejects a non-object entry', () =>
     expect(parseCouponCartItems(['ai-book'], getProductById, now.getTime())).toBeNull());
 });
+
+describe('coupons during the Black Friday sale', () => {
+  const during = new Date('2026-11-27T12:00:00+02:00');
+  const club = {
+    id: '1', code: 'CLUB10', discount_type: 'percent' as const, discount_value: 10,
+    min_subtotal: null, max_uses: null, used_count: 0, active: true, expires_at: null,
+  };
+  const lines = [{ productId: 'ai-book', price: 63, quantity: 1 }];
+
+  it('rejects a valid coupon, so discounts never stack', () => {
+    const result = validateCouponForCart(club, lines, during);
+    expect(result.valid).toBe(false);
+    expect(result.discount).toBe(0);
+    expect(result.message).toContain('בלאק פריידי');
+  });
+
+  it('accepts the same coupon once the sale is over', () => {
+    const result = validateCouponForCart(club, lines, new Date('2026-11-29T00:00:00+02:00'));
+    expect(result.valid).toBe(true);
+  });
+
+  it('still takes the coupon one second before the sale starts', () =>
+    expect(validateCouponForCart(club, lines, new Date('2026-11-25T23:59:59+02:00')).valid).toBe(true));
+
+  // Its launch price outlasts the sale and keeps coupons off it until 1.12.
+  it('keeps coupons off the riddles book after the sale while its launch price runs', () => {
+    const at = (iso: string) => {
+      const now = new Date(iso);
+      const lines = parseCouponCartItems([{ productId: 'riddles-book-1', quantity: 1 }], getProductById, now.getTime())!;
+      return validateCouponForCart(club, lines, now);
+    };
+    expect(at('2026-11-29T00:00:00+02:00').valid).toBe(false);
+    expect(at('2026-12-01T00:00:00+02:00')).toEqual({ valid: true, discount: 12, code: 'CLUB10', message: 'הקופון הוחל' });
+  });
+});

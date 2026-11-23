@@ -26,8 +26,8 @@ const getSnapshot = () => priceMoment(PRICE_BOUNDARIES, Date.now());
 const getServerSnapshot = () => priceMoment(PRICE_BOUNDARIES, Infinity);
 
 // The moment to price at, for browser-state surfaces (cart, checkout, modals).
-// It changes only when some price does, so a tab left open across a promo
-// boundary reprices on its own. Prerendered pages use the head clock.
+// It changes only when some price does, so a tab left open across a sale or
+// promo boundary reprices on its own. Prerendered pages use the head clock.
 export function usePriceMoment(): number {
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }

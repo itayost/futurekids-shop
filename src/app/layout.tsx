@@ -13,6 +13,7 @@ import ClubPopup from "@/components/ClubPopup";
 import WhatsAppFab from "@/components/WhatsAppFab";
 import AccessibilityWidget from "@/components/AccessibilityWidget";
 import { FreeShippingBar } from "@/components/FreeShippingBar";
+import { SaleBar } from "@/components/sale/SaleBar";
 import { PRICE_CLOCK_SCRIPT, PROMO_CSS } from "@/lib/price-clock";
 
 const rubik = Rubik({
@@ -90,6 +91,7 @@ export default function RootLayout({
         <GoogleAnalytics />
         <AccessibilityWidget />
         <CartProvider>
+          <SaleBar />
           <FreeShippingBar />
           <Navbar />
           <main className="flex-grow">

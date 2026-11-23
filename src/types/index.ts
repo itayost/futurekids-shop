@@ -26,6 +26,8 @@ export interface Product {
   compareAtPrice?: number;
   // Already discounted (e.g. pre-sale), so coupons never apply to it.
   excludeFromCoupons?: boolean;
+  // Keeps its price during a sitewide sale (see lib/sale.ts).
+  excludeFromSale?: boolean;
   // A time-boxed price of its own, such as a launch price (see lib/promo.ts).
   promo?: ProductPromo;
   // Not in stock yet; shipsBy is a Hebrew label such as 'נובמבר 2026'.

@@ -1,6 +1,8 @@
 // Pure state + eligibility logic for the members-club popup. No window access
 // here so it stays unit-testable; ClubPopup.tsx owns the localStorage I/O.
 
+import { isSaleActive } from './sale';
+
 export const CLUB_POPUP_STORAGE_KEY = 'club_popup';
 export const CLUB_COUPON_CODE = 'CLUB10';
 export const POPUP_DELAY_MS = 6000;
@@ -53,6 +55,8 @@ export function isPopupEligible(
   pathname: string
 ): boolean {
   if (isExcludedPath(pathname)) return false;
+  // Its only offer is a coupon, and coupons are off during a sale.
+  if (isSaleActive(now)) return false;
   if (!state) return true;
   if (state.status === 'joined') return false;
   return now - state.ts >= DISMISS_TTL_MS;

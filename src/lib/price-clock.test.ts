@@ -8,14 +8,14 @@ import {
   promoCss,
   type PriceWindow,
 } from './price-clock';
-import { priceOf } from './promo';
+import { priceOf } from './sale';
 import { products } from './products';
 
-// A second, earlier promo, so the script and boundaries are tested on more than one window.
-const EARLY_W: PriceWindow = {
-  attr: 'data-promo-early-book',
-  startsAt: Date.parse('2026-11-04T00:00:00+02:00'),
-  endsAt: Date.parse('2026-11-06T00:00:00+02:00'),
+// Black Friday sits inside the riddles launch price, so the two overlap.
+const SALE_W: PriceWindow = {
+  attr: 'data-sale',
+  startsAt: Date.parse('2026-11-26T00:00:00+02:00'),
+  endsAt: Date.parse('2026-11-29T00:00:00+02:00'),
 };
 const LAUNCH_W: PriceWindow = {
   attr: 'data-promo-riddles-book-1',
@@ -35,12 +35,25 @@ function runAt(script: string, now: number) {
 }
 
 describe('priceClockScript', () => {
-  const script = priceClockScript([EARLY_W, LAUNCH_W]);
+  const script = priceClockScript([SALE_W, LAUNCH_W]);
 
   it('marks each window open or closed on its own', () => {
     const { attrs } = runAt(script, Date.parse('2026-11-20T12:00:00+02:00'));
-    expect(attrs.get('data-promo-early-book')).toBe(false);
+    expect(attrs.get('data-sale')).toBe(false);
     expect(attrs.get('data-promo-riddles-book-1')).toBe(true);
+  });
+
+  it('opens both windows while they overlap', () => {
+    const { attrs } = runAt(script, Date.parse('2026-11-27T12:00:00+02:00'));
+    expect(attrs.get('data-sale')).toBe(true);
+    expect(attrs.get('data-promo-riddles-book-1')).toBe(true);
+  });
+
+  it('closes the sale at midnight into 29.11 and leaves the launch price open', () => {
+    const { attrs, timers } = runAt(script, SALE_W.endsAt);
+    expect(attrs.get('data-sale')).toBe(false);
+    expect(attrs.get('data-promo-riddles-book-1')).toBe(true);
+    expect(timers).toEqual([LAUNCH_W.endsAt - SALE_W.endsAt + 50]);
   });
 
   it('closes the launch price at midnight into 1.12', () => {
@@ -59,11 +72,12 @@ describe('priceClockScript', () => {
     expect(runAt(script, Date.parse('2026-11-01T12:00:00+02:00')).timers).toHaveLength(1));
 
   it('escapes markup in attribute names', () =>
-    expect(priceClockScript([{ ...EARLY_W, attr: '</script>' }])).not.toContain('</script>'));
+    expect(priceClockScript([{ ...SALE_W, attr: '</script>' }])).not.toContain('</script>'));
 
   it('is built from the live catalog', () => expect(PRICE_CLOCK_SCRIPT).toContain('data-promo-riddles-book-1'));
 
-  it('carries no sitewide sale window', () => expect(PRICE_CLOCK_SCRIPT).not.toContain('data-sale'));
+  it('carries the live sale window', () =>
+    expect(PRICE_CLOCK_SCRIPT).toContain(`["data-sale",${Date.parse('2026-11-26T00:00:00+02:00')},${Date.parse('2026-11-29T00:00:00+02:00')}]`));
 });
 
 describe('promoCss', () => {
@@ -77,26 +91,27 @@ describe('promoCss', () => {
 });
 
 describe('priceMoment', () => {
-  const b = priceBoundaries([EARLY_W, LAUNCH_W]);
+  const b = priceBoundaries([SALE_W, LAUNCH_W]);
 
   it('sorts and de-duplicates boundaries', () =>
-    expect(priceBoundaries([LAUNCH_W, EARLY_W, LAUNCH_W])).toEqual([
-      EARLY_W.startsAt, EARLY_W.endsAt, LAUNCH_W.startsAt, LAUNCH_W.endsAt,
+    expect(priceBoundaries([LAUNCH_W, SALE_W, LAUNCH_W])).toEqual([
+      LAUNCH_W.startsAt, SALE_W.startsAt, SALE_W.endsAt, LAUNCH_W.endsAt,
     ]));
 
   it('stays put between boundaries', () =>
     expect(priceMoment(b, Date.parse('2026-11-20T12:00:00+02:00'))).toBe(LAUNCH_W.startsAt));
 
   it('lands just before the first boundary when nothing has started', () =>
-    expect(priceMoment(b, 0)).toBe(EARLY_W.startsAt - 1));
+    expect(priceMoment(b, 0)).toBe(LAUNCH_W.startsAt - 1));
 
   it('moves on exactly at a boundary', () => expect(priceMoment(b, LAUNCH_W.endsAt)).toBe(LAUNCH_W.endsAt));
 
   // The whole point: any price at the moment equals the price right now.
   it('prices every product the same as the real clock does', () => {
     const samples = [
-      '2026-11-03T12:00:00+02:00', '2026-11-04T12:00:00+02:00', '2026-11-08T12:00:00+02:00',
-      '2026-11-20T12:00:00+02:00', '2026-11-30T23:59:59+02:00', '2026-12-02T12:00:00+02:00',
+      '2026-11-03T12:00:00+02:00', '2026-11-08T12:00:00+02:00', '2026-11-20T12:00:00+02:00',
+      '2026-11-26T00:00:00+02:00', '2026-11-27T12:00:00+02:00', '2026-11-28T23:59:59+02:00',
+      '2026-11-29T00:00:00+02:00', '2026-11-30T23:59:59+02:00', '2026-12-02T12:00:00+02:00',
     ].map(Date.parse);
     for (const now of samples) {
       const moment = priceMoment(PRICE_BOUNDARIES, now);

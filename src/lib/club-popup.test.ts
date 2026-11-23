@@ -128,3 +128,13 @@ describe('getMemberIdentity', () => {
     });
   });
 });
+
+describe('isPopupEligible during the Black Friday sale', () => {
+  const during = Date.parse('2026-11-27T12:00:00+02:00');
+
+  test('stays closed, because its 10% coupon does not work during the sale', () =>
+    expect(isPopupEligible(null, during, '/')).toBe(false));
+
+  test('comes back when the sale ends', () =>
+    expect(isPopupEligible(null, Date.parse('2026-11-29T00:00:00+02:00'), '/')).toBe(true));
+});

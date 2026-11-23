@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
     const total = productsTotal - couponDiscount + shippingCost;
 
     // The browser's clock decides what the page shows, so a tab left open across
-    // a promo boundary (or a wrong clock) can display a different total. Never
+    // the sale boundary (or a wrong clock) can display a different total. Never
     // charge a number the customer did not see: send it back for them to confirm.
     if (typeof body.expectedTotal === 'number' && body.expectedTotal !== total) {
       return NextResponse.json({ priceChanged: true, total }, { status: 409 });
