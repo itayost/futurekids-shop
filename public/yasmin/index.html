@@ -68,6 +68,7 @@
               { id: "heb-combinations", title: "צירופי מילים", icon: "➕", content: "לפעמים חיבור של שני דברים שונים יוצר משהו חדש לגמרי. מה יוצא מחיבור התמונות הבאות?" },
               { id: "heb-rhymes", title: "חרוזים", icon: "🎵", content: "חתול ו... שבלול! ילד ו... פלד! איזה כיף למצוא מילים שמתחרזות." },
               { id: "heb-sounds", title: "צליל פותח", icon: "🔊", content: "באיזה צליל מתחילה המילה 'כלב'?" },
+              { id: "heb-sound-pairs", title: "זוגות בצליל פותח", icon: "👯", content: "נמצא זוגות של מילים שמתחילות באותו צליל פותח!" },
               { id: "heb-opposites", title: "הפכים", icon: "↔️", content: "מה ההפך מ'גדול'? 'קטן'! בואו נלמד הפכים." }
             ]
           },
@@ -80,6 +81,8 @@
             items: [
               { id: "ar-colors", title: "צבעים", icon: "🎨", content: "בואו נכיר את כל הצבעים היפים בשפה הערבית." },
               { id: "ar-animals", title: "חיות", icon: "🐪", content: "איך אומרים חתול בערבית? בואו נלמד את שמות החיות." },
+              { id: "ar-fruits-veggies", title: "פירות וירקות", icon: "🥗", content: "עגבנייה, מלפפון, בננה ודובדבן... בואו נלמד פירות וירקות בערבית." },
+              { id: "ar-nature", title: "טבע", icon: "🌈", content: "קשת בענן, שמיים, פרחים וים – מילים מהטבע בערבית." },
               { id: "ar-body", title: "איברי גוף", icon: "👁️", content: "ראש, כתף, ברך... בואו נלמד את איברי הגוף בערבית." },
               { id: "ar-family", title: "בני משפחה", icon: "👨‍👩‍👧‍👦", content: "אבא, אמא, אח ואחות... בואו נכיר את בני המשפחה בערבית." },
               { id: "ar-rosh-hashana", title: "ראש השנה", icon: "🍯", content: "תפוח בדבש, רימון ושופר – מילים לחג בערבית." },
@@ -149,6 +152,7 @@
           { id: 'brown', bg: '#8B4513', text: 'בוני', speak: 'بُنِّيْ', textColor: 'white' },
           { id: 'burgundy', bg: '#800020', text: 'חַ\'מְרִי', speak: 'خَمْرِيْ', textColor: 'white' },
           { id: 'lightblue', bg: '#06B6D4', text: 'אַזְרַק פָאתִח', speak: 'أَزْرَقْ فَاتِحْ', textColor: 'black' },
+          { id: 'indigo', bg: '#3730A3', text: 'נִילִי', speak: 'نِيلِيْ', textColor: 'white' },
           { id: 'black', bg: '#000000', text: 'אסווד', speak: 'أَسْوَدْ', textColor: 'white' },
           { id: 'white', bg: '#FFFFFF', text: 'אבייד', speak: 'أَبْيَضْ', textColor: 'black', border: true },
           { id: 'orange', bg: '#F97316', text: 'בורתוקאלי', speak: 'بُرْتُقَالِيْ', textColor: 'white' },
@@ -194,7 +198,18 @@
           { id: 'bear', emoji: '🐻', text: 'דֻבּ', speak: 'دُبّْ' },
           { id: 'butterfly', emoji: '🦋', text: 'פַרָאשַׁה', speak: 'فَرَاشَةْ' },
           { id: 'fish', emoji: '🐟', text: 'סַמַכַּה', speak: 'سَمَكَةْ' },
-          { id: 'bird', emoji: '🐦', text: 'עַצְפוּר', speak: 'عَصْفُورْ' }
+          { id: 'bird', emoji: '🐦', text: 'עַצְפוּר', speak: 'عَصْفُورْ' },
+          { id: 'horse', emoji: '🐴', text: 'חִסָאן', speak: 'حِصَانْ' },
+          { id: 'bull', emoji: '🐂', text: 'תַ\'וְר', speak: 'ثَوْرْ' },
+          { id: 'donkey', emoji: '🫏', text: 'חִמָאר', speak: 'حِمَارْ' },
+          { id: 'ladybug', emoji: '🐞', text: 'דַעְסוּקַה', speak: 'دَعْسُوقَةْ' },
+          { id: 'spider', emoji: '🕷️', text: 'עַנְכַּבּוּת', speak: 'عَنْكَبُوتْ' },
+          { id: 'kangaroo', emoji: '🦘', text: 'כַּנְעַ\'ר', speak: 'كَنْغَرْ' },
+          { id: 'bee', emoji: '🐝', text: 'נַחְלַה', speak: 'نَحْلَةْ' },
+          { id: 'crocodile', emoji: '🐊', text: 'תִּמְסָאח', speak: 'تِمْسَاحْ' },
+          { id: 'bat', emoji: '🦇', text: 'חֻ\'פָּאשׁ', speak: 'خُفَّاشْ' },
+          { id: 'ant', emoji: '🐜', text: 'נַמְלַה', speak: 'نَمْلَةْ' },
+          { id: 'scorpion', emoji: '🦂', text: 'עַקְרַבּ', speak: 'عَقْرَبْ' }
         ];
 
         const ARABIC_BODY_PARTS = [
@@ -261,6 +276,38 @@
           { id: 'fish-head', svg: <FishHeadSVG />, text: 'רָאס סַמַכַּה', speak: 'رَاسْ سَمَكَةْ', hint: 'ראש של דג' },
           { id: 'dates', svg: <DatesSVG />, text: 'תַמְר', speak: 'تَمْرْ', hint: 'תמר' },
           { id: 'shofar', svg: <ShofarSVG />, text: 'בּוּק', speak: 'بُوقْ', hint: 'שופר' }
+        ];
+
+        const SkySVG = () => (
+          <svg viewBox="0 0 64 64" className="w-12 h-12 md:w-14 md:h-14">
+            <rect x="6" y="10" width="52" height="44" rx="14" fill="#38BDF8" />
+            <g fill="#FFFFFF">
+              <circle cx="22" cy="31" r="6" />
+              <circle cx="29" cy="28" r="7.5" />
+              <circle cx="36" cy="31" r="5.5" />
+              <rect x="22" y="30" width="14" height="7" rx="3" />
+              <circle cx="43" cy="41" r="4" opacity="0.9" />
+              <circle cx="48" cy="39.5" r="5" opacity="0.9" />
+              <circle cx="52" cy="41.5" r="3.5" opacity="0.9" />
+            </g>
+          </svg>
+        );
+
+        const ARABIC_FRUITS_VEGGIES = [
+          { id: 'tomato', emoji: '🍅', text: 'בַּנְדוֹרַה', speak: 'بَنْدُورَةْ', hint: 'עגבנייה' },
+          { id: 'cherry', emoji: '🍒', text: 'כַּרַז', speak: 'كَرَزْ', hint: 'דובדבן' },
+          { id: 'banana', emoji: '🍌', text: 'מַוְז', speak: 'مَوْزْ', hint: 'בננה' },
+          { id: 'lettuce', emoji: '🥬', text: 'חַ\'סּ', speak: 'خَسّْ', hint: 'חסה' },
+          { id: 'lemon', emoji: '🍋', text: 'לַיְמוּן', speak: 'لَيْمُونْ', hint: 'לימון' },
+          { id: 'cucumber', emoji: '🥒', text: 'חִ\'יָאר', speak: 'خِيَارْ', hint: 'מלפפון' },
+          { id: 'carrot', emoji: '🥕', text: 'גַ\'זַר', speak: 'جَزَرْ', hint: 'גזר' }
+        ];
+
+        const ARABIC_NATURE = [
+          { id: 'rainbow', emoji: '🌈', text: 'קַוְס קֻזַח', speak: 'قَوْسْ قُزَحْ', hint: 'קשת בענן' },
+          { id: 'sky', svg: <SkySVG />, text: 'סַמָא', speak: 'سَمَاءْ', hint: 'שמיים' },
+          { id: 'flowers', emoji: '💐', text: 'אַזְהָאר', speak: 'أَزْهَارْ', hint: 'פרחים' },
+          { id: 'sea', emoji: '🌊', text: 'בַּחְר', speak: 'بَحْرْ', hint: 'ים' }
         ];
 
         const ARABIC_DAYS = [
@@ -575,6 +622,40 @@
           { soundDisplay: 'פֶּ', soundSpeak: 'פֶּ', match: { w: 'פרח', e: '🌻' }, distractors: [{ w: 'עץ', e: '🌳' }, { w: 'דשא', e: '🌿' }, { w: 'אדמה', e: '🌱' }] },
           { soundDisplay: 'גֶּ', soundSpeak: 'גֶּ', match: { w: 'גזר', e: '🥕' }, distractors: [{ w: 'מלפפון', e: '🥒' }, { w: 'עגבנייה', e: '🍅' }, { w: 'בצל', e: '🧅' }] },
           { soundDisplay: 'מַ', soundSpeak: 'מַ', match: { w: 'מחשב', e: '💻' }, distractors: [{ w: 'טלוויזיה', e: '📺' }, { w: 'טלפון', e: '📱' }, { w: 'ספר', e: '📖' }] }
+        ];
+
+        const STARTING_SOUND_PAIRS_DATA = [
+          { id: 'sp-1', letterGroup: 'א', soundDisplay: 'אַ', soundSpeak: 'אַ', items: [{ w: 'אריה', speak: 'אַרְיֵה', e: '🦁' }, { w: 'ארנב', speak: 'אַרְנָב', e: '🐰' }] },
+          { id: 'sp-2', letterGroup: 'ב', soundDisplay: 'בַּ', soundSpeak: 'בַּ', items: [{ w: 'בננה', speak: 'בָּנָנָה', e: '🍌' }, { w: 'בלון', speak: 'בָּלוֹן', e: '🎈' }] },
+          { id: 'sp-3', letterGroup: 'ב', soundDisplay: 'בּוּ', soundSpeak: 'בּוּ', items: [{ w: 'בובה', speak: 'בּוּבָּה', e: '🪆' }, { w: 'בועות', speak: 'בּוּעוֹת', e: '🫧' }] },
+          { id: 'sp-4', letterGroup: 'ג', soundDisplay: 'גָּ', soundSpeak: 'גָּ', items: [{ w: 'גמל', speak: 'גָּמָל', e: '🐪' }, { w: 'גביע', speak: 'גָּבִיעַ', e: '🏆' }] },
+          { id: 'sp-5', letterGroup: 'ג', soundDisplay: 'גֶּ', soundSpeak: 'גֶּ', items: [{ w: 'גזר', speak: 'גֶּזֶר', e: '🥕' }, { w: 'גשם', speak: 'גֶּשֶׁם', e: '🌧️' }] },
+          { id: 'sp-6', letterGroup: 'ד', soundDisplay: 'דֶּ', soundSpeak: 'דֶּ', items: [{ w: 'דלת', speak: 'דֶּלֶת', e: '🚪' }, { w: 'דגל', speak: 'דֶּגֶל', e: '🚩' }] },
+          { id: 'sp-7', letterGroup: 'ד', soundDisplay: 'דּוֹ', soundSpeak: 'דּוֹ', items: [{ w: 'דוב', speak: 'דּוֹב', e: '🐻' }, { w: 'דולפין', speak: 'דּוֹלְפִין', e: '🐬' }] },
+          { id: 'sp-8', letterGroup: 'ז', soundDisplay: 'זָ', soundSpeak: 'זָ', items: [{ w: 'זחל', speak: 'זַחַל', e: '🐛' }, { w: 'זקן', speak: 'זָקָן', e: '🧔' }] },
+          { id: 'sp-9', letterGroup: 'ח', soundDisplay: 'חָ', soundSpeak: 'חָ', items: [{ w: 'חתול', speak: 'חָתוּל', e: '🐱' }, { w: 'חלון', speak: 'חַלּוֹן', e: '🪟' }] },
+          { id: 'sp-10', letterGroup: 'ח', soundDisplay: 'חִי', soundSpeak: 'חִי', items: [{ w: 'חיפושית', speak: 'חִיפּוּשִׁית', e: '🐞' }, { w: 'חילזון', speak: 'חִילָזוֹן', e: '🐌' }] },
+          { id: 'sp-11', letterGroup: 'כ', soundDisplay: 'כַּ', soundSpeak: 'כַּ', items: [{ w: 'כדור', speak: 'כַּדּוּר', e: '⚽' }, { w: 'כפית', speak: 'כַּפִּית', e: '🥄' }] },
+          { id: 'sp-12', letterGroup: 'כ', soundDisplay: 'כֶּ', soundSpeak: 'כֶּ', items: [{ w: 'כלב', speak: 'כֶּלֶב', e: '🐶' }, { w: 'כתר', speak: 'כֶּתֶר', e: '👑' }] },
+          { id: 'sp-13', letterGroup: 'כ', soundDisplay: 'כּוֹ', soundSpeak: 'כּוֹ', items: [{ w: 'כובע', speak: 'כּוֹבַע', e: '🎩' }, { w: 'כוכב', speak: 'כּוֹכָב', e: '⭐' }] },
+          { id: 'sp-14', letterGroup: 'ל', soundDisplay: 'לִי', soundSpeak: 'לִי', items: [{ w: 'לימון', speak: 'לִימוֹן', e: '🍋' }, { w: 'לוויתן', speak: 'לִוְיָתָן', e: '🐋' }] },
+          { id: 'sp-15', letterGroup: 'מ', soundDisplay: 'מַ', soundSpeak: 'מַ', items: [{ w: 'מפתח', speak: 'מַפְתֵּחַ', e: '🔑' }, { w: 'מזלג', speak: 'מַזְלֵג', e: '🍴' }] },
+          { id: 'sp-16', letterGroup: 'מ', soundDisplay: 'מִי', soundSpeak: 'מִי', items: [{ w: 'מטריה', speak: 'מִטְרִיָּה', e: '☂️' }, { w: 'מיטה', speak: 'מִיטָּה', e: '🛏️' }] },
+          { id: 'sp-17', letterGroup: 'נ', soundDisplay: 'נָ', soundSpeak: 'נָ', items: [{ w: 'נחש', speak: 'נָחָשׁ', e: '🐍' }, { w: 'נמר', speak: 'נָמֵר', e: '🐯' }] },
+          { id: 'sp-18', letterGroup: 'נ', soundDisplay: 'נֵ', soundSpeak: 'נֵ', items: [{ w: 'נר', speak: 'נֵר', e: '🕯️' }, { w: 'נשר', speak: 'נֶשֶׁר', e: '🦅' }] },
+          { id: 'sp-19', letterGroup: 'ס', soundDisplay: 'סִי', soundSpeak: 'סִי', items: [{ w: 'סירה', speak: 'סִירָה', e: '⛵' }, { w: 'סיר', speak: 'סִיר', e: '🍲' }] },
+          { id: 'sp-20', letterGroup: 'ס', soundDisplay: 'סוּ', soundSpeak: 'סוּ', items: [{ w: 'סוס', speak: 'סוּס', e: '🐴' }, { w: 'סוכרייה', speak: 'סוּכָּרִיָּה', e: '🍭' }] },
+          { id: 'sp-21', letterGroup: 'ע', soundDisplay: 'עַ', soundSpeak: 'עַ', items: [{ w: 'עכבר', speak: 'עַכְבָּר', e: '🐭' }, { w: 'ענן', speak: 'עָנָן', e: '☁️' }] },
+          { id: 'sp-22', letterGroup: 'פ', soundDisplay: 'פַּ', soundSpeak: 'פַּ', items: [{ w: 'פרפר', speak: 'פַּרְפַּר', e: '🦋' }, { w: 'פטיש', speak: 'פַּטִּישׁ', e: '🔨' }] },
+          { id: 'sp-23', letterGroup: 'פ', soundDisplay: 'פִּ', soundSpeak: 'פִּ', items: [{ w: 'פיל', speak: 'פִּיל', e: '🐘' }, { w: 'פיצה', speak: 'פִּיצָה', e: '🍕' }] },
+          { id: 'sp-24', letterGroup: 'צ', soundDisplay: 'צָ', soundSpeak: 'צָ', items: [{ w: 'צב', speak: 'צָב', e: '🐢' }, { w: 'צלחת', speak: 'צַלַּחַת', e: '🍽️' }] },
+          { id: 'sp-25', letterGroup: 'ק', soundDisplay: 'קֶ', soundSpeak: 'קֶ', items: [{ w: 'קשת', speak: 'קֶשֶׁת', e: '🌈' }, { w: 'קרח', speak: 'קֶרַח', e: '🧊' }] },
+          { id: 'sp-26', letterGroup: 'ק', soundDisplay: 'קוּ', soundSpeak: 'קוּ', items: [{ w: 'קובייה', speak: 'קוּבִּיָּה', e: '🎲' }, { w: 'קומקום', speak: 'קוּמְקוּם', e: '🫖' }] },
+          { id: 'sp-27', letterGroup: 'ר', soundDisplay: 'רַ', soundSpeak: 'רַ', items: [{ w: 'רכבת', speak: 'רַכֶּבֶת', e: '🚂' }, { w: 'רמזור', speak: 'רַמְזוֹר', e: '🚦' }] },
+          { id: 'sp-28', letterGroup: 'ש', soundDisplay: 'שֶׁ', soundSpeak: 'שֶׁ', items: [{ w: 'שמש', speak: 'שֶׁמֶשׁ', e: '☀️' }, { w: 'שלג', speak: 'שֶׁלֶג', e: '❄️' }] },
+          { id: 'sp-29', letterGroup: 'ש', soundDisplay: 'שׁוּ', soundSpeak: 'שׁוּ', items: [{ w: 'שועל', speak: 'שׁוּעָל', e: '🦊' }, { w: 'שום', speak: 'שׁוּם', e: '🧄' }] },
+          { id: 'sp-30', letterGroup: 'ת', soundDisplay: 'תַּ', soundSpeak: 'תַּ', items: [{ w: 'תפוח', speak: 'תַּפּוּחַ', e: '🍎' }, { w: 'תנין', speak: 'תַּנִּין', e: '🐊' }] },
+          { id: 'sp-31', letterGroup: 'ת', soundDisplay: 'תּוּ', soundSpeak: 'תּוּ', items: [{ w: 'תות', speak: 'תּוּת', e: '🍓' }, { w: 'תוכי', speak: 'תּוּכִּי', e: '🦜' }] }
         ];
 
         // --- Helpers ---
@@ -1292,98 +1373,210 @@
           );
         };
 
-        // --- Starting Sounds Game ---
-        const StartingSoundsGame = () => {
-          const [shuffledData] = useState(() => [...STARTING_SOUNDS_DATA].sort(() => 0.5 - Math.random()));
-          const [currentIndex, setCurrentIndex] = useState(0);
-          const [options, setOptions] = useState([]);
-          const [feedback, setFeedback] = useState(null);
+        // --- Starting Sound Pairs Game (זוגות בצליל פותח) ---
+        const StartingSoundPairsGame = () => {
+          const PAIRS_PER_ROUND = 4;
+          const [cards, setCards] = useState([]);
+          const [selectedUid, setSelectedUid] = useState(null);
+          const [wrongPairUids, setWrongPairUids] = useState([]);
+          const [matchedPairIds, setMatchedPairIds] = useState([]);
+          const [lastMatchedSound, setLastMatchedSound] = useState(null);
+          const [roundsCompleted, setRoundsCompleted] = useState(0);
+          const [isLocked, setIsLocked] = useState(false);
+
           const speak = useSpeech('he-IL');
-          const spokenIndexRef = React.useRef(-1);
+          const timerRef = React.useRef(null);
+          const hasSpokenIntroRef = React.useRef(false);
 
-          const current = shuffledData[currentIndex];
+          const instructionSpeak = 'מִצְאוּ זּוּגוֹת שֶׁמַּתְחִילִים בְּאוֹתוֹ צְלִיל פּוֹתֵחַ!';
 
-          const handleNext = () => setCurrentIndex(prev => (prev + 1) % shuffledData.length);
-          const handlePrev = () => setCurrentIndex(prev => (prev - 1 + shuffledData.length) % shuffledData.length);
+          const buildRound = () => {
+            if (timerRef.current) clearTimeout(timerRef.current);
+            const shuffledPool = [...STARTING_SOUND_PAIRS_DATA].sort(() => Math.random() - 0.5);
+            const chosenPairs = [];
+            const usedLetters = new Set();
+
+            for (const pair of shuffledPool) {
+              if (chosenPairs.length >= PAIRS_PER_ROUND) break;
+              if (usedLetters.has(pair.letterGroup)) continue;
+              usedLetters.add(pair.letterGroup);
+              chosenPairs.push(pair);
+            }
+
+            const boardCards = chosenPairs
+              .flatMap((pair) =>
+                pair.items.map((item, idx) => ({
+                  uid: `${pair.id}-${idx}-${Math.random().toString(36).slice(2, 6)}`,
+                  pairId: pair.id,
+                  soundDisplay: pair.soundDisplay,
+                  soundSpeak: pair.soundSpeak,
+                  w: item.w,
+                  speak: item.speak,
+                  e: item.e
+                }))
+              )
+              .sort(() => Math.random() - 0.5);
+
+            setCards(boardCards);
+            setSelectedUid(null);
+            setWrongPairUids([]);
+            setMatchedPairIds([]);
+            setLastMatchedSound(null);
+            setIsLocked(false);
+          };
 
           useEffect(() => {
-            const choices = [current.match, ...current.distractors].sort(() => Math.random() - 0.5);
-            setOptions(choices);
-            setFeedback(null);
-          }, [currentIndex, current]);
+            buildRound();
+            return () => {
+              if (timerRef.current) clearTimeout(timerRef.current);
+            };
+          }, []);
 
           useEffect(() => {
-            if (spokenIndexRef.current !== currentIndex) {
-              spokenIndexRef.current = currentIndex;
-              const t = setTimeout(() => {
-                speak(`מה מתחיל בְּ... ${current.soundSpeak}?`);
-              }, 500);
+            if (!hasSpokenIntroRef.current && cards.length > 0) {
+              hasSpokenIntroRef.current = true;
+              const t = setTimeout(() => speak(instructionSpeak), 450);
               return () => clearTimeout(t);
             }
-          }, [currentIndex, current, speak]);
+          }, [cards, speak]);
 
-          const handleGuess = (item, e) => {
+          const handleCardClick = (card, e) => {
             if (e && e.currentTarget) e.currentTarget.blur();
-            if (feedback === 'correct') return;
-            speak(item.speak || item.w);
+            if (isLocked || matchedPairIds.includes(card.pairId)) return;
 
-            if (item.w === current.match.w) {
-              setFeedback('correct');
-              setTimeout(() => handleNext(), 1400);
+            speak(card.speak);
+
+            // לחיצה חוזרת על אותו קלף מבטלת בחירה
+            if (selectedUid === card.uid) {
+              setSelectedUid(null);
+              return;
+            }
+
+            // בחירת הקלף הראשון בזוג
+            if (!selectedUid) {
+              setLastMatchedSound(null);
+              setSelectedUid(card.uid);
+              return;
+            }
+
+            // בחירת הקלף השני בזוג
+            const firstCard = cards.find((c) => c.uid === selectedUid);
+            if (!firstCard) {
+              setSelectedUid(card.uid);
+              return;
+            }
+
+            if (firstCard.pairId === card.pairId) {
+              const nextMatched = [...matchedPairIds, card.pairId];
+              setMatchedPairIds(nextMatched);
+              setSelectedUid(null);
+              setLastMatchedSound(card.soundDisplay);
+
+              if (nextMatched.length === PAIRS_PER_ROUND) {
+                setIsLocked(true);
+                setRoundsCompleted((r) => r + 1);
+                timerRef.current = setTimeout(() => {
+                  speak('כּוֹל הַכָּבוֹד! מְצָאתֶם אֶת כּוֹל הַזּוּגוֹת!');
+                  timerRef.current = setTimeout(() => {
+                    buildRound();
+                  }, 1700);
+                }, 700);
+              }
             } else {
-              setFeedback('wrong');
-              setTimeout(() => speak('נַסּוּ שׁוּב'), 850);
+              setIsLocked(true);
+              setWrongPairUids([firstCard.uid, card.uid]);
+              timerRef.current = setTimeout(() => {
+                speak('נַסּוּ שׁוּב');
+                setSelectedUid(null);
+                setWrongPairUids([]);
+                setIsLocked(false);
+              }, 900);
             }
           };
 
+          const allMatched = cards.length > 0 && matchedPairIds.length === PAIRS_PER_ROUND;
+
           return (
             <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
-              <button
-                type="button"
-                onClick={() => speak(`מה מתחיל בְּ... ${current.soundSpeak}?`)}
-                className="bg-pink-100 border-4 border-pink-300 rounded-3xl p-6 flex flex-col items-center shadow-lg w-56 h-64 md:w-64 justify-center mb-10 cursor-pointer transform hover:scale-105 transition-transform"
-              >
-                <span className="text-xl md:text-2xl font-bold text-pink-500 mb-2 text-center">מה מתחיל ב-</span>
-                <span className="text-7xl md:text-8xl mb-4 font-black text-pink-700 leading-none">{current.soundDisplay}</span>
-                <div className="bg-pink-200 text-pink-600 px-4 py-2 rounded-full font-bold flex items-center gap-2 mt-2">
-                  <Volume2Icon /> שמע שוב
-                </div>
-              </button>
+              <div className="flex flex-wrap items-center justify-center gap-3 mb-5">
+                <button
+                  type="button"
+                  onClick={() => speak(instructionSpeak)}
+                  className="bg-pink-100 hover:bg-pink-200 text-pink-700 px-6 py-3 rounded-full font-bold text-base md:text-xl flex items-center gap-2 shadow-sm transition-all"
+                >
+                  <Volume2Icon /> בחרו זוגות שמתחילים באותו צליל פותח!
+                </button>
 
-              <div className="grid grid-cols-2 gap-4 md:gap-8 w-full max-w-lg mb-10">
-                {options.map((opt, i) => {
-                  const isCorrect = feedback === 'correct' && opt.w === current.match.w;
-                  const isWrong = feedback === 'wrong' && opt.w !== current.match.w;
+                <button
+                  type="button"
+                  onClick={buildRound}
+                  className="px-4 py-2.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-sm transition-all"
+                >
+                  🔄 לוח חדש
+                </button>
+              </div>
+
+              {/* חיווי הצלחה / צליל משותף */}
+              <div className="h-10 mb-4 flex items-center justify-center">
+                {allMatched ? (
+                  <div className="text-xl md:text-2xl font-black text-green-600 animate-bounce">
+                    כל הכבוד! מצאתם את כל הזוגות! מיד נפתח לוח חדש... 🎉
+                  </div>
+                ) : wrongPairUids.length > 0 ? (
+                  <div className="text-lg md:text-xl font-bold text-red-500 animate-pulse">
+                    לא אותו צליל פותח – נסו שוב! 💪
+                  </div>
+                ) : lastMatchedSound ? (
+                  <div className="text-lg md:text-xl font-black text-green-600 animate-fade-in-up">
+                    יופי! שתי המילים מתחילות בצליל "{lastMatchedSound}" ✨
+                  </div>
+                ) : null}
+              </div>
+
+              {/* לוח 8 הכרטיסים (4 זוגות) */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 md:gap-5 w-full">
+                {cards.map((card) => {
+                  const isMatched = matchedPairIds.includes(card.pairId);
+                  const isSelected = selectedUid === card.uid;
+                  const isWrong = wrongPairUids.includes(card.uid);
+
                   return (
                     <button
-                      key={`${currentIndex}-${opt.w}-${i}`}
+                      key={card.uid}
                       type="button"
-                      onClick={(e) => handleGuess(opt, e)}
+                      disabled={isMatched}
+                      onClick={(e) => handleCardClick(card, e)}
                       className={`
-                        bg-white border-4 rounded-3xl p-4 flex flex-col items-center justify-center h-36 md:h-48 shadow-md hover:shadow-xl hover:scale-105 transition-all focus:outline-none
-                        ${isCorrect ? 'border-green-400 bg-green-50 shadow-green-200' : 'border-gray-200'}
-                        ${isWrong ? 'opacity-50 scale-95 border-red-200' : ''}
+                        relative rounded-3xl border-4 p-4 h-36 sm:h-40 md:h-44 flex flex-col items-center justify-center transition-all duration-200 focus:outline-none
+                        ${isMatched
+                          ? 'bg-green-50 border-green-400 opacity-85 scale-95 shadow-sm cursor-default'
+                          : isWrong
+                            ? 'bg-red-50 border-red-400 ring-4 ring-red-200 scale-95'
+                            : isSelected
+                              ? 'bg-pink-50 border-pink-500 ring-4 ring-pink-200 -translate-y-1.5 shadow-xl cursor-pointer'
+                              : 'bg-white border-pink-100 hover:border-pink-300 shadow-md hover:shadow-xl hover:-translate-y-1 cursor-pointer'
+                        }
                       `}
                     >
-                      <span className={`text-6xl md:text-7xl mb-3 ${isCorrect ? 'animate-bounce' : ''}`}>{opt.e}</span>
-                      <span className={`text-xl md:text-2xl font-bold ${isCorrect ? 'text-green-600' : 'text-gray-700'}`}>{opt.w}</span>
+                      {isMatched && (
+                        <span className="absolute top-2 left-2 bg-green-200 text-green-800 text-xs sm:text-sm font-black px-2 py-0.5 rounded-full">
+                          {card.soundDisplay} ✓
+                        </span>
+                      )}
+                      <span className="text-5xl sm:text-6xl mb-2 select-none">{card.e}</span>
+                      <span className={`text-lg sm:text-xl font-black select-none ${isMatched ? 'text-green-700' : 'text-gray-800'}`}>
+                        {card.w}
+                      </span>
                     </button>
                   );
                 })}
               </div>
 
-              <div className="flex gap-4 md:gap-8 w-full justify-center">
-                <button type="button" onClick={handlePrev} className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md bg-pink-100 text-pink-700 hover:bg-pink-200">
-                  הקודם
-                </button>
-                <button type="button" onClick={handleNext} className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-xl transition-all shadow-md bg-pink-500 text-white hover:bg-pink-600">
-                  הבא
-                </button>
-              </div>
-
-              <div className="mt-8 text-pink-400 font-bold text-lg">
-                {currentIndex + 1} מתוך {shuffledData.length}
-              </div>
+              {roundsCompleted > 0 && (
+                <div className="mt-6 text-pink-500 font-bold text-base md:text-lg">
+                  לוחות שהושלמו: {roundsCompleted} 🌟
+                </div>
+              )}
             </div>
           );
         };
@@ -3889,48 +4082,72 @@
           const p = 7;
           const rawCards = [];
 
-          // Card 0
-          const firstCard = [];
-          for (let i = 0; i <= p; i++) firstCard.push(i);
-          rawCards.push(firstCard);
+          // קלף ראשון
+          rawCards.push(Array.from({ length: p + 1 }, (_, i) => i));
 
-          // p cards passing through 0
-          for (let i = 0; i < p; i++) {
+          // p קלפים החולקים את סמל 0
+          for (let j = 0; j < p; j++) {
             const card = [0];
             for (let k = 0; k < p; k++) {
-              card.push(p + 1 + i * p + k);
+              card.push(p + 1 + p * j + k);
             }
             rawCards.push(card);
           }
 
-          // p^2 remaining cards
+          // p*p קלפים נוספים במישור הפרויקטיבי
           for (let i = 0; i < p; i++) {
             for (let j = 0; j < p; j++) {
-              const card = [1 + i];
+              const card = [i + 1];
               for (let k = 0; k < p; k++) {
-                card.push(p + 1 + k * p + ((j + i * k) % p));
+                card.push(p + 1 + p * k + ((i * k + j) % p));
               }
               rawCards.push(card);
             }
           }
 
-          const scales = [0.9, 1.15, 0.95, 1.2, 0.88, 1.1, 1.0, 1.18];
+          const scales = [0.52, 1.56, 0.64, 1.36, 0.76, 1.2, 0.92, 1.46];
 
-          return rawCards
+          const deckCards = rawCards
             .sort(() => Math.random() - 0.5)
             .map((symIds, cIdx) => {
               const shuffledSyms = [...symIds].sort(() => Math.random() - 0.5);
+              const shuffledScales = [...scales].sort(() => Math.random() - 0.5);
               const ringOffsetDeg = Math.floor(Math.random() * 360);
               return {
                 uid: `dobble-card-${cIdx}-${Math.random().toString(36).slice(2, 6)}`,
                 ringOffsetDeg,
                 entries: shuffledSyms.map((sid, sIdx) => ({
                   symbol: DOBBLE_SYMBOLS[sid],
-                  rot: Math.round((Math.random() - 0.5) * 50),
-                  scale: scales[(cIdx + sIdx) % scales.length]
+                  rot: Math.round((Math.random() - 0.5) * 90),
+                  scale: shuffledScales[sIdx]
                 }))
               };
             });
+
+          // מוודא שבכל זוג כרטיסים שנפתח יחד, הצורה המשותפת תופיע בגדלים שונים (למשל גדולה בכרטיס אחד וקטנה בשני)
+          for (let i = 0; i + 1 < deckCards.length; i += 2) {
+            const cardA = deckCards[i];
+            const cardB = deckCards[i + 1];
+            const idsA = new Set(cardA.entries.map(e => e.symbol.id));
+            const matchBIdx = cardB.entries.findIndex(e => idsA.has(e.symbol.id));
+            if (matchBIdx !== -1) {
+              const sharedId = cardB.entries[matchBIdx].symbol.id;
+              const entryA = cardA.entries.find(e => e.symbol.id === sharedId);
+              const entryB = cardB.entries[matchBIdx];
+              if (entryA && Math.abs(entryA.scale - entryB.scale) < 0.45) {
+                const targetContrastIdx = cardB.entries.findIndex((e, idx) =>
+                  idx !== matchBIdx && (entryA.scale >= 1.0 ? e.scale <= 0.78 : e.scale >= 1.3)
+                );
+                if (targetContrastIdx !== -1) {
+                  const tempScale = entryB.scale;
+                  entryB.scale = cardB.entries[targetContrastIdx].scale;
+                  cardB.entries[targetContrastIdx].scale = tempScale;
+                }
+              }
+            }
+          }
+
+          return deckCards;
         };
 
         const DobbleGame = () => {
@@ -4038,20 +4255,25 @@
                       style={{
                         left: `${leftPct}%`,
                         top: `${topPct}%`,
-                        transform: `translate(-50%, -50%) rotate(${entry.rot}deg) scale(${isMatched ? 1.3 : entry.scale})`
+                        transform: 'translate(-50%, -50%)'
                       }}
                       className={`
                         absolute w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center
                         transition-all duration-200 focus:outline-none cursor-pointer
                         ${isMatched
-                          ? 'bg-green-100 ring-4 ring-green-400 shadow-lg z-20'
+                          ? 'bg-green-100 ring-4 ring-green-400 shadow-lg z-20 scale-125'
                           : isWrong
                             ? 'bg-red-100 ring-4 ring-red-300 opacity-70'
                             : 'hover:bg-amber-50/80 active:scale-90'
                         }
                       `}
                     >
-                      <span className="text-3xl sm:text-4xl md:text-[40px] leading-none select-none">
+                      <span
+                        style={{
+                          transform: `rotate(${entry.rot}deg) scale(${isMatched ? 1.25 : entry.scale})`
+                        }}
+                        className="text-3xl sm:text-4xl md:text-[40px] leading-none select-none inline-block transition-transform duration-200"
+                      >
                         {entry.symbol.emoji}
                       </span>
                     </button>
@@ -4488,10 +4710,26 @@
 
           const renderInteractiveContent = () => {
             switch(activeItem.id) {
+              case 'heb-letters':
+                return <InteractiveModule key={activeItem.id} items={HEBREW_LETTERS} lang="he-IL" themeClass="pink" renderItem={renderTextCardItem('pink', 'w-16 h-16 md:w-24 md:h-24', 'text-2xl md:text-4xl')} />;
+              case 'heb-combinations':
+                return <WordCombinationsModule key={activeItem.id} />;
+              case 'heb-rhymes':
+                return <RhymesGame key={activeItem.id} />;
+              case 'heb-sounds':
+                return <StartingSoundsGame key={activeItem.id} />;
+              case 'heb-sound-pairs':
+                return <StartingSoundPairsGame key={activeItem.id} />;
+              case 'heb-opposites':
+                return <OppositesModule key={activeItem.id} />;
               case 'ar-colors':
                 return <InteractiveModule key={activeItem.id} items={ARABIC_COLORS} lang="ar-SA" themeClass="emerald" renderItem={renderColorItem} />;
               case 'ar-animals':
                 return <InteractiveModule key={activeItem.id} items={ARABIC_ANIMALS} lang="ar-SA" themeClass="emerald" renderItem={renderAnimalItem('emerald')} />;
+              case 'ar-fruits-veggies':
+                return <InteractiveModule key={activeItem.id} items={ARABIC_FRUITS_VEGGIES} lang="ar-SA" themeClass="emerald" renderItem={renderAnimalItem('emerald')} />;
+              case 'ar-nature':
+                return <InteractiveModule key={activeItem.id} items={ARABIC_NATURE} lang="ar-SA" themeClass="emerald" renderItem={renderAnimalItem('emerald')} />;
               case 'ar-body':
                 return <InteractiveModule key={activeItem.id} items={ARABIC_BODY_PARTS} lang="ar-SA" themeClass="emerald" renderItem={renderAnimalItem('emerald')} />;
               case 'ar-family':
@@ -4499,19 +4737,13 @@
               case 'ar-rosh-hashana':
                 return <InteractiveModule key={activeItem.id} items={ARABIC_ROSH_HASHANA} lang="ar-SA" themeClass="emerald" renderItem={renderAnimalItem('emerald')} />;
               case 'ar-days':
-                return <InteractiveModule key={activeItem.id} items={ARABIC_DAYS} lang="ar-SA" themeClass="emerald" renderItem={renderTextCardItem('emerald', 'w-16 h-16 md:w-24 md:h-24', 'text-2xl md:text-4xl')} />;
+                return <InteractiveModule key={activeItem.id} items={ARABIC_DAYS} lang="ar-SA" themeClass="emerald" renderItem={renderTextCardItem('emerald', 'w-20 h-20 md:w-28 md:h-28', 'text-2xl md:text-4xl')} />;
               case 'ar-numbers':
                 return <InteractiveModule key={activeItem.id} items={ARABIC_NUMBERS} lang="ar-SA" themeClass="emerald" renderItem={renderTextCardItem('emerald', 'w-16 h-16 md:w-24 md:h-24', 'text-2xl md:text-4xl')} />;
               case 'en-colors':
                 return <InteractiveModule key={activeItem.id} items={ENGLISH_COLORS} lang="en-US" themeClass="blue" renderItem={renderColorItem} />;
               case 'en-animals':
                 return <InteractiveModule key={activeItem.id} items={ENGLISH_ANIMALS} lang="en-US" themeClass="blue" renderItem={renderAnimalItem('blue')} />;
-              case 'heb-letters':
-                return <InteractiveModule key={activeItem.id} items={HEBREW_LETTERS} lang="he-IL" themeClass="pink" renderItem={renderTextCardItem('pink', 'w-16 h-16 md:w-24 md:h-24', 'text-2xl md:text-4xl')} />;
-              case 'heb-rhymes':
-                return <RhymesGame key={activeItem.id} />;
-              case 'heb-sounds':
-                return <StartingSoundsGame key={activeItem.id} />;
               case 'en-numbers':
                 return <InteractiveModule key={activeItem.id} items={ENGLISH_NUMBERS} lang="en-US" themeClass="blue" renderItem={renderTextCardItem('blue', 'w-16 h-16 md:w-24 md:h-24', 'text-2xl md:text-4xl')} />;
               case 'math-30':
@@ -4520,10 +4752,6 @@
                 return <CountingGame key={activeItem.id} />;
               case 'math-compare':
                 return <ComparisonGame key={activeItem.id} />;
-              case 'heb-combinations':
-                return <WordCombinationsModule key={activeItem.id} />;
-              case 'heb-opposites':
-                return <OppositesModule key={activeItem.id} />;
               case 'songs-letters':
                 return <SongsModule key={activeItem.id} videos={HEBREW_LETTERS_SONGS} themeClass="amber" />;
               case 'songs-numbers':
@@ -4547,13 +4775,6 @@
                     <p className="text-xl md:text-2xl leading-relaxed text-gray-600 font-medium bg-amber-50/50 p-6 rounded-2xl border-2 border-dashed border-amber-200">
                       {activeItem.content}
                     </p>
-                    <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {['🌟','🎈','🎨','🧸'].map((emoji, i) => (
-                        <div key={i} className="aspect-square w-20 h-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200 flex items-center justify-center text-4xl hover:scale-110 transition-transform cursor-pointer hover:bg-white hover:shadow-md">
-                           {emoji}
-                        </div>
-                      ))}
-                    </div>
                   </div>
                 );
             }
@@ -4561,20 +4782,23 @@
 
           return (
             <div className="min-h-screen flex flex-col md:flex-row bg-amber-50 h-screen overflow-hidden">
-              
               {/* Header (Mobile) */}
               <div className="md:hidden bg-white shadow-sm p-4 flex justify-between items-center z-20 shrink-0">
                 <div className="flex items-center text-amber-600 font-bold text-xl">
                   <span className="text-2xl ml-2">🌸</span> גן יסמין
                 </div>
-                <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 bg-amber-100 text-amber-700 rounded-full hover:bg-amber-200 transition-colors">
+                <button
+                  type="button"
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className="p-2 bg-amber-100 text-amber-700 rounded-full hover:bg-amber-200 transition-colors"
+                >
                   {isMobileMenuOpen ? <XIcon /> : <MenuIcon />}
                 </button>
               </div>
 
               {/* Sidebar */}
               <nav className={`
-                ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'} 
+                ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
                 md:translate-x-0 transition-transform duration-300 ease-in-out
                 absolute md:relative top-0 right-0 w-72 h-full bg-white shadow-xl md:shadow-lg z-30 overflow-y-auto shrink-0
               `}>
@@ -4591,11 +4815,12 @@
                         {section.items.map((item) => (
                           <li key={item.id}>
                             <button
+                              type="button"
                               onClick={() => handleSelectItem(item, section)}
                               className={`
                                 w-full text-right flex items-center px-4 py-3 rounded-xl transition-all
-                                ${activeItem?.id === item.id 
-                                  ? `${section.color} font-bold shadow-sm scale-[1.02]` 
+                                ${activeItem?.id === item.id
+                                  ? `${section.color} font-bold shadow-sm scale-[1.02]`
                                   : `hover:bg-gray-50 text-gray-600 ${section.hover}`
                                 }
                               `}
@@ -4612,7 +4837,10 @@
 
               {/* Mobile Overlay */}
               {isMobileMenuOpen && (
-                <div className="absolute inset-0 bg-black/20 z-20 md:hidden backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
+                <div
+                  className="absolute inset-0 bg-black/20 z-20 md:hidden backdrop-blur-sm"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                />
               )}
 
               {/* Main Content */}
@@ -4637,10 +4865,10 @@
                         בחרו נושא מהתפריט בצד ימין כדי להתחיל ללמוד, לשחק ולגלות דברים חדשים.
                       </p>
                       <div className="mt-12 flex space-x-3 space-x-reverse justify-center">
-                        <div className="w-3 h-3 rounded-full bg-pink-400 animate-bounce" style={{animationDelay: '0ms'}}></div>
-                        <div className="w-3 h-3 rounded-full bg-emerald-400 animate-bounce" style={{animationDelay: '150ms'}}></div>
-                        <div className="w-3 h-3 rounded-full bg-blue-400 animate-bounce" style={{animationDelay: '300ms'}}></div>
-                        <div className="w-3 h-3 rounded-full bg-purple-400 animate-bounce" style={{animationDelay: '450ms'}}></div>
+                        <div className="w-3 h-3 rounded-full bg-pink-400 animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                        <div className="w-3 h-3 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                        <div className="w-3 h-3 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                        <div className="w-3 h-3 rounded-full bg-purple-400 animate-bounce" style={{ animationDelay: '450ms' }}></div>
                       </div>
                     </div>
                   )}
